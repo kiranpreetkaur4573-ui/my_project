@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Product Details</title>
+</head>
+<body>
+
+  <img id="image" width="200" />
+  <h2 id="name"></h2>
+  <p id="price"></p>
+  <p id="category"></p>
+  <p id="description"></p>
+  
+
+<!-- Firebase v8 -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+<script>
+  // ── Firebase Init ────────────────────────────────────────
+  const firebaseConfig = {
+    apiKey: "AIzaSyDpnSVwV3QP9MP4tuU5SCtXiwpdAUD0vlc",
+    authDomain: "trendlilly-boutique.firebaseapp.com",
+    projectId: "trendlilly-boutique",
+    storageBucket: "trendlilly-boutique.firebasestorage.app",
+    messagingSenderId: "929563690255",
+    appId: "1:929563690255:web:b535b31e9cb2f6158b6a7a"
+  };
+
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+  const db   = firebase.firestore();
+  const auth = firebase.auth();
+  const rtdb = firebase.database();
+
+  // ── Get product ID from URL ──────────────────────────────
+  const productId = new URLSearchParams(window.location.search).get("id");
+
+  // ── Loaded product stored here ───────────────────────────
+  let currentProduct = null;
+
+  // ── Load product from Firestore ──────────────────────────
+  function loadProduct() {
+    if (!productId) {
+      document.getElementById("name").innerText = "No product selected.";
+      return;
+    }
+
+    db.collection("products").doc(productId).get()
+      .then(function(docSnap) {
+        if (docSnap.exists) {
+          currentProduct = { id: docSnap.id, ...docSnap.data() };
+
+          // || "" means if field missing → blank, not "undefined"
+          document.getElementById("name").innerText        = currentProduct.name        || "";
+          document.getElementById("price").innerText       = currentProduct.price       || "";
+          document.getElementById("category").innerText    = currentProduct.category    || "";
+          document.getElementById("description").innerText = currentProduct.description || "No description available.";
+          document.getElementById("image").src             = currentProduct.img         || "";
+        } else {
+          document.getElementById("name").innerText = "Product not found.";
+        }
+      })
+      .catch(function(err) {
+        console.error("Error loading product:", err);
+        document.getElementById("name").innerText = "Error loading product.";
+      });
+  }
+
+  // ── Add to Cart ──────────────────────────────────────────
+  // If user is logged in → saves to Firestore under users/{uid}/cart
+  // If guest → saves to localStorage (fallback)
+  function addToCart() {
+    if (!currentProduct) {
+      alert("Product not loaded yet. Please wait.");
+      return;
+    }
+
+    var cartItem = {
+      id:       currentProduct.id,
+      name:     currentProduct.name     || "Unnamed Product",
+      price:    currentProduct.price    || "0",
+      image:    currentProduct.img      || "",
+      category: currentProduct.category || "",
+      color:    currentProduct.color    || "",
+      size:     "",
+      quantity: 1
+    };
+
+    var uid = localStorage.getItem('tl_uid');
+    var loggedIn = localStorage.getItem('tl_loggedIn');
+
+    if (loggedIn === 'true' && uid) {
+      // ── LOGGED IN → Save to Realtime Database ───────────────────
+      var cartRef = rtdb.ref(`carts/${uid}/${currentProduct.id}`);
+      cartRef.once('value').then(function(snapshot) {
+        var existing = snapshot.val();
+        if (existing) {
+          // Already in cart → increase quantity
+          cartItem.quantity = existing.quantity + 1;
+        }
+        return cartRef.set(cartItem);
+      })
+      .then(function() {
+        alert("Added to cart! ✅");
+        window.location.href = "mycart.html";
+      })
+      .catch(function(err) {
+        console.error("Cart error:", err);
+        alert("Could not add to cart. Please try again.");
+      });
+
+    } else {
+      // ── GUEST → Save to localStorage ────────────────────
+      var cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      var existing = cart.find(function(item) { return item.id === currentProduct.id; });
+
+      if (existing) {
+        existing.quantity = existing.quantity + 1;
+      } else {
+        cart.push(cartItem);
+      }
+
+      localStorage.setItem("cart", JSON.stringify(cart));
+      alert("Added to cart! ✅");
+      window.location.href = "mycart.html";
+    }
+  }
+
+  // ── Run ──────────────────────────────────────────────────
+  loadProduct();
+</script>
+
+</body>
+</html>

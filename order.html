@@ -1,0 +1,839 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout — TrendLily</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+  <style>
+    :root {
+      --rose: #c595b0; --deep: #7a2d52; --blush: #faedeb;
+      --plum: #4a1a32; --soft: #f5dde8; --white: #fff;
+      --text: #3d1a28; --green: #2e7d32; --err: #d32f2f;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--blush); font-family: 'DM Sans', sans-serif; padding: 20px; min-height: 100vh; }
+
+    /* ── Auth spinner ── */
+    #authScreen {
+      position: fixed; inset: 0; background: var(--blush);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; z-index: 9999;
+    }
+    #authScreen .logo-text { font-family: 'Cormorant Garamond', serif; font-size: 38px; font-style: italic; font-weight: 700; color: var(--deep); margin-bottom: 18px; }
+    #authScreen .logo-text span { color: var(--rose); }
+
+    .page-header { display: flex; align-items: center; justify-content: space-between; background: white; padding: 16px 28px; border-radius: 12px; margin-bottom: 24px; box-shadow: 0 2px 10px rgba(122,45,82,.08); }
+    .logo { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-style: italic; font-weight: 700; color: var(--deep); text-decoration: none; }
+    .logo span { color: var(--rose); }
+    .back-link { color: var(--deep); font-size: 13px; font-weight: 500; text-decoration: none; }
+    .back-link:hover { text-decoration: underline; }
+    .user-chip { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--plum); font-weight: 500; }
+    .user-dot { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, var(--rose), var(--deep)); color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; overflow: hidden; flex-shrink: 0; }
+    .user-dot img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* ── Saved-email banner ── */
+    .saved-banner {
+      background: linear-gradient(135deg, #f0fff4, #e8f5e9);
+      border: 1px solid #9ae6b4;
+      border-radius: 10px;
+      padding: 12px 18px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      color: #276749;
+    }
+    .saved-banner i { font-size: 16px; color: var(--green); flex-shrink: 0; }
+    .saved-banner strong { color: var(--green); }
+
+    .steps { display: flex; justify-content: center; align-items: center; margin-bottom: 32px; }
+    .step { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+    .step-circle { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; border: 2px solid #ddb8cc; background: white; color: #bbb; transition: all 0.3s; }
+    .step.active .step-circle { background: linear-gradient(135deg, var(--rose), var(--deep)); border-color: var(--deep); color: white; }
+    .step.done .step-circle  { background: var(--deep); border-color: var(--deep); color: white; }
+    .step-label { font-size: 11px; font-weight: 500; color: #aaa; white-space: nowrap; }
+    .step.active .step-label { color: var(--deep); font-weight: 700; }
+    .step.done .step-label { color: var(--deep); }
+    .step-line { width: 70px; height: 2px; background: #ddb8cc; margin-bottom: 20px; }
+    .step-line.done { background: var(--deep); }
+
+    .checkout-grid { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: 1fr 390px; gap: 24px; }
+    .card { background: white; border-radius: 14px; padding: 28px; box-shadow: 0 4px 20px rgba(122,45,82,.07); margin-bottom: 20px; }
+    .card-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-style: italic; color: var(--plum); margin-bottom: 22px; display: flex; align-items: center; gap: 10px; }
+    .card-title i { font-size: 16px; color: var(--rose); }
+
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.full { grid-column: 1 / -1; }
+    label { font-size: 11px; font-weight: 700; color: var(--plum); letter-spacing: 0.7px; text-transform: uppercase; }
+    input, select, textarea { border: 1.5px solid #e8ccd9; border-radius: 9px; padding: 11px 14px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); outline: none; transition: border-color 0.2s, box-shadow 0.2s; background: #fdfafb; }
+    input:focus, select:focus, textarea:focus { border-color: var(--rose); box-shadow: 0 0 0 3px rgba(197,149,176,.15); }
+
+    /* Highlight auto-filled fields so user sees what was saved */
+    input.auto-filled { background: #f0fff4; border-color: #9ae6b4; }
+
+    input.err-field { border-color: var(--err); }
+    .err-msg { font-size: 11px; color: var(--err); display: none; }
+    .err-msg.show { display: block; }
+    textarea { resize: vertical; min-height: 76px; }
+
+    .payment-options { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+    .payment-option { border: 2px solid #e8ccd9; border-radius: 11px; padding: 15px 10px; text-align: center; cursor: pointer; transition: all 0.2s; user-select: none; }
+    .payment-option:hover { border-color: var(--rose); background: var(--blush); }
+    .payment-option.selected { border-color: var(--deep); background: var(--soft); }
+    .payment-option i { font-size: 22px; color: var(--rose); display: block; margin-bottom: 6px; }
+    .payment-option span { font-size: 12px; font-weight: 600; color: var(--plum); }
+    .pay-detail { display: none; animation: fadeSlide 0.3s ease; }
+    .pay-detail.show { display: block; }
+    @keyframes fadeSlide { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+    .cod-note { background: #fff8f0; border: 1px solid #f0c080; border-radius: 9px; padding: 14px 16px; font-size: 13px; color: #7a5000; display: flex; align-items: center; gap: 10px; }
+    .cod-note i { color: #e6a817; font-size: 18px; flex-shrink: 0; }
+
+    .delivery-options { display: flex; flex-direction: column; gap: 12px; }
+    .delivery-option { display: flex; align-items: center; gap: 14px; border: 2px solid #e8ccd9; border-radius: 11px; padding: 14px 18px; cursor: pointer; transition: all 0.2s; }
+    .delivery-option:hover { border-color: var(--rose); }
+    .delivery-option.selected { border-color: var(--deep); background: var(--soft); }
+    .delivery-option input[type="radio"] { accent-color: var(--deep); width: 17px; height: 17px; }
+    .delivery-info { flex: 1; }
+    .delivery-name { font-weight: 600; color: var(--plum); font-size: 14px; }
+    .delivery-desc { font-size: 12px; color: #999; margin-top: 2px; }
+    .delivery-price { font-weight: 700; color: var(--deep); font-size: 14px; }
+
+    .order-summary { position: sticky; top: 20px; }
+    .summary-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #f5eaf0; }
+    .summary-item:last-child { border-bottom: none; }
+    .s-thumb { width: 58px; height: 58px; border-radius: 9px; overflow: hidden; flex-shrink: 0; background: var(--soft); position: relative; }
+    .s-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .qty-badge { position: absolute; top: -6px; right: -6px; background: var(--deep); color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .s-name { font-size: 13px; font-weight: 600; color: var(--plum); }
+    .s-meta { font-size: 11px; color: #aaa; }
+    .s-price { font-weight: 700; color: var(--deep); font-size: 14px; margin-left: auto; white-space: nowrap; }
+    .summary-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; color: #666; }
+    .summary-row.total { border-top: 2px solid #f0e0ea; padding-top: 14px; font-size: 18px; font-weight: 700; color: var(--plum); margin-top: 6px; }
+    .discount-row { color: var(--green); }
+    .coupon-row { display: flex; gap: 8px; margin: 16px 0 4px; }
+    .coupon-row input { flex: 1; text-transform: uppercase; letter-spacing: 1px; }
+    .coupon-btn { background: var(--deep); color: white; border: none; padding: 11px 16px; border-radius: 9px; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; font-family: 'DM Sans', sans-serif; transition: opacity 0.2s; }
+    .coupon-btn:hover { opacity: 0.85; }
+    .coupon-msg { font-size: 12px; }
+    .coupon-msg.ok { color: var(--green); }
+    .coupon-msg.fail { color: var(--err); }
+
+    .place-order-btn { width: 100%; background: linear-gradient(135deg, var(--rose), var(--deep)); color: white; border: none; padding: 17px; border-radius: 11px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 20px; transition: opacity 0.2s, transform 0.15s; font-family: 'DM Sans', sans-serif; letter-spacing: 0.3px; }
+    .place-order-btn:hover { opacity: 0.93; transform: translateY(-1px); }
+    .place-order-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .secure-note { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 11px; color: #bbb; margin-top: 12px; }
+    .secure-note i { color: var(--rose); }
+
+    .modal-overlay { position: fixed; inset: 0; background: rgba(74,26,50,.55); backdrop-filter: blur(5px); z-index: 5000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s; }
+    .modal-overlay.show { opacity: 1; pointer-events: all; }
+    .modal { background: white; border-radius: 22px; padding: 50px 40px; max-width: 440px; width: 92%; text-align: center; transform: scale(0.85); transition: transform 0.4s cubic-bezier(.34,1.56,.64,1); box-shadow: 0 30px 80px rgba(74,26,50,.25); }
+    .modal-overlay.show .modal { transform: scale(1); }
+    .success-icon { width: 82px; height: 82px; background: linear-gradient(135deg, var(--rose), var(--deep)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 26px; font-size: 38px; color: white; }
+    .modal h2 { font-family: 'Cormorant Garamond', serif; font-size: 34px; font-style: italic; color: var(--plum); margin-bottom: 10px; }
+    .modal p { color: #8a5a6a; font-size: 15px; margin-bottom: 6px; }
+    .order-id-box { background: var(--blush); border-radius: 10px; padding: 14px 22px; margin: 20px 0; font-size: 13px; color: var(--plum); }
+    .order-id-box strong { font-size: 18px; color: var(--deep); letter-spacing: 2px; display: block; margin-top: 4px; }
+    .modal-btn { background: linear-gradient(135deg, var(--rose), var(--deep)); color: white; border: none; padding: 14px 36px; border-radius: 25px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: opacity 0.2s; margin-top: 10px; }
+    .modal-btn:hover { opacity: 0.9; }
+
+    .prev-section { max-width: 1120px; margin: 32px auto 0; }
+    .prev-title { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-style: italic; color: var(--plum); margin-bottom: 18px; display: flex; align-items: center; gap: 10px; }
+    .prev-title i { font-size: 18px; color: var(--rose); }
+    .no-orders { background: white; border-radius: 12px; padding: 38px; text-align: center; color: #bbb; font-size: 14px; }
+    .no-orders i { font-size: 38px; color: var(--rose); display: block; margin-bottom: 10px; }
+    .order-card { background: white; border-radius: 14px; box-shadow: 0 4px 20px rgba(122,45,82,.07); margin-bottom: 16px; overflow: hidden; animation: slideIn 0.3s ease both; }
+    @keyframes slideIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+    .order-card-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 22px; background: linear-gradient(135deg, #fdf5f8, #fff); border-bottom: 1px solid #f0e0ea; flex-wrap: wrap; gap: 10px; }
+    .order-card-id { font-weight: 700; color: var(--deep); font-size: 15px; }
+    .order-card-date { font-size: 12px; color: #aaa; margin-top: 2px; }
+    .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+    .s-confirmed  { background: #e8f5e9; color: #2e7d32; }
+    .s-processing { background: #fff8e1; color: #f57f17; }
+    .s-shipped    { background: #e3f2fd; color: #1565c0; }
+    .s-delivered  { background: #ede7f6; color: #4527a0; }
+    .s-cancelled  { background: #ffebee; color: #c62828; }
+    .order-card-items { padding: 12px 22px; }
+    .order-mini-item { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 1px solid #faf0f4; font-size: 13px; }
+    .order-mini-item:last-child { border-bottom: none; }
+    .mini-thumb { width: 46px; height: 46px; border-radius: 7px; object-fit: cover; background: var(--soft); flex-shrink: 0; }
+    .mini-name { font-weight: 600; color: var(--plum); }
+    .mini-meta { font-size: 11px; color: #aaa; }
+    .mini-price { margin-left: auto; font-weight: 700; color: var(--deep); white-space: nowrap; }
+    .order-card-footer { display: flex; justify-content: space-between; align-items: center; padding: 12px 22px; background: #fdfafb; border-top: 1px solid #f0e0ea; flex-wrap: wrap; gap: 8px; }
+    .order-total-val { font-size: 16px; font-weight: 700; color: var(--plum); }
+    .order-eta { font-size: 12px; color: #aaa; }
+
+    .loading-orders { background: white; border-radius: 12px; padding: 40px; text-align: center; }
+    .spinner { width: 36px; height: 36px; border: 3px solid var(--soft); border-top-color: var(--deep); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .toast { position: fixed; bottom: 24px; right: 24px; background: var(--plum); color: white; padding: 13px 22px; border-radius: 10px; font-weight: 500; font-size: 14px; opacity: 0; transform: translateY(20px); transition: all 0.3s; z-index: 9999; }
+    .toast.success { background: var(--green); }
+    .toast.error   { background: var(--err); }
+    .toast.show    { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 860px) { .checkout-grid { grid-template-columns: 1fr; } .order-summary { position: static; } }
+    @media (max-width: 540px) { .form-grid { grid-template-columns: 1fr; } .form-group.full { grid-column: 1; } .steps { gap: 0; } .step-line { width: 30px; } }
+  </style>
+</head>
+<body>
+
+<!-- Auth spinner -->
+<div id="authScreen">
+  <div class="logo-text">Trend<span>Lily</span></div>
+  <div class="spinner"></div>
+</div>
+
+<!-- Page content (shown after auth check) -->
+<div id="pageContent" style="display:none;">
+
+<header class="page-header">
+  <a class="logo" href="index.html">Trend<span>Lily</span></a>
+  <a class="back-link" href="mycart.html">← Back to Cart</a>
+  <div class="user-chip" id="userChip">
+    <div class="user-dot"><i class="fa-solid fa-user"></i></div>
+    <span>Loading…</span>
+  </div>
+</header>
+
+<div class="steps">
+  <div class="step done">
+    <div class="step-circle"><i class="fa-solid fa-check"></i></div>
+    <div class="step-label">Cart</div>
+  </div>
+  <div class="step-line done"></div>
+  <div class="step active">
+    <div class="step-circle">2</div>
+    <div class="step-label">Checkout</div>
+  </div>
+  <div class="step-line"></div>
+  <div class="step">
+    <div class="step-circle">3</div>
+    <div class="step-label">Confirmed</div>
+  </div>
+</div>
+
+<!-- Saved email/address banner (shown when data was auto-filled) -->
+<div class="saved-banner" id="savedBanner" style="display:none;max-width:1120px;margin:0 auto 20px;">
+  <i class="fa-solid fa-circle-check"></i>
+  <span>Your details have been <strong>auto-filled</strong> from your saved account. Just review and place your order!</span>
+</div>
+
+<div class="checkout-grid">
+  <div>
+    <div class="card">
+      <div class="card-title"><i class="fa-solid fa-location-dot"></i> Shipping Address</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>First Name</label>
+          <input type="text" id="firstName" placeholder="Priya">
+          <div class="err-msg" id="firstNameErr">Enter first name</div>
+        </div>
+        <div class="form-group">
+          <label>Last Name</label>
+          <input type="text" id="lastName" placeholder="Sharma">
+          <div class="err-msg" id="lastNameErr">Enter last name</div>
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" id="phone" placeholder="+91 98765 43210" maxlength="15">
+          <div class="err-msg" id="phoneErr">Enter valid phone number</div>
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="email" placeholder="priya@email.com">
+          <div class="err-msg" id="emailErr">Enter valid email</div>
+        </div>
+        <div class="form-group full">
+          <label>Street Address</label>
+          <input type="text" id="address" placeholder="House No., Street, Area">
+          <div class="err-msg" id="addressErr">Enter your address</div>
+        </div>
+        <div class="form-group">
+          <label>City</label>
+          <input type="text" id="city" placeholder="Ludhiana">
+          <div class="err-msg" id="cityErr">Enter city</div>
+        </div>
+        <div class="form-group">
+          <label>State</label>
+          <select id="state">
+            <option value="">Select State</option>
+            <option>Punjab</option><option>Delhi</option><option>Haryana</option>
+            <option>Rajasthan</option><option>Uttar Pradesh</option><option>Maharashtra</option>
+            <option>Gujarat</option><option>Tamil Nadu</option><option>Karnataka</option>
+            <option>West Bengal</option><option>Madhya Pradesh</option><option>Other</option>
+          </select>
+          <div class="err-msg" id="stateErr">Select state</div>
+        </div>
+        <div class="form-group">
+          <label>PIN Code</label>
+          <input type="text" id="pin" placeholder="141001" maxlength="6">
+          <div class="err-msg" id="pinErr">Enter valid 6-digit PIN</div>
+        </div>
+        <div class="form-group full">
+          <label>Delivery Notes (Optional)</label>
+          <textarea id="notes" placeholder="e.g. Leave at door, call before delivery…"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="fa-solid fa-truck"></i> Delivery Method</div>
+      <div class="delivery-options">
+        <label class="delivery-option selected" id="opt-std">
+          <input type="radio" name="delivery" value="standard" checked>
+          <div class="delivery-info">
+            <div class="delivery-name">Standard Delivery</div>
+            <div class="delivery-desc">5–7 business days</div>
+          </div>
+          <div class="delivery-price" id="std-price">FREE</div>
+        </label>
+        <label class="delivery-option" id="opt-exp">
+          <input type="radio" name="delivery" value="express">
+          <div class="delivery-info">
+            <div class="delivery-name">Express Delivery</div>
+            <div class="delivery-desc">2–3 business days</div>
+          </div>
+          <div class="delivery-price">₹149</div>
+        </label>
+        <label class="delivery-option" id="opt-same">
+          <input type="radio" name="delivery" value="same">
+          <div class="delivery-info">
+            <div class="delivery-name">Same Day</div>
+            <div class="delivery-desc">Order before 12 PM (local only)</div>
+          </div>
+          <div class="delivery-price">₹249</div>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="fa-solid fa-credit-card"></i> Payment Method</div>
+      <div class="payment-options">
+        <div class="payment-option selected" id="pay-upi" onclick="setPayment('upi')">
+          <i class="fa-solid fa-mobile-screen-button"></i><span>UPI / GPay</span>
+        </div>
+        <div class="payment-option" id="pay-card" onclick="setPayment('card')">
+          <i class="fa-solid fa-credit-card"></i><span>Card</span>
+        </div>
+        <div class="payment-option" id="pay-cod" onclick="setPayment('cod')">
+          <i class="fa-solid fa-money-bill-wave"></i><span>Cash on Delivery</span>
+        </div>
+      </div>
+      <div class="pay-detail show" id="payUpi">
+        <div class="form-group"><label>UPI ID</label><input type="text" id="upiId" placeholder="yourname@upi"></div>
+      </div>
+      <div class="pay-detail" id="payCard">
+        <div class="form-grid">
+          <div class="form-group full"><label>Card Number</label><input type="text" id="cardNum" placeholder="1234 5678 9012 3456" maxlength="19"></div>
+          <div class="form-group"><label>Expiry (MM/YY)</label><input type="text" id="cardExp" placeholder="MM/YY" maxlength="5"></div>
+          <div class="form-group"><label>CVV</label><input type="password" id="cardCvv" placeholder="•••" maxlength="4"></div>
+          <div class="form-group full"><label>Name on Card</label><input type="text" id="cardName" placeholder="PRIYA SHARMA"></div>
+        </div>
+      </div>
+      <div class="pay-detail" id="payCod">
+        <div class="cod-note"><i class="fa-solid fa-circle-info"></i><span>Pay cash when your order arrives. ₹50 handling fee applies for COD orders.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="order-summary">
+    <div class="card">
+      <div class="card-title"><i class="fa-solid fa-bag-shopping"></i> Order Summary</div>
+      <div id="summaryItems" style="margin-bottom:8px;">
+        <div style="text-align:center;padding:20px;color:#bbb;"><div class="spinner" style="width:28px;height:28px;border-width:2px;"></div></div>
+      </div>
+      <div class="coupon-row">
+        <input type="text" id="couponInput" placeholder="COUPON CODE" oninput="this.value=this.value.toUpperCase()">
+        <button class="coupon-btn" onclick="applyCoupon()">Apply</button>
+      </div>
+      <div class="coupon-msg" id="couponMsg"></div>
+      <div style="margin-top:18px;">
+        <div class="summary-row"><span>Subtotal</span><span id="valSubtotal">₹0.00</span></div>
+        <div class="summary-row discount-row" id="rowDiscount" style="display:none;"><span id="discLabel">Discount</span><span id="valDiscount">-₹0</span></div>
+        <div class="summary-row"><span>Delivery</span><span id="valDelivery">FREE</span></div>
+        <div class="summary-row"><span>GST (5%)</span><span id="valGst">₹0.00</span></div>
+        <div class="summary-row total"><span>Total</span><span id="valTotal">₹0.00</span></div>
+      </div>
+      <button class="place-order-btn" id="placeBtn" onclick="placeOrder()">
+        <i class="fa-solid fa-lock" style="margin-right:8px;"></i>Place Order Securely
+      </button>
+      <div class="secure-note"><i class="fa-solid fa-shield-halved"></i> 256-bit SSL encrypted &amp; secure</div>
+    </div>
+  </div>
+</div>
+
+<div class="prev-section">
+  <div class="prev-title"><i class="fa-solid fa-clock-rotate-left"></i> My Previous Orders</div>
+  <div id="prevOrders">
+    <div class="loading-orders"><div class="spinner"></div><p style="font-size:13px;color:#a07090;">Loading order history…</p></div>
+  </div>
+</div>
+
+</div><!-- end #pageContent -->
+
+<div class="modal-overlay" id="successModal">
+  <div class="modal">
+    <div class="success-icon"><i class="fa-solid fa-check"></i></div>
+    <h2>Order Placed!</h2>
+    <p>Thank you for shopping with TrendLily 🌸</p>
+    <p>A confirmation email will be sent shortly.</p>
+    <div class="order-id-box">Order ID<br><strong id="modalOrderId">#BQ000000</strong></div>
+    <p style="font-size:13px;color:#aaa;">Estimated delivery: <strong id="modalEta" style="color:var(--deep);">5–7 business days</strong></p>
+    <button class="modal-btn" onclick="goHome()">Continue Shopping</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  /* ══════════════════════════════════════════
+     FIREBASE — SAME REAL CONFIG AS ALL PAGES
+  ══════════════════════════════════════════ */
+  const firebaseConfig = {
+    apiKey:            "AIzaSyDpnSVwV3QP9MP4tuU5SCtXiwpdAUD0vlc",
+    authDomain:        "trendlilly-boutique.firebaseapp.com",
+    databaseURL:       "https://trendlilly-boutique-default-rtdb.firebaseio.com",
+    projectId:         "trendlilly-boutique",
+    storageBucket:     "trendlilly-boutique.firebasestorage.app",
+    messagingSenderId: "929563690255",
+    appId:             "1:929563690255:web:b535b31e9cb2f6158b6a7a"
+  };
+
+  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db   = firebase.firestore();
+
+  let currentUser = null;
+  let cart        = [];
+  let subtotal    = 0;
+  let deliveryFee = 0;
+  let discountAmt = 0;
+  let selectedPay = 'upi';
+  let selectedDel = 'standard';
+
+  const COUPONS = {
+    'SAVE10':  { type: 'percent', value: 10,  label: '10% OFF' },
+    'FLAT100': { type: 'flat',    value: 100, label: '₹100 OFF' },
+    'WELCOME': { type: 'percent', value: 15,  label: '15% OFF' },
+    'LILY20':  { type: 'percent', value: 20,  label: '20% OFF' },
+  };
+
+  const DELIVERY_ETAs = {
+    standard: '5–7 business days',
+    express:  '2–3 business days',
+    same:     'Today'
+  };
+
+  /* ══════════════════════════════════════════
+     AUTH CHECK
+     If not logged in → send to login.html.
+     If logged in → auto-fill email + address.
+  ══════════════════════════════════════════ */
+  auth.onAuthStateChanged(async function(user) {
+    currentUser = user;
+
+    // Hide spinner, show page
+    document.getElementById('authScreen').style.display  = 'none';
+    document.getElementById('pageContent').style.display = 'block';
+
+    if (user) {
+      // ── Logged-in user ────────────────────────────
+      // Update localStorage so it's always fresh
+      localStorage.setItem('tl_loggedIn', 'true');
+      localStorage.setItem('tl_uid',      user.uid);
+      localStorage.setItem('tl_email',    user.email || '');
+      if (user.displayName) localStorage.setItem('tl_name', user.displayName);
+
+      updateUserChip(user);
+
+      // Auto-fill name and email from Firebase Auth
+      autoFillFromAuth(user);
+
+      // Load saved address from Firestore (phone, city, pin etc.)
+      await loadSavedAddress(user.uid);
+
+      loadCart(user.uid);
+      loadOrderHistory(user.uid);
+
+    } else {
+      // ── Not logged in ─────────────────────────────
+      // Redirect to login so they can sign in
+      // (login.html will bring them back here after login)
+      localStorage.setItem('tl_loginRedirect', 'order.html');
+      window.location.replace('login.html');
+    }
+  });
+
+  /* ── AUTO-FILL from Firebase Auth (name + email) ── */
+  function autoFillFromAuth(user) {
+    var anyFilled = false;
+
+    // Fill email — this is ALWAYS available from Firebase Auth
+    if (user.email) {
+      var emailEl = document.getElementById('email');
+      emailEl.value = user.email;
+      emailEl.classList.add('auto-filled');
+      anyFilled = true;
+    }
+
+    // Fill name if available
+    if (user.displayName) {
+      var parts = user.displayName.trim().split(' ');
+      var firstEl = document.getElementById('firstName');
+      var lastEl  = document.getElementById('lastName');
+      firstEl.value = parts[0] || '';
+      lastEl.value  = parts.slice(1).join(' ') || '';
+      if (parts[0]) { firstEl.classList.add('auto-filled'); anyFilled = true; }
+      if (parts.slice(1).join(' ')) lastEl.classList.add('auto-filled');
+    }
+
+    if (anyFilled) {
+      document.getElementById('savedBanner').style.display = 'flex';
+    }
+  }
+
+  /* ── LOAD SAVED ADDRESS from Firestore ── */
+  async function loadSavedAddress(uid) {
+    try {
+      var snap = await db.collection('addresses').doc(uid).get();
+      if (!snap.exists) return;
+      var a = snap.data();
+      var anyAddress = false;
+
+      // Fill each field and mark it as auto-filled
+      var fields = ['phone','address','city','state','pin','notes'];
+      fields.forEach(function(f) {
+        if (a[f]) {
+          var el = document.getElementById(f);
+          if (el) {
+            el.value = a[f];
+            el.classList.add('auto-filled');
+            anyAddress = true;
+          }
+        }
+      });
+
+      if (anyAddress) {
+        document.getElementById('savedBanner').style.display = 'flex';
+        showToast('Saved address auto-filled ✓', 'success');
+      }
+    } catch(e) {
+      console.log('[TrendLily] No saved address:', e.message);
+    }
+  }
+
+  /* ── UPDATE USER CHIP ── */
+  function updateUserChip(user) {
+    var chip = document.getElementById('userChip');
+    if (user) {
+      var initials = (user.displayName || user.email || 'U')[0].toUpperCase();
+      var photo    = user.photoURL;
+      chip.innerHTML = '<div class="user-dot">' + (photo ? '<img src="' + photo + '">' : initials) + '</div><span>' + (user.displayName || user.email.split('@')[0]) + '</span>';
+    } else {
+      chip.innerHTML = '<div class="user-dot"><i class="fa-solid fa-user"></i></div><span style="color:#a07090;">Guest</span>';
+    }
+  }
+
+  /* ── LOAD CART from localStorage ── */
+  function loadCart(uid) {
+    cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    renderSummary();
+  }
+
+  /* ── RENDER SUMMARY ── */
+  function parsePrice(p) { return parseFloat(String(p).replace(/[₹$,]/g,'')) || 0; }
+
+  function renderSummary() {
+    var container = document.getElementById('summaryItems');
+    if (cart.length === 0) {
+      container.innerHTML = '<div style="text-align:center;padding:24px 0;"><i class="fa-solid fa-cart-shopping" style="font-size:34px;color:var(--rose);display:block;margin-bottom:10px;"></i><div style="font-weight:700;color:var(--plum);margin-bottom:6px;">Cart is empty</div><a href="cart.html" style="background:linear-gradient(135deg,var(--rose),var(--deep));color:white;padding:9px 20px;border-radius:20px;font-size:13px;font-weight:700;text-decoration:none;display:inline-block;">← Back to Cart</a></div>';
+      document.getElementById('placeBtn').style.display = 'none';
+      document.querySelector('.secure-note').style.display = 'none';
+      updateTotals();
+      return;
+    }
+    container.innerHTML = cart.map(function(item) {
+      return '<div class="summary-item"><div class="s-thumb"><img src="' + (item.image||'') + '" alt="' + item.name + '" onerror="this.src=\'https://placehold.co/58x58/f5dde8/7a2d52?text=🛍\'"><div class="qty-badge">' + item.quantity + '</div></div><div><div class="s-name">' + item.name + '</div><div class="s-meta">' + item.size + ' · ' + item.color + '</div></div><div class="s-price">₹' + (parsePrice(item.price) * item.quantity).toLocaleString('en-IN') + '</div></div>';
+    }).join('');
+    updateTotals();
+  }
+
+  function updateTotals() {
+    subtotal = cart.reduce(function(s,i){ return s + parsePrice(i.price) * i.quantity; }, 0);
+    var gst    = subtotal * 0.05;
+    var codFee = selectedPay === 'cod' ? 50 : 0;
+    var stdFree = subtotal >= 1000;
+    document.getElementById('std-price').textContent = stdFree ? 'FREE' : '₹99';
+    if      (selectedDel === 'standard') deliveryFee = stdFree ? 0 : 99;
+    else if (selectedDel === 'express')  deliveryFee = 149;
+    else                                 deliveryFee = 249;
+    var total = subtotal - discountAmt + deliveryFee + gst + codFee;
+    document.getElementById('valSubtotal').textContent = '₹' + subtotal.toLocaleString('en-IN',{minimumFractionDigits:2});
+    document.getElementById('valGst').textContent      = '₹' + gst.toFixed(2);
+    document.getElementById('valDelivery').textContent = deliveryFee === 0 ? 'FREE' : '₹' + deliveryFee;
+    document.getElementById('valTotal').textContent    = '₹' + total.toLocaleString('en-IN',{minimumFractionDigits:2});
+    if (discountAmt > 0) {
+      document.getElementById('rowDiscount').style.display = 'flex';
+      document.getElementById('valDiscount').textContent   = '-₹' + discountAmt.toFixed(2);
+    } else {
+      document.getElementById('rowDiscount').style.display = 'none';
+    }
+  }
+
+  /* ── PAYMENT / DELIVERY ── */
+  function setPayment(type) {
+    selectedPay = type;
+    document.querySelectorAll('.payment-option').forEach(function(o){ o.classList.remove('selected'); });
+    document.getElementById('pay-' + type).classList.add('selected');
+    ['payUpi','payCard','payCod'].forEach(function(id){ document.getElementById(id).classList.remove('show'); });
+    if (type === 'upi')  document.getElementById('payUpi').classList.add('show');
+    if (type === 'card') document.getElementById('payCard').classList.add('show');
+    if (type === 'cod')  document.getElementById('payCod').classList.add('show');
+    updateTotals();
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('input[name="delivery"]').forEach(function(radio) {
+      radio.addEventListener('change', function() {
+        selectedDel = this.value;
+        document.querySelectorAll('.delivery-option').forEach(function(o){ o.classList.remove('selected'); });
+        this.closest('.delivery-option').classList.add('selected');
+        updateTotals();
+      });
+    });
+    var cardNum = document.getElementById('cardNum');
+    if (cardNum) cardNum.addEventListener('input', function() {
+      var v = this.value.replace(/\D/g,'').substring(0,16);
+      this.value = v.replace(/(.{4})/g,'$1 ').trim();
+    });
+    var cardExp = document.getElementById('cardExp');
+    if (cardExp) cardExp.addEventListener('input', function() {
+      var v = this.value.replace(/\D/g,'').substring(0,4);
+      if (v.length >= 3) v = v.substring(0,2) + '/' + v.substring(2);
+      this.value = v;
+    });
+  });
+
+  /* ── COUPON ── */
+  function applyCoupon() {
+    var code  = document.getElementById('couponInput').value.trim().toUpperCase();
+    var msgEl = document.getElementById('couponMsg');
+    if (!code) { msgEl.textContent = 'Enter a coupon code.'; msgEl.className = 'coupon-msg fail'; return; }
+    if (COUPONS[code]) {
+      var c = COUPONS[code];
+      discountAmt = c.type === 'percent' ? subtotal * (c.value / 100) : Math.min(c.value, subtotal);
+      document.getElementById('discLabel').textContent = 'Coupon (' + c.label + ')';
+      msgEl.textContent = '✓ Saved ₹' + discountAmt.toFixed(2) + ' with ' + code + '!';
+      msgEl.className = 'coupon-msg ok';
+      updateTotals();
+    } else {
+      discountAmt = 0;
+      msgEl.textContent = '✗ Invalid coupon code.';
+      msgEl.className = 'coupon-msg fail';
+      updateTotals();
+    }
+  }
+
+  /* ── VALIDATION ── */
+  function validate() {
+    var ok = true;
+    var fields = [
+      { id:'firstName', err:'firstNameErr', fn: function(v){ return v.trim().length > 0; } },
+      { id:'lastName',  err:'lastNameErr',  fn: function(v){ return v.trim().length > 0; } },
+      { id:'phone',     err:'phoneErr',     fn: function(v){ return /^[\d\s\+\-]{8,15}$/.test(v.trim()); } },
+      { id:'email',     err:'emailErr',     fn: function(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()); } },
+      { id:'address',   err:'addressErr',   fn: function(v){ return v.trim().length > 5; } },
+      { id:'city',      err:'cityErr',      fn: function(v){ return v.trim().length > 0; } },
+      { id:'state',     err:'stateErr',     fn: function(v){ return v !== ''; } },
+      { id:'pin',       err:'pinErr',       fn: function(v){ return /^\d{6}$/.test(v.trim()); } },
+    ];
+    fields.forEach(function(f) {
+      var el  = document.getElementById(f.id);
+      var err = document.getElementById(f.err);
+      if (!f.fn(el.value)) { el.classList.add('err-field'); if(err) err.classList.add('show'); ok = false; }
+      else { el.classList.remove('err-field'); if(err) err.classList.remove('show'); }
+    });
+    return ok;
+  }
+
+  /* ══════════════════════════════════════════
+     PLACE ORDER
+  ══════════════════════════════════════════ */
+  async function placeOrder() {
+    if (cart.length === 0) { showToast('Your cart is empty!', 'error'); return; }
+    if (!validate()) { showToast('Please fill all required fields.', 'error'); return; }
+
+    var btn = document.getElementById('placeBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="margin-right:8px;"></i>Processing…';
+
+    var gst    = subtotal * 0.05;
+    var codFee = selectedPay === 'cod' ? 50 : 0;
+    var total  = parseFloat((subtotal - discountAmt + deliveryFee + gst + codFee).toFixed(2));
+    var orderId = '#BQ' + Date.now().toString().slice(-6) + Math.floor(100 + Math.random() * 900);
+
+    var address = {
+      firstName: document.getElementById('firstName').value.trim(),
+      lastName:  document.getElementById('lastName').value.trim(),
+      phone:     document.getElementById('phone').value.trim(),
+      email:     document.getElementById('email').value.trim(),
+      address:   document.getElementById('address').value.trim(),
+      city:      document.getElementById('city').value.trim(),
+      state:     document.getElementById('state').value,
+      pin:       document.getElementById('pin').value.trim(),
+      notes:     document.getElementById('notes').value.trim(),
+    };
+
+    var cleanItems = cart.map(function(i) {
+      return {
+        name:     i.name     || 'Unknown',
+        price:    parsePrice(i.price),
+        quantity: i.quantity || 1,
+        size:     i.size     || 'N/A',
+        color:    i.color    || 'N/A',
+        image:    i.image    || '',
+      };
+    });
+
+    var orderData = {
+      orderId:     orderId,
+      userId:      currentUser ? currentUser.uid : 'guest_' + Date.now(),
+      userEmail:   address.email,
+      address:     address,
+      items:       cleanItems,
+      payment:     selectedPay,
+      delivery:    selectedDel,
+      eta:         DELIVERY_ETAs[selectedDel],
+      subtotal:    subtotal,
+      discountAmt: discountAmt,
+      deliveryFee: deliveryFee,
+      gst:         parseFloat(gst.toFixed(2)),
+      codFee:      codFee,
+      total:       total,
+      status:      'confirmed',
+      createdAt:   firebase.firestore.FieldValue.serverTimestamp(),
+    };
+
+    try {
+      if (currentUser) {
+        // Save order to Firestore
+        var orderRef = await db.collection('orders').add(orderData);
+        console.log('[TrendLily] Order saved:', orderRef.id);
+
+        // ── SAVE ADDRESS PERMANENTLY ─────────────────
+        // This is what makes email + address auto-fill
+        // on every future visit for this customer.
+        await db.collection('addresses').doc(currentUser.uid).set(
+          Object.assign({}, address, {
+            userId:    currentUser.uid,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+          })
+        );
+
+        // Clear the Firestore cart
+        await db.collection('carts').doc(currentUser.uid).set({
+          items: [], updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+      } else {
+        // Guest — save locally
+        var guestOrders = JSON.parse(localStorage.getItem('guest_orders') || '[]');
+        guestOrders.push(Object.assign({}, orderData, { createdAt: new Date().toISOString() }));
+        localStorage.setItem('guest_orders', JSON.stringify(guestOrders));
+      }
+
+      localStorage.removeItem('cart');
+      cart = [];
+
+      document.getElementById('modalOrderId').textContent = orderId;
+      document.getElementById('modalEta').textContent     = DELIVERY_ETAs[selectedDel];
+      document.getElementById('successModal').classList.add('show');
+
+      if (currentUser) loadOrderHistory(currentUser.uid);
+
+    } catch(e) {
+      console.error('[TrendLily] Order error:', e.code, e.message);
+      var errMsg = 'Something went wrong. Please try again.';
+      if (e.code === 'permission-denied') errMsg = 'Permission denied. Fix Firebase Rules.';
+      else if (e.code === 'unavailable')  errMsg = 'No internet connection.';
+      showToast(errMsg, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-lock" style="margin-right:8px;"></i>Place Order Securely';
+    }
+  }
+
+  /* ══════════════════════════════════════════
+     ORDER HISTORY
+  ══════════════════════════════════════════ */
+  async function loadOrderHistory(uid) {
+    var container = document.getElementById('prevOrders');
+    container.innerHTML = '<div class="loading-orders"><div class="spinner"></div><p style="font-size:13px;color:#a07090;">Loading order history…</p></div>';
+    try {
+      var snap = await db.collection('orders')
+        .where('userId', '==', uid)
+        .orderBy('createdAt', 'desc')
+        .limit(10)
+        .get();
+      if (snap.empty) { renderNoOrders(container); return; }
+      var orders = snap.docs.map(function(d){ return Object.assign({ id: d.id }, d.data()); });
+      renderOrderCards(container, orders);
+    } catch(e) {
+      console.error('[TrendLily] History error:', e.code, e.message);
+      if (e.code === 'failed-precondition' || (e.message && e.message.includes('index'))) {
+        container.innerHTML = '<div class="no-orders"><i class="fa-solid fa-triangle-exclamation" style="color:#e6a817;"></i><div style="margin-top:10px;color:#7a5000;font-weight:600;">Firestore Index Required</div><div style="font-size:12px;margin-top:6px;">Firebase Console → Indexes → Create:<br>Collection: <b>orders</b> | userId ASC | createdAt DESC</div></div>';
+      } else if (e.code === 'permission-denied') {
+        container.innerHTML = '<div class="no-orders"><i class="fa-solid fa-lock"></i><div style="margin-top:8px;">Permission denied. Fix Firebase Security Rules.</div></div>';
+      } else {
+        renderNoOrders(container);
+      }
+    }
+  }
+
+  function renderNoOrders(container) {
+    container.innerHTML = '<div class="no-orders"><i class="fa-solid fa-box-open"></i>No previous orders yet.</div>';
+  }
+
+  var STATUS_CLASSES = { confirmed:'s-confirmed', processing:'s-processing', shipped:'s-shipped', delivered:'s-delivered', cancelled:'s-cancelled' };
+  var STATUS_ICONS   = { confirmed:'fa-circle-check', processing:'fa-spinner', shipped:'fa-truck', delivered:'fa-check-double', cancelled:'fa-ban' };
+
+  function renderOrderCards(container, orders) {
+    container.innerHTML = orders.map(function(order, i) {
+      var status = order.status || 'confirmed';
+      var badgeClass = STATUS_CLASSES[status] || 's-confirmed';
+      var icon       = STATUS_ICONS[status]   || 'fa-circle-check';
+      var label      = status.charAt(0).toUpperCase() + status.slice(1);
+      var dateStr    = '—';
+      try {
+        if (order.createdAt && typeof order.createdAt.toDate === 'function') dateStr = order.createdAt.toDate().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+        else if (order.createdAt) dateStr = new Date(order.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+      } catch(e) { dateStr = '—'; }
+      return '<div class="order-card" style="animation-delay:' + (i*0.07) + 's"><div class="order-card-header"><div><div class="order-card-id">' + (order.orderId || ('#'+order.id)) + '</div><div class="order-card-date"><i class="fa-regular fa-calendar" style="margin-right:4px;"></i>' + dateStr + ' · ' + (order.delivery||'standard') + ' delivery</div></div><span class="status-badge ' + badgeClass + '"><i class="fa-solid ' + icon + '"></i> ' + label + '</span></div><div class="order-card-items">' + (order.items||[]).map(function(item){ return '<div class="order-mini-item"><img class="mini-thumb" src="' + (item.image||'') + '" alt="' + item.name + '" onerror="this.src=\'https://placehold.co/46x46/f5dde8/7a2d52?text=🛍\'"><div><div class="mini-name">' + item.name + '</div><div class="mini-meta">Qty: ' + item.quantity + ' · ' + item.size + ' · ' + item.color + '</div></div><div class="mini-price">₹' + (parsePrice(item.price)*item.quantity).toLocaleString('en-IN') + '</div></div>'; }).join('') + '</div><div class="order-card-footer"><div class="order-eta"><i class="fa-solid fa-truck" style="color:var(--rose);margin-right:4px;"></i>Est. ' + (order.eta||'5–7 business days') + '</div><div><span style="font-size:13px;color:#aaa;">Total: </span><span class="order-total-val">₹' + Number(order.total||0).toLocaleString('en-IN',{minimumFractionDigits:2}) + '</span></div></div></div>';
+    }).join('');
+  }
+
+  function goHome() {
+    document.getElementById('successModal').classList.remove('show');
+    window.location.href = 'cart.html';
+  }
+
+  function showToast(msg, type) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className   = 'toast ' + (type || '');
+    t.classList.add('show');
+    setTimeout(function(){ t.classList.remove('show'); }, 3800);
+  }
+</script>
+</body>
+</html>

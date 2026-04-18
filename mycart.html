@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Cart — TrendLily</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+  <style>
+    :root {
+      --rose: #c595b0;
+      --deep: #7a2d52;
+      --blush: #faedeb;
+      --plum: #4a1a32;
+      --soft: #f5dde8;
+      --white: #fff;
+      --text: #3d1a28;
+      --green: #2e7d32;
+      --err: #d32f2f;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--blush); font-family: 'DM Sans', sans-serif; padding: 20px; min-height: 100vh; }
+
+    #authScreen {
+      position: fixed; inset: 0;
+      background: var(--blush);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      z-index: 9999;
+    }
+    #authScreen .logo-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 38px; font-style: italic; font-weight: 700;
+      color: var(--deep); margin-bottom: 18px;
+    }
+    #authScreen .logo-text span { color: var(--rose); }
+    .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid var(--soft);
+      border-top-color: var(--deep);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .navbar {
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(255,255,255,.97); padding: 15px 30px;
+      border-radius: 10px; margin-bottom: 30px;
+      box-shadow: 0 2px 10px rgba(122,45,82,.1);
+    }
+    .logo { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-style: italic; font-weight: 700; color: var(--deep); text-decoration: none; }
+    .logo span { color: var(--rose); }
+    .nav-right { display: flex; align-items: center; gap: 12px; }
+    .user-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--rose), var(--deep)); color: white; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+    .user-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+    .user-name { font-weight: 600; color: var(--plum); font-size: 14px; }
+    .nav-btn { background: none; border: 1.5px solid #ddb8cc; color: var(--deep); font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 20px; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
+    .nav-btn:hover { background: var(--soft); border-color: var(--rose); }
+    .nav-btn.primary { background: linear-gradient(135deg, var(--rose), var(--deep)); color: white; border-color: transparent; }
+    .nav-btn.primary:hover { opacity: 0.9; }
+
+    .cart-header { text-align: center; margin-bottom: 30px; background: white; padding: 22px; border-radius: 12px; box-shadow: 0 2px 10px rgba(122,45,82,.08); }
+    .cart-header h1 { font-family: 'Cormorant Garamond', serif; font-size: 40px; font-style: italic; color: var(--plum); margin-bottom: 8px; }
+    .back-link { color: var(--deep); text-decoration: none; font-size: 14px; font-weight: 500; cursor: pointer; }
+    .back-link:hover { text-decoration: underline; }
+    .sync-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: var(--green); background: #e8f5e9; padding: 3px 10px; border-radius: 20px; margin-top: 6px; }
+
+    .cart-container { max-width: 1000px; margin: 0 auto; }
+    .loading-state { text-align: center; padding: 60px 20px; background: white; border-radius: 12px; }
+
+    .cart-items { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(122,45,82,.08); margin-bottom: 24px; }
+    .cart-item { display: flex; padding: 20px; border-bottom: 1px solid #f0e0ea; align-items: center; transition: background 0.2s; animation: slideIn 0.3s ease both; }
+    @keyframes slideIn { from { opacity: 0; transform: translateX(-16px); } to { opacity: 1; transform: translateX(0); } }
+    .cart-item:last-child { border-bottom: none; }
+    .cart-item:hover { background: #fdfafb; }
+    .item-image { width: 84px; height: 84px; border-radius: 10px; overflow: hidden; margin-right: 18px; flex-shrink: 0; }
+    .item-image img { width: 100%; height: 100%; object-fit: cover; }
+    .item-details { flex: 1; }
+    .item-name { font-weight: 600; color: var(--plum); margin-bottom: 4px; font-size: 15px; }
+    .item-meta { font-size: 12px; color: #888; margin-bottom: 6px; }
+    .item-price { font-weight: 700; color: var(--deep); font-size: 16px; }
+    .item-actions { display: flex; align-items: center; gap: 12px; }
+    .quantity-controls { display: flex; align-items: center; border: 1.5px solid #ddb8cc; border-radius: 8px; overflow: hidden; }
+    .quantity-controls button { background: white; border: none; width: 34px; height: 34px; cursor: pointer; color: var(--deep); font-weight: 700; font-size: 16px; transition: background 0.15s; }
+    .quantity-controls button:hover { background: var(--soft); }
+    .quantity-controls span { padding: 0 14px; font-weight: 700; min-width: 42px; text-align: center; font-size: 14px; }
+    .remove-btn { background: none; border: none; color: #ccc; cursor: pointer; padding: 8px; border-radius: 6px; transition: all 0.2s; font-size: 15px; }
+    .remove-btn:hover { background: #ffebee; color: #d32f2f; }
+
+    .cart-summary { background: white; border-radius: 12px; padding: 26px; box-shadow: 0 4px 20px rgba(122,45,82,.08); }
+    .summary-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; color: #666; }
+    .summary-row.total { border-top: 2px solid #f0e0ea; padding-top: 16px; font-size: 18px; font-weight: 700; color: var(--plum); margin-top: 4px; }
+    .checkout-btn { width: 100%; background: linear-gradient(135deg, var(--rose), var(--deep)); color: white; border: none; padding: 16px; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 20px; transition: opacity 0.2s, transform 0.15s; font-family: 'DM Sans', sans-serif; letter-spacing: 0.3px; }
+    .checkout-btn:hover { opacity: 0.92; transform: translateY(-1px); }
+
+    .empty-cart { text-align: center; padding: 70px 20px; background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(122,45,82,.08); }
+    .empty-cart i { font-size: 64px; color: var(--rose); margin-bottom: 20px; display: block; }
+    .empty-cart h2 { font-family: 'Cormorant Garamond', serif; font-size: 30px; color: var(--plum); margin-bottom: 10px; }
+    .empty-cart p { font-size: 15px; color: #8a5a6a; margin-bottom: 28px; }
+    .shop-btn { background: linear-gradient(135deg, var(--rose), var(--deep)); color: white; padding: 13px 32px; border: none; border-radius: 25px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: opacity 0.2s; }
+    .shop-btn:hover { opacity: 0.9; }
+
+    .toast { position: fixed; bottom: 24px; right: 24px; background: var(--plum); color: white; padding: 13px 22px; border-radius: 10px; font-weight: 500; font-size: 14px; opacity: 0; transform: translateY(20px); transition: all 0.3s ease; z-index: 9999; max-width: 320px; }
+    .toast.success { background: var(--green); }
+    .toast.error { background: var(--err); }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 768px) {
+      .cart-item { flex-direction: column; align-items: flex-start; gap: 14px; }
+      .item-actions { width: 100%; justify-content: space-between; }
+      .nav-right .user-name { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="authScreen">
+  <div class="logo-text">Trend<span>Lily</span></div>
+  <div class="spinner"></div>
+</div>
+
+<div id="pageContent" style="display:none;">
+  <nav class="navbar">
+    <a class="logo" href="index.html">Trend<span>Lily</span></a>
+    <div class="nav-right" id="navRight"></div>
+  </nav>
+
+  <header class="cart-header">
+    <h1>My Cart</h1>
+    <a class="back-link" onclick="history.back()" href="#">← Continue Shopping</a>
+    <div id="syncBadge" style="display:none;">
+      <span class="sync-badge"><i class="fa-solid fa-cloud"></i> Cart synced to your account</span>
+    </div>
+  </header>
+
+  <div class="cart-container">
+    <div id="cartContent">
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p style="color:#a07090;font-size:14px;margin-top:12px;">Loading your cart…</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const firebaseConfig = {
+    apiKey:            "AIzaSyDpnSVwV3QP9MP4tuU5SCtXiwpdAUD0vlc",
+    authDomain:        "trendlilly-boutique.firebaseapp.com",
+    databaseURL:       "https://trendlilly-boutique-default-rtdb.firebaseio.com",
+    projectId:         "trendlilly-boutique",
+    storageBucket:     "trendlilly-boutique.firebasestorage.app",
+    messagingSenderId: "929563690255",
+    appId:             "1:929563690255:web:b535b31e9cb2f6158b6a7a"
+  };
+
+  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db   = firebase.firestore();
+
+  let currentUser = null;
+  let unsubCart   = null;
+
+  /* ── Helper: clean undefined / corrupt items ── */
+  function cleanItems(rawItems) {
+    if (!Array.isArray(rawItems)) return [];
+    return rawItems.filter(function(i) {
+      if (!i) return false;
+      var hasName  = i.name  && i.name  !== 'undefined' && i.name.trim()  !== '';
+      var hasPrice = i.price && i.price !== 'undefined' && String(i.price).trim() !== '';
+      var hasImage = i.image && i.image !== 'undefined' && i.image.trim() !== '';
+      return hasName && hasPrice && hasImage;
+    });
+  }
+
+  auth.onAuthStateChanged(async function(user) {
+    currentUser = user;
+    document.getElementById('authScreen').style.display  = 'none';
+    document.getElementById('pageContent').style.display = 'block';
+
+    if (user) {
+      localStorage.setItem('tl_loggedIn', 'true');
+      localStorage.setItem('tl_uid',      user.uid);
+      localStorage.setItem('tl_email',    user.email || '');
+      if (user.displayName) localStorage.setItem('tl_name', user.displayName);
+
+      updateNavbar(user);
+      await migrateGuestCart(user.uid);
+      listenToFirestoreCart(user.uid);
+      document.getElementById('syncBadge').style.display = 'block';
+    } else {
+      updateNavbar(null);
+      renderCartFromLocal();
+    }
+  });
+
+  function updateNavbar(user) {
+    const navRight = document.getElementById('navRight');
+    if (user) {
+      const initials = (user.displayName || user.email || 'U')[0].toUpperCase();
+      const photo    = user.photoURL;
+      navRight.innerHTML = `
+        <div class="user-avatar">
+          ${photo ? `<img src="${photo}" alt="${initials}">` : initials}
+        </div>
+        <span class="user-name">${user.displayName || user.email.split('@')[0]}</span>
+        <button class="nav-btn" onclick="doSignOut()">Sign Out</button>
+      `;
+    } else {
+      navRight.innerHTML = `<button class="nav-btn primary" onclick="goLogin()">Sign In</button>`;
+    }
+  }
+
+  function goLogin() {
+    localStorage.setItem('tl_loginRedirect', 'order.html');
+    window.location.href = 'login.html';
+  }
+
+  async function doSignOut() {
+    if (unsubCart) { unsubCart(); unsubCart = null; }
+    await auth.signOut();
+    localStorage.removeItem('tl_loggedIn');
+    localStorage.removeItem('tl_uid');
+    localStorage.removeItem('tl_email');
+    localStorage.removeItem('tl_name');
+    showToast('Signed out successfully.');
+    updateNavbar(null);
+    renderCartFromLocal();
+  }
+
+  function listenToFirestoreCart(uid) {
+    if (unsubCart) unsubCart();
+    unsubCart = db.collection('carts').doc(uid).onSnapshot(function(doc) {
+      const data     = doc.exists ? doc.data() : {};
+      const rawItems = data.items || [];
+      const items    = cleanItems(rawItems);
+      // Auto-save cleaned version back if any were removed
+      if (items.length !== rawItems.length) saveCartToFirestore(items);
+      localStorage.setItem('cart', JSON.stringify(items));
+      renderCart(items, true);
+    }, function(err) {
+      console.error('Cart sync error:', err);
+      renderCartFromLocal();
+    });
+  }
+
+  async function saveCartToFirestore(items) {
+    if (!currentUser) return;
+    try {
+      await db.collection('carts').doc(currentUser.uid).set({
+        items,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        userId: currentUser.uid
+      });
+    } catch(e) { console.error('Save cart error:', e); }
+  }
+
+  async function migrateGuestCart(uid) {
+    const localRaw   = JSON.parse(localStorage.getItem('cart') || '[]');
+    const localItems = cleanItems(localRaw);
+    if (localItems.length === 0) { localStorage.removeItem('cart'); return; }
+    try {
+      const snap     = await db.collection('carts').doc(uid).get();
+      const existing = cleanItems(snap.exists ? (snap.data().items || []) : []);
+      const merged   = [...existing];
+      localItems.forEach(function(localItem) {
+        const found = merged.find(function(i){ return i.id === localItem.id && i.size === localItem.size; });
+        if (found) found.quantity = Math.max(found.quantity, localItem.quantity);
+        else merged.push(localItem);
+      });
+      await db.collection('carts').doc(uid).set({
+        items: merged,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        userId: uid
+      });
+      localStorage.removeItem('cart');
+      if (merged.length > existing.length) showToast('Guest cart merged into your account!', 'success');
+    } catch(e) { console.error('Migration error:', e); }
+  }
+
+  function getLocalCart()      { return cleanItems(JSON.parse(localStorage.getItem('cart') || '[]')); }
+  function saveLocalCart(items){ localStorage.setItem('cart', JSON.stringify(items)); }
+  function renderCartFromLocal(){ renderCart(getLocalCart(), false); }
+
+  async function removeItem(itemId, size) {
+    let items;
+    if (currentUser) {
+      const snap = await db.collection('carts').doc(currentUser.uid).get();
+      items = cleanItems(snap.exists ? (snap.data().items || []) : []);
+      items = items.filter(function(i){ return !(i.id == itemId && i.size === size); });
+      await saveCartToFirestore(items);
+      renderCart(items, true);
+    } else {
+      items = getLocalCart().filter(function(i){ return !(i.id == itemId && i.size === size); });
+      saveLocalCart(items);
+      renderCart(items, false);
+    }
+    showToast('Item removed from cart.');
+  }
+
+  async function updateQty(itemId, size, delta) {
+    let items;
+    if (currentUser) {
+      const snap = await db.collection('carts').doc(currentUser.uid).get();
+      items = cleanItems(snap.exists ? (snap.data().items || []) : []);
+    } else {
+      items = getLocalCart();
+    }
+    const item = items.find(function(i){ return i.id == itemId && i.size === size; });
+    if (!item) return;
+    const newQty = item.quantity + delta;
+    if (newQty < 1) return;
+    item.quantity = newQty;
+    if (currentUser) { await saveCartToFirestore(items); renderCart(items, true); }
+    else             { saveLocalCart(items); renderCart(items, false); }
+  }
+
+  function calculateTotal(items) {
+    return items.reduce(function(sum, i){
+      return sum + parseFloat(String(i.price).replace(/[^\d.]/g, '')) * i.quantity;
+    }, 0);
+  }
+
+  function renderCart(items, synced) {
+    const cartContent = document.getElementById('cartContent');
+
+    if (items.length === 0) {
+      cartContent.innerHTML = `
+        <div class="empty-cart">
+          <i class="fa-solid fa-cart-shopping"></i>
+          <h2>Your cart is empty</h2>
+          <p>Add some beautiful ethnic wear to get started!</p>
+          <button class="shop-btn" onclick="history.back()">Start Shopping</button>
+        </div>`;
+      return;
+    }
+
+    const subtotal   = calculateTotal(items);
+    const shipping   = subtotal >= 1000 ? 0 : 99;
+    const finalTotal = subtotal + shipping;
+    const totalItems = items.reduce(function(n, i){ return n + i.quantity; }, 0);
+
+    const checkoutAction = currentUser
+      ? `onclick="window.location.href='order.html'"`
+      : `onclick="goLogin()"`;
+
+    // Safe display helpers — never show "undefined"
+    function safeName(v)  { return (!v || v === 'undefined') ? 'Unknown Item'  : v; }
+    function safeSize(v)  { return (!v || v === 'undefined') ? '—'             : v; }
+    function safeColor(v) { return (!v || v === 'undefined') ? '—'             : v; }
+    function safePrice(v) { return (!v || v === 'undefined') ? '₹0'            : v; }
+
+    cartContent.innerHTML = `
+      <div class="cart-items">
+        ${items.map(function(item, idx){ return `
+          <div class="cart-item" style="animation-delay:${idx * 0.06}s">
+            <div class="item-image">
+              <img src="${item.image}" alt="${safeName(item.name)}"
+                onerror="this.src='https://placehold.co/84x84/faedeb/7a2d52?text=🛍'">
+            </div>
+            <div class="item-details">
+              <div class="item-name">${safeName(item.name)}</div>
+              <div class="item-meta">Size: ${safeSize(item.size)} &nbsp;·&nbsp; Color: ${safeColor(item.color)}</div>
+              <div class="item-price">${safePrice(item.price)}</div>
+            </div>
+            <div class="item-actions">
+              <div class="quantity-controls">
+                <button onclick="updateQty('${item.id}', '${item.size}', -1)">−</button>
+                <span>${item.quantity || 1}</span>
+                <button onclick="updateQty('${item.id}', '${item.size}', 1)">+</button>
+              </div>
+              <button class="remove-btn" onclick="removeItem('${item.id}', '${item.size}')" title="Remove">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </div>
+          </div>
+        `; }).join('')}
+      </div>
+
+      <div class="cart-summary">
+        <div class="summary-row">
+          <span>Subtotal (${totalItems} item${totalItems !== 1 ? 's' : ''})</span>
+          <span>₹${subtotal.toFixed(2)}</span>
+        </div>
+        <div class="summary-row">
+          <span>Shipping</span>
+          <span>${shipping === 0 ? '<span style="color:#2e7d32;font-weight:700">FREE</span>' : '₹' + shipping}</span>
+        </div>
+        ${subtotal < 1000 ? `
+          <div class="summary-row" style="font-size:12px;color:#a07090;">
+            <span>🎉 Add ₹${(1000 - subtotal).toFixed(2)} more for free shipping!</span>
+          </div>` : ''}
+        <div class="summary-row total">
+          <span>Total</span>
+          <span>₹${finalTotal.toFixed(2)}</span>
+        </div>
+        <button class="checkout-btn" ${checkoutAction}>
+          ${currentUser ? 'Proceed to Checkout &nbsp;→' : '🔒 Sign In to Checkout'}
+        </button>
+      </div>
+    `;
+  }
+
+  function showToast(msg, type) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className   = `toast ${type || ''}`;
+    t.classList.add('show');
+    setTimeout(function(){ t.classList.remove('show'); }, 3200);
+  }
+
+  window.removeItem = removeItem;
+  window.updateQty  = updateQty;
+  window.goLogin    = goLogin;
+  window.doSignOut  = doSignOut;
+</script>
+</body>
+</html>

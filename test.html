@@ -1,0 +1,1434 @@
+/**
+ * search.js
+ * Universal search bar — works on index.html, variety.html,
+ * product.html, product1.html … product11.html
+ *
+ * HOW TO USE
+ * ----------
+ * 1. Copy this file into your project's frontend/ folder (same place as your HTML files).
+ * 2. In every HTML page add this ONE line just before </body>:
+ *        <script src="search.js"></script>
+ * 3. Make sure each page has a search input.  The script finds it automatically
+ *    if it has any of these: id="searchInput", id="search", class="search-input",
+ *    class="searchBar", name="q", or type="search".
+ *    You can also add  data-search-input  to your own element.
+ * 4. That's it — no other changes needed.
+ */
+
+(function () {
+  "use strict";
+
+  /* ─────────────────────────────────────────────
+     1.  FULL PRODUCT DATABASE
+     ───────────────────────────────────────────── */
+  const products = [
+    {id:1,name:"Light Steel Blue Salwar Suit",category:"Salwar Suit",img:"img/sast1.png",color:"Light Steel Blue",price:"₹5087",priceOld:"₹6,900",discount:"27% OFF",tagline:"Rich navy with delicate embroidery — timeless festive charm.",fabric:"Georgette",occasion:"Festive / Party",work:"Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(98 reviews)"},
+    {id:1,name:"Mint Green Salwar Suit",category:"Salwar Suit",img:"img/sast2.png",color:"Mint Green",price:"₹6004",priceOld:"₹8,000",discount:"25% OFF",tagline:"Elegant white chikankari — grace in every thread.",fabric:"Cotton",occasion:"Casual / Day",work:"Chikankari",sizes:["XS","S","M","L","XL","XXL"],rating:"(74 reviews)"},
+    {id:1,name:"Soft Coral Salwar Suit",category:"Salwar Suit",img:"img/sast3.png",color:"Soft Coral Pink",price:"₹4899",priceOld:"₹6,500",discount:"25% OFF",tagline:"Bold magenta that commands every room you enter.",fabric:"Silk Blend",occasion:"Wedding / Party",work:"Zari Work",sizes:["XS","S","M","L","XL","XXL"],rating:"(115 reviews)"},
+    {id:1,name:"Deep Pink Salwar Suit",category:"Salwar Suit",img:"img/sast4.png",color:"Deep Pink",price:"₹4077",priceOld:"₹5,500",discount:"26% OFF",tagline:"Soft and dreamy — a wardrobe must-have for every occasion.",fabric:"Crepe",occasion:"Casual / Puja",work:"Digital Print",sizes:["XS","S","M","L","XL","XXL"],rating:"(62 reviews)"},
+    {id:1,name:"Mustard Yellow Salwar Suit",category:"Salwar Suit",img:"img/sast5.png",color:"Mustard Yellow",price:"₹4266",priceOld:"₹5,800",discount:"26% OFF",tagline:"Contemporary grey with subtle finesse — modern ethnic.",fabric:"Art Silk",occasion:"Office / Casual",work:"Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(88 reviews)"},
+    {id:1,name:"Cream Color Salwar Suit",category:"Salwar Suit",img:"img/sast6.png",color:"Offwhite/Cream",price:"₹5589",priceOld:"₹7,400",discount:"24% OFF",tagline:"Earthy warmth meets ethnic artistry — effortlessly chic.",fabric:"Banarasi",occasion:"Festive",work:"Woven",sizes:["XS","S","M","L","XL","XXL"],rating:"(51 reviews)"},
+    {id:1,name:"Hot Pink Salwar Suit",category:"Salwar Suit",img:"img/sast7.png",color:"Hot Pink",price:"₹999",priceOld:"₹1,499",discount:"33% OFF",tagline:"Lavender serenity — light, fresh and festival-ready.",fabric:"Cotton Silk",occasion:"Puja / Casual",work:"Block Print",sizes:["S","M","L","XL","XXL"],rating:"(203 reviews)"},
+    {id:1,name:"Royal Blue Salwar Suit",category:"Salwar Suit",img:"img/sast8.png",color:"Royal Blue",price:"₹3,199",priceOld:"₹4,299",discount:"25% OFF",tagline:"Classic navy with vibrant prints — versatile and vivid.",fabric:"Poly Crepe",occasion:"Daily Wear",work:"Digital Print",sizes:["S","M","L","XL","XXL"],rating:"(141 reviews)"},
+    {id:1,name:"Blush Pink Salwar Suit",category:"Salwar Suit",img:"img/sast9.png",color:"Blush Pink",price:"₹1,099",priceOld:"₹1,499",discount:"27% OFF",tagline:"Floral pink elegance — the bloom of ethnic fashion.",fabric:"Organza",occasion:"Wedding / Party",work:"Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(176 reviews)"},
+    {id:1,name:"Bright Blue Salwar Suit",category:"Salwar Suit",img:"img/sast10.png",color:"Bright Blue",price:"₹2000",priceOld:"₹2,700",discount:"26% OFF",tagline:"Auspicious red — for every celebration worth remembering.",fabric:"Heavy Silk",occasion:"Wedding / Bridal",work:"Heavy Zari",sizes:["XS","S","M","L","XL","XXL"],rating:"(89 reviews)"},
+    {id:1,name:"Ash Grey Salwar Suit",category:"Salwar Suit",img:"img/sast11.png",color:"Ash Grey",price:"₹1,199",priceOld:"₹1,699",discount:"29% OFF",tagline:"Sunshine yellow — radiant ethnic wear for every festivity.",fabric:"Cotton",occasion:"Casual / Puja",work:"Block Print",sizes:["S","M","L","XL","XXL"],rating:"(67 reviews)"},
+    {id:1,name:"Burnt Orange Salwar Suit",category:"Salwar Suit",img:"img/sast12.png",color:"Burnt Orange",price:"₹1,399",priceOld:"₹1,899",discount:"26% OFF",tagline:"Lush green Anarkali — grace, flow and a timeless presence.",fabric:"Silk Blend",occasion:"Party / Festive",work:"Embroidery",sizes:["S","M","L","XL","XXL"],rating:"(93 reviews)"},
+    {id:1,name:"Taupe Brown Salwar Suit",category:"Salwar Suit",img:"img/sast13.png",color:"Taupe Brown",price:"₹1,099",priceOld:"₹1,499",discount:"27% OFF",tagline:"Royal blue, regal aura — confidence in every stitch.",fabric:"Georgette",occasion:"Casual / Office",work:"Printed",sizes:["S","M","L","XL","XXL"],rating:"(112 reviews)"},
+    {id:1,name:"Black & White Salwar Suit",category:"Salwar Suit",img:"img/sast14.png",color:"Black & White",price:"₹1,249",priceOld:"₹1,699",discount:"26% OFF",tagline:"Vibrant orange — the energy of tradition in every wear.",fabric:"Crepe",occasion:"Festive",work:"Embroidery",sizes:["S","M","L","XL","XXL"],rating:"(58 reviews)"},
+    {id:1,name:"Golden Yellow Salwar Suit",category:"Salwar Suit",img:"img/sast15.png",color:"Golden Yellow",price:"₹949",priceOld:"₹1,299",discount:"27% OFF",tagline:"Soft peach tones — gentle charm for everyday elegance.",fabric:"Cotton Silk",occasion:"Casual / Daily",work:"Thread Work",sizes:["S","M","L","XL","XXL"],rating:"(47 reviews)"},
+    {id:1,name:"Indigo Blue Salwar Suit",category:"Salwar Suit",img:"img/sast16.png",color:"Indigo Blue",price:"₹1,149",priceOld:"₹1,599",discount:"28% OFF",tagline:"Rich mustard hues — earthy and effortlessly stylish.",fabric:"Art Silk",occasion:"Festive / Puja",work:"Block Print",sizes:["S","M","L","XL","XXL"],rating:"(71 reviews)"},
+    {id:1,name:"Crimson Salwar Suit",category:"Salwar Suit",img:"img/sast17.png",color:"Crimson Red",price:"₹1,299",priceOld:"₹1,799",discount:"28% OFF",tagline:"Teal serenity — modern meets traditional in perfect balance.",fabric:"Georgette",occasion:"Party / Festive",work:"Embroidery",sizes:["S","M","L","XL","XXL"],rating:"(84 reviews)"},
+    {id:1,name:"Violet Blue Salwar Suit",category:"Salwar Suit",img:"img/sast18.png",color:"Violet Blue",price:"₹1,499",priceOld:"₹1,999",discount:"25% OFF",tagline:"Violet Blue — timeless richness for every grand occasion.",fabric:"Banarasi",occasion:"Wedding / Party",work:"Woven Zari",sizes:["XS","S","M","L","XL","XXL"],rating:"(129 reviews)"},
+    // Sarees
+    {id:2,name:"Powder Blue Saree",category:"Saree",img:"img/sar1.png",color:"Powder Blue",price:"₹1,300",priceOld:"₹2,000",discount:"35% OFF",tagline:"Serene powder blue drape — effortlessly elegant for every occasion.",fabric:"Georgette",occasion:"Casual / Office",work:"Digital Print",sizes:["Free Size"],rating:"(112 reviews)"},
+    {id:2,name:"Ivory Cream Floral Saree",category:"Saree",img:"img/sar2.png",color:"Ivory / Cream",price:"₹1,300",priceOld:"₹2,200",discount:"41% OFF",tagline:"Timeless ivory with floral grace — pure elegance in every pleat.",fabric:"Cotton Silk",occasion:"Puja / Festive",work:"Floral Print",sizes:["Free Size"],rating:"(87 reviews)"},
+    {id:2,name:"Pastel Multicolor Saree",category:"Saree",img:"img/sar3.png",color:"Soft Pink–Blue Mix",price:"₹1,300",priceOld:"₹2,500",discount:"48% OFF",tagline:"Dreamy pastels blended beautifully — a festive statement drape.",fabric:"Organza",occasion:"Wedding / Party",work:"Embroidery",sizes:["Free Size"],rating:"(143 reviews)"},
+    {id:2,name:"Dusty Rose Pink Saree",category:"Saree",img:"img/sar4.png",color:"Dusty Rose Pink",price:"₹1,300",priceOld:"₹2,000",discount:"35% OFF",tagline:"Muted rose tones with timeless appeal — soft and sophisticated.",fabric:"Crepe",occasion:"Casual / Festive",work:"Thread Work",sizes:["Free Size"],rating:"(76 reviews)"},
+    {id:2,name:"Navy Blue Saree",category:"Saree",img:"img/sar5.png",color:"Navy Blue",price:"₹1,300",priceOld:"₹2,500",discount:"48% OFF",tagline:"Deep navy richness — regal, bold and effortlessly commanding.",fabric:"Banarasi Silk",occasion:"Wedding / Party",work:"Woven Zari",sizes:["Free Size"],rating:"(198 reviews)"},
+    {id:2,name:"Peach Apricot Saree",category:"Saree",img:"img/sar6.png",color:"Peach / Apricot",price:"₹1,300",priceOld:"₹2,200",discount:"41% OFF",tagline:"Warm peach glow — a sunshine drape for your happiest moments.",fabric:"Cotton Silk",occasion:"Casual / Day",work:"Block Print",sizes:["Free Size"],rating:"(64 reviews)"},
+    {id:2,name:"Beige Printed Saree",category:"Saree",img:"img/sar7.png",color:"Beige with Print",price:"₹1,300",priceOld:"₹2,000",discount:"35% OFF",tagline:"Earthy beige with artistic prints — understated and elegant.",fabric:"Art Silk",occasion:"Casual / Office",work:"Digital Print",sizes:["Free Size"],rating:"(91 reviews)"},
+    {id:2,name:"Soft Blush Pink Saree",category:"Saree",img:"img/sar8.png",color:"Soft Blush Pink",price:"₹1,300",priceOld:"₹2,200",discount:"41% OFF",tagline:"Delicate blush pink — soft romance woven into every thread.",fabric:"Georgette",occasion:"Engagement / Party",work:"Embroidery",sizes:["Free Size"],rating:"(118 reviews)"},
+    {id:2,name:"Bright Yellow Saree",category:"Saree",img:"img/sar9.png",color:"Bright Yellow",price:"₹1,300",priceOld:"₹2,000",discount:"35% OFF",tagline:"Radiant sunshine yellow — festive cheer draped in silk.",fabric:"Cotton",occasion:"Haldi / Festive",work:"Block Print",sizes:["Free Size"],rating:"(55 reviews)"},
+    {id:2,name:"Rose Pink Saree",category:"Saree",img:"img/sar10.png",color:"Rose Pink",price:"₹1,300",priceOld:"₹2,500",discount:"48% OFF",tagline:"Deep rose bloom — for the woman who dresses with intention.",fabric:"Silk Blend",occasion:"Wedding / Party",work:"Zari Work",sizes:["Free Size"],rating:"(167 reviews)"},
+    {id:2,name:"Seafoam Green Saree",category:"Saree",img:"img/sar11.png",color:"Seafoam Green",price:"₹1,300",priceOld:"₹2,000",discount:"35% OFF",tagline:"Cool seafoam serenity — fresh, breezy and utterly graceful.",fabric:"Cotton Silk",occasion:"Casual / Puja",work:"Thread Work",sizes:["Free Size"],rating:"(73 reviews)"},
+    {id:2,name:"Mauve Brown Saree",category:"Saree",img:"img/sar12.png",color:"Mauve Brown",price:"₹1,300",priceOld:"₹2,200",discount:"41% OFF",tagline:"Warm mauve earth tones — rooted elegance for every festivity.",fabric:"Banarasi",occasion:"Festive / Party",work:"Woven",sizes:["Free Size"],rating:"(84 reviews)"},
+    {id:2,name:"Muted Purple Saree",category:"Saree",img:"img/sar13.png",color:"Muted Purple",price:"₹1,300",priceOld:"₹2,000",discount:"35% OFF",tagline:"Dusty purple mystique — a drape that exudes quiet confidence.",fabric:"Georgette",occasion:"Party / Evening",work:"Embroidery",sizes:["Free Size"],rating:"(99 reviews)"},
+    {id:2,name:"Aqua Green Saree",category:"Saree",img:"img/sar14.png",color:"Aqua Green",price:"₹1,300",priceOld:"₹2,500",discount:"48% OFF",tagline:"Vivid aqua — bold, modern and effortlessly ethnic.",fabric:"Art Silk",occasion:"Festive / Party",work:"Digital Print",sizes:["Free Size"],rating:"(61 reviews)"},
+    {id:2,name:"Taupe Grey Saree",category:"Saree",img:"img/sar15.png",color:"Taupe Grey",price:"₹1,300",priceOld:"₹2,000",discount:"35% OFF",tagline:"Refined taupe grey — timeless neutral that never goes out of style.",fabric:"Crepe",occasion:"Office / Casual",work:"Printed",sizes:["Free Size"],rating:"(47 reviews)"},
+    {id:2,name:"Deep Purple Saree",category:"Saree",img:"img/sar16.png",color:"Deep Purple",price:"₹1,300",priceOld:"₹2,500",discount:"48% OFF",tagline:"Royal deep purple — luxurious, bold and made to be remembered.",fabric:"Heavy Silk",occasion:"Wedding / Bridal",work:"Heavy Zari",sizes:["Free Size"],rating:"(132 reviews)"},
+    {id:2,name:"Teal Blue Saree",category:"Saree",img:"img/sar17.png",color:"Teal Blue",price:"₹1,300",priceOld:"₹2,200",discount:"41% OFF",tagline:"Rich teal blue — a modern classic that shines at every celebration.",fabric:"Georgette",occasion:"Party / Festive",work:"Embroidery",sizes:["Free Size"],rating:"(88 reviews)"},
+    {id:2,name:"Maroon Red Saree",category:"Saree",img:"img/sar18.png",color:"Maroon Red",price:"₹1,300",priceOld:"₹2,500",discount:"48% OFF",tagline:"Deep maroon red — auspicious, timeless and eternally bridal.",fabric:"Banarasi Silk",occasion:"Wedding / Bridal",work:"Woven Zari",sizes:["Free Size"],rating:"(204 reviews)"},
+    // Gowns
+    {id:3,name:"Black Flared Gown",category:"Gown",img:"img/gown1.png",color:"Black",price:"₹1,300",priceOld:"₹2,500",discount:"48% OFF",tagline:"Sleek black flared gown — power, poise and pure elegance in one.",fabric:"Georgette / Silk",occasion:"Evening / Party",work:"Minimal Embellishment",sizes:["XS","S","M","L","XL","XXL"],rating:"(138 reviews)"},
+    {id:3,name:"Deep Wine Purple Gown",category:"Gown",img:"img/gown2.png",color:"Wine Purple",price:"₹1,300",priceOld:"₹2,500",discount:"48% OFF",tagline:"Rich wine purple velvet — heavy flare for your most royal moments.",fabric:"Velvet",occasion:"Wedding",work:"Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(192 reviews)"},
+    {id:3,name:"Steel Blue Gown",category:"Gown",img:"img/gown3.png",color:"Steel Blue",price:"₹1,300",priceOld:"₹2,200",discount:"41% OFF",tagline:"Polished steel blue satin — formal elegance with every step.",fabric:"Satin / Silk",occasion:"Formal",work:"Plain / Minimal",sizes:["XS","S","M","L","XL","XXL"],rating:"(87 reviews)"},
+    {id:3,name:"Maroon Red Gown",category:"Gown",img:"img/gown4.png",color:"Maroon",price:"₹1,300",priceOld:"₹2,500",discount:"48% OFF",tagline:"Deep maroon silk — auspicious, bold and wedding-ready.",fabric:"Silk",occasion:"Wedding",work:"Zari Work",sizes:["XS","S","M","L","XL","XXL"],rating:"(211 reviews)"},
+    {id:3,name:"Champagne Beige Gown",category:"Gown",img:"img/gown5.png",color:"Champagne",price:"₹1,300",priceOld:"₹2,000",discount:"35% OFF",tagline:"Shimmering champagne net — a designer dream for every festivity.",fabric:"Net / Organza",occasion:"Festive",work:"Sequin Work",sizes:["XS","S","M","L","XL","XXL"],rating:"(74 reviews)"},
+    {id:3,name:"Sage Green Gown",category:"Gown",img:"img/gown6.png",color:"Sage Green",price:"₹1,300",priceOld:"₹2,000",discount:"35% OFF",tagline:"Earthy sage green cotton silk — effortlessly chic for every day.",fabric:"Cotton Silk",occasion:"Casual / Festive",work:"Block Print",sizes:["XS","S","M","L","XL","XXL"],rating:"(63 reviews)"},
+    {id:3,name:"Royal Blue Gown",category:"Gown",img:"img/gown7.png",color:"Royal Blue",price:"₹1,300",priceOld:"₹2,500",discount:"48% OFF",tagline:"Striking royal blue silk — a flowy drape that commands attention.",fabric:"Silk",occasion:"Party",work:"Embroidery",sizes:["S","M","L","XL","XXL"],rating:"(149 reviews)"},
+    {id:3,name:"Dusty Pink Embroidered Gown",category:"Gown",img:"img/gown8.png",color:"Dusty Pink",price:"₹1,300",priceOld:"₹2,500",discount:"48% OFF",tagline:"Dusty pink net with heavy embroidery — bridal beauty redefined.",fabric:"Net",occasion:"Wedding",work:"Heavy Embroidery",sizes:["S","M","L","XL","XXL"],rating:"(176 reviews)"},
+    {id:3,name:"Mauve Pink Gown",category:"Gown",img:"img/gown19.png",color:"Mauve",price:"₹1,300",priceOld:"₹2,200",discount:"41% OFF",tagline:"Elegant mauve georgette — understated sophistication at its finest.",fabric:"Georgette",occasion:"Formal",work:"Thread Work",sizes:["S","M","L","XL","XXL"],rating:"(98 reviews)"},
+    {id:3,name:"Teal Green Gown",category:"Gown",img:"img/gown21.png",color:"Teal",price:"₹1,300",priceOld:"₹2,500",discount:"48% OFF",tagline:"Vivid teal silk — a designer masterpiece for every grand festivity.",fabric:"Silk",occasion:"Festive",work:"Zari Border",sizes:["S","M","L","XL","XXL"],rating:"(121 reviews)"},
+    {id:3,name:"Jet Black Gown",category:"Gown",img:"img/gown11.png",color:"Jet Black",price:"₹1,300",priceOld:"₹2,000",discount:"35% OFF",tagline:"Minimal jet black satin — timeless after-dark glamour.",fabric:"Satin",occasion:"Evening",work:"Plain",sizes:["S","M","L","XL","XXL"],rating:"(83 reviews)"},
+    {id:3,name:"Coffee Brown Gown",category:"Gown",img:"img/gown12.png",color:"Coffee Brown",price:"₹1,300",priceOld:"₹2,000",discount:"35% OFF",tagline:"Warm coffee brown cotton — casual ease with an ethnic soul.",fabric:"Cotton",occasion:"Daily Wear",work:"Digital Print",sizes:["S","M","L","XL","XXL"],rating:"(55 reviews)"},
+    {id:3,name:"Lavender Purple Gown",category:"Gown",img:"img/gown13.png",color:"Lavender",price:"₹1,300",priceOld:"₹2,200",discount:"41% OFF",tagline:"Dreamy lavender net — light, floaty and perfectly festive.",fabric:"Net / Organza",occasion:"Festive",work:"Embroidery",sizes:["S","M","L","XL","XXL"],rating:"(107 reviews)"},
+    {id:3,name:"Dark Plum Gown",category:"Gown",img:"img/gown14.png",color:"Dark Plum",price:"₹1,300",priceOld:"₹2,500",discount:"48% OFF",tagline:"Deep plum velvet — heavy, lush and made for grand weddings.",fabric:"Velvet",occasion:"Wedding",work:"Heavy Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(162 reviews)"},
+    {id:3,name:"Ice Blue Gown",category:"Gown",img:"img/gown15.png",color:"Ice Blue",price:"₹1,300",priceOld:"₹2,200",discount:"41% OFF",tagline:"Cool ice blue net — a breezy designer pick for every party.",fabric:"Net",occasion:"Party",work:"Sequin & Thread Work",sizes:["S","M","L","XL","XXL"],rating:"(69 reviews)"},
+    {id:3,name:"Navy Blue Gown",category:"Gown",img:"img/gown16.png",color:"Navy Blue",price:"₹1,300",priceOld:"₹2,500",discount:"48% OFF",tagline:"Classic navy silk — poised, polished and timelessly elegant.",fabric:"Silk",occasion:"Formal",work:"Woven Border",sizes:["S","M","L","XL","XXL"],rating:"(94 reviews)"},
+    {id:3,name:"Mocha Brown Gown",category:"Gown",img:"img/gown17.png",color:"Mocha Brown",price:"₹1,300",priceOld:"₹2,000",discount:"35% OFF",tagline:"Warm mocha cotton silk — grounded, chic and everyday beautiful.",fabric:"Cotton Silk",occasion:"Casual",work:"Block Print",sizes:["S","M","L","XL","XXL"],rating:"(48 reviews)"},
+    {id:3,name:"Soft Baby Pink Gown",category:"Gown",img:"img/gown20.png",color:"Baby Pink",price:"₹1,300",priceOld:"₹2,000",discount:"35% OFF",tagline:"Soft baby pink organza — delicate, feminine and day-perfect.",fabric:"Organza",occasion:"Day Wear",work:"Thread Work",sizes:["XS","S","M","L","XL","XXL"],rating:"(77 reviews)"},
+    // Pant Suits
+    {id:4,name:"Peach Net Suit",category:"Pant Suit",img:"img/pent1.png",color:"Peach",price:"₹3,899",priceOld:"₹5,299",discount:"27% OFF",tagline:"Elegant peach Anarkali with Churidar and Net Dupatta — perfect for weddings.",fabric:"Net / Organza",occasion:"Wedding / Festive",work:"Anarkali",sizes:["XS","S","M","L","XL","XXL"],rating:"(98 reviews)"},
+    {id:4,name:"Mint White Suit",category:"Pant Suit",img:"img/pent2.png",color:"Mint White",price:"₹4,599",priceOld:"₹6,099",discount:"25% OFF",tagline:"Fresh mint white Straight Suit with Pant and Light Chiffon Dupatta.",fabric:"Cotton",occasion:"Daily / Summer",work:"Straight Suit",sizes:["XS","S","M","L","XL","XXL"],rating:"(74 reviews)"},
+    {id:4,name:"Pistachio Green Suit",category:"Pant Suit",img:"img/pent3.png",color:"Pistachio",price:"₹3,749",priceOld:"₹4,999",discount:"25% OFF",tagline:"Vibrant pistachio A-line Suit with Palazzo and Net Dupatta.",fabric:"Georgette",occasion:"Festive",work:"A-line Suit",sizes:["XS","S","M","L","XL","XXL"],rating:"(115 reviews)"},
+    {id:4,name:"Ice Blue Suit",category:"Pant Suit",img:"img/pent4.png",color:"Ice Blue",price:"₹3,129",priceOld:"₹4,199",discount:"26% OFF",tagline:"Cool ice blue Straight Suit with Pant and Organza Dupatta.",fabric:"Silk Blend",occasion:"Formal",work:"Straight Suit",sizes:["XS","S","M","L","XL","XXL"],rating:"(62 reviews)"},
+    {id:4,name:"Cream Ivory Suit",category:"Pant Suit",img:"img/pent5.png",color:"Ivory",price:"₹3,269",priceOld:"₹4,449",discount:"26% OFF",tagline:"Classic ivory suit with Embroidered Dupatta — traditional charm.",fabric:"Cotton Silk",occasion:"Traditional",work:"Classic Suit",sizes:["XS","S","M","L","XL","XXL"],rating:"(88 reviews)"},
+    {id:4,name:"Lavender Purple Suit",category:"Pant Suit",img:"img/pent6.png",color:"Lavender",price:"₹4,289",priceOld:"₹5,699",discount:"24% OFF",tagline:"Soft lavender Flared Suit with Palazzo and Chiffon Dupatta.",fabric:"Georgette",occasion:"Party",work:"Flared Suit",sizes:["XS","S","M","L","XL","XXL"],rating:"(51 reviews)"},
+    {id:4,name:"Aqua Green Suit",category:"Pant Suit",img:"img/pent7.png",color:"Aqua",price:"₹999",priceOld:"₹1,499",discount:"33% OFF",tagline:"Refreshing aqua Straight Suit with Pant and Printed Dupatta.",fabric:"Cotton",occasion:"Casual",work:"Straight Suit",sizes:["S","M","L","XL","XXL"],rating:"(203 reviews)"},
+    {id:4,name:"Powder Blue Suit",category:"Pant Suit",img:"img/pent8.png",color:"Powder Blue",price:"₹2,989",priceOld:"₹3,999",discount:"26% OFF",tagline:"Delicate powder blue Embroidered Suit with Palazzo and Net Dupatta.",fabric:"Chiffon",occasion:"Festive",work:"Embroidered Suit",sizes:["XS","S","M","L","XL","XXL"],rating:"(134 reviews)"},
+    {id:4,name:"Champagne Gold Suit",category:"Pant Suit",img:"img/pent9.png",color:"Champagne",price:"₹5,219",priceOld:"₹6,899",discount:"25% OFF",tagline:"Luxurious champagne Elegant Suit with Pant and Light Net Dupatta.",fabric:"Silk",occasion:"Wedding",work:"Elegant Suit",sizes:["XS","S","M","L","XL","XXL"],rating:"(176 reviews)"},
+    {id:4,name:"Soft Pink Suit",category:"Pant Suit",img:"img/pent10.png",color:"Baby Pink",price:"₹7,319",priceOld:"₹9,999",discount:"27% OFF",tagline:"Gentle baby pink Straight Suit with Pant and Chiffon Dupatta.",fabric:"Georgette",occasion:"Day Wear",work:"Straight Suit",sizes:["XS","S","M","L","XL","XXL"],rating:"(89 reviews)"},
+    {id:4,name:"Blush Pink Suit",category:"Pant Suit",img:"img/pent11.png",color:"Blush",price:"₹1,199",priceOld:"₹1,699",discount:"29% OFF",tagline:"Sweet blush Printed Suit with Pant and Printed Dupatta.",fabric:"Cotton",occasion:"Casual",work:"Printed Suit",sizes:["S","M","L","XL","XXL"],rating:"(67 reviews)"},
+    {id:4,name:"Sky Blue Suit",category:"Pant Suit",img:"img/pent12.png",color:"Sky Blue",price:"₹1,399",priceOld:"₹1,899",discount:"26% OFF",tagline:"Bright sky blue Flowing Suit with Palazzo and Net Dupatta.",fabric:"Chiffon",occasion:"Party",work:"Flowing Suit",sizes:["S","M","L","XL","XXL"],rating:"(93 reviews)"},
+    {id:4,name:"White Floral Suit",category:"Pant Suit",img:"img/pent13.png",color:"White",price:"₹1,099",priceOld:"₹1,499",discount:"27% OFF",tagline:"Pure white Floral Suit with Pant and Printed Dupatta.",fabric:"Cotton",occasion:"Daily",work:"Floral Suit",sizes:["S","M","L","XL","XXL"],rating:"(112 reviews)"},
+    {id:4,name:"Beige Printed Suit",category:"Pant Suit",img:"img/pent14.png",color:"Beige",price:"₹1,249",priceOld:"₹1,699",discount:"26% OFF",tagline:"Neutral beige Straight Suit with Pant and Cotton Dupatta.",fabric:"Cotton",occasion:"Casual",work:"Straight Suit",sizes:["S","M","L","XL","XXL"],rating:"(58 reviews)"},
+    {id:4,name:"Off White Suit",category:"Pant Suit",img:"img/pent15.png",color:"Off White",price:"₹949",priceOld:"₹1,299",discount:"27% OFF",tagline:"Subtle off white Designer Suit with Palazzo and Heavy Net Dupatta.",fabric:"Net",occasion:"Wedding",work:"Designer Suit",sizes:["S","M","L","XL","XXL"],rating:"(47 reviews)"},
+    {id:4,name:"Cream Minimal Suit",category:"Pant Suit",img:"img/pent16.png",color:"Cream",price:"₹1,149",priceOld:"₹1,599",discount:"28% OFF",tagline:"Simple cream Minimal Suit with Pant and Light Dupatta.",fabric:"Cotton Silk",occasion:"Office",work:"Minimal Suit",sizes:["S","M","L","XL","XXL"],rating:"(71 reviews)"},
+    {id:4,name:"Floral Organza Suit",category:"Pant Suit",img:"img/pent17.png",color:"Light Pink Floral",price:"₹1,299",priceOld:"₹1,799",discount:"28% OFF",tagline:"Floral light pink Designer Suit with Palazzo and Organza Dupatta.",fabric:"Organza",occasion:"Festive",work:"Designer Suit",sizes:["S","M","L","XL","XXL"],rating:"(84 reviews)"},
+    {id:4,name:"Teal Embroidered Suit",category:"Pant Suit",img:"img/pent18.png",color:"Teal",price:"₹1,499",priceOld:"₹1,999",discount:"25% OFF",tagline:"Rich teal Designer Suit with Pant and Embroidered Dupatta.",fabric:"Silk",occasion:"Party",work:"Designer Suit",sizes:["XS","S","M","L","XL","XXL"],rating:"(129 reviews)"},
+    // Lehenga
+    {id:5,name:"Black Blouse with Cream Skirt",category:"Lehenga",img:"img/lah1.png",color:"Off White Lehenga",price:"₹4,399",priceOld:"₹6,026",discount:"27% OFF",tagline:"Rich navy with delicate embroidery — timeless festive charm.",fabric:"Georgette",occasion:"Festive / Party",work:"Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(98 reviews)"},
+    {id:5,name:"Red Lehenga",category:"Lehenga",img:"img/lah2.png",color:"Red",price:"₹4,899",priceOld:"₹6,532",discount:"25% OFF",tagline:"Elegant chikankari — grace in every thread.",fabric:"Cotton",occasion:"Casual / Day",work:"Chikankari",sizes:["XS","S","M","L","XL","XXL"],rating:"(74 reviews)"},
+    {id:5,name:"Mustard Yellow Lehenga",category:"Lehenga",img:"img/lah3.png",color:"Mustard Yellow",price:"₹6,265",priceOld:"₹8,300",discount:"25% OFF",tagline:"Bold mustard that commands every room you enter.",fabric:"Silk Blend",occasion:"Wedding / Party",work:"Zari Work",sizes:["XS","S","M","L","XL","XXL"],rating:"(115 reviews)"},
+    {id:5,name:"Floral Printed Lehenga",category:"Lehenga",img:"img/lah9.png",color:"Floral Print",price:"₹6,215",priceOld:"₹8,399",discount:"26% OFF",tagline:"Soft and dreamy — a wardrobe must-have for every occasion.",fabric:"Crepe",occasion:"Casual / Puja",work:"Digital Print",sizes:["XS","S","M","L","XL","XXL"],rating:"(62 reviews)"},
+    {id:5,name:"Pink Lehenga",category:"Lehenga",img:"img/lah5.png",color:"Pink",price:"₹4,799",priceOld:"₹6,485",discount:"26% OFF",tagline:"Contemporary elegance with subtle finesse.",fabric:"Art Silk",occasion:"Office / Casual",work:"Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(88 reviews)"},
+    {id:5,name:"Beige Lehenga",category:"Lehenga",img:"img/lah6.png",color:"Beige",price:"₹4,999",priceOld:"₹6,578",discount:"24% OFF",tagline:"Earthy warmth meets ethnic artistry — effortlessly chic.",fabric:"Banarasi",occasion:"Festive",work:"Woven",sizes:["XS","S","M","L","XL","XXL"],rating:"(51 reviews)"},
+    {id:5,name:"Peach Floral Lehenga",category:"Lehenga",img:"img/lahim1.png",color:"Peach Floral",price:"₹4,999",priceOld:"₹7,461",discount:"33% OFF",tagline:"Lavender serenity — light, fresh and festival-ready.",fabric:"Cotton Silk",occasion:"Puja / Casual",work:"Block Print",sizes:["S","M","L","XL","XXL"],rating:"(203 reviews)"},
+    {id:5,name:"Soft Pink Floral Lehenga",category:"Lehenga",img:"img/lahim2.png",color:"Soft Pink Floral",price:"₹5,599",priceOld:"₹7,465",discount:"25% OFF",tagline:"Classic elegance with vibrant prints — versatile and vivid.",fabric:"Poly Crepe",occasion:"Daily Wear",work:"Digital Print",sizes:["S","M","L","XL","XXL"],rating:"(141 reviews)"},
+    {id:5,name:"Aqua Blue Lehenga",category:"Lehenga",img:"img/lahim3.png",color:"Aqua Blue",price:"₹5,699",priceOld:"₹7,599",discount:"25% OFF",tagline:"Floral elegance — the bloom of ethnic fashion.",fabric:"Organza",occasion:"Wedding / Party",work:"Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(176 reviews)"},
+    {id:5,name:"Sage Green Lehenga",category:"Lehenga",img:"img/lahim4.png",color:"Sage Green",price:"₹4,866",priceOld:"₹6,711",discount:"27% OFF",tagline:"Auspicious tones — for every celebration worth remembering.",fabric:"Heavy Silk",occasion:"Wedding / Bridal",work:"Heavy Zari",sizes:["XS","S","M","L","XL","XXL"],rating:"(89 reviews)"},
+    {id:5,name:"Purple Lehenga",category:"Lehenga",img:"img/lahim6.png",color:"Purple",price:"₹5,999",priceOld:"₹8,107",discount:"26% OFF",tagline:"Lush elegance — grace, flow and a timeless presence.",fabric:"Silk Blend",occasion:"Party / Festive",work:"Embroidery",sizes:["S","M","L","XL","XXL"],rating:"(93 reviews)"},
+    {id:5,name:"Mauve Lehenga",category:"Lehenga",img:"img/lahim7.png",color:"Mauve",price:"₹4,899",priceOld:"₹6,711",discount:"27% OFF",tagline:"Regal aura — confidence in every stitch.",fabric:"Georgette",occasion:"Casual / Office",work:"Printed",sizes:["S","M","L","XL","XXL"],rating:"(112 reviews)"},
+    {id:5,name:"Floral Pink Lehenga",category:"Lehenga",img:"img/lahim8.png",color:"Floral Pink",price:"₹6,699",priceOld:"₹9,053",discount:"26% OFF",tagline:"The energy of tradition in every wear.",fabric:"Crepe",occasion:"Festive",work:"Embroidery",sizes:["S","M","L","XL","XXL"],rating:"(58 reviews)"},
+    {id:5,name:"Light Pink Lehenga",category:"Lehenga",img:"img/lahim9.png",color:"Light Pink",price:"₹4,599",priceOld:"₹6,300",discount:"27% OFF",tagline:"Soft tones — gentle charm for everyday elegance.",fabric:"Cotton Silk",occasion:"Casual / Daily",work:"Thread Work",sizes:["S","M","L","XL","XXL"],rating:"(47 reviews)"},
+    {id:5,name:"Dusty Green Sage Lehenga",category:"Lehenga",img:"img/lahim10.png",color:"Dusty Green Sage",price:"₹5,899",priceOld:"₹8,193",discount:"28% OFF",tagline:"Rich earthy hues — effortlessly stylish.",fabric:"Art Silk",occasion:"Festive / Puja",work:"Block Print",sizes:["S","M","L","XL","XXL"],rating:"(71 reviews)"},
+    {id:5,name:"Maroon Lehenga",category:"Lehenga",img:"img/lahim11.png",color:"Maroon",price:"₹4,899",priceOld:"₹6,804",discount:"28% OFF",tagline:"Teal serenity — modern meets traditional in perfect balance.",fabric:"Georgette",occasion:"Party / Festive",work:"Embroidery",sizes:["S","M","L","XL","XXL"],rating:"(84 reviews)"},
+    {id:5,name:"Deep Purple Lehenga",category:"Lehenga",img:"img/lahim12.png",color:"Deep Purple",price:"₹4,999",priceOld:"₹6,665",discount:"25% OFF",tagline:"Timeless richness for every grand occasion.",fabric:"Banarasi",occasion:"Wedding / Party",work:"Woven Zari",sizes:["XS","S","M","L","XL","XXL"],rating:"(129 reviews)"},
+    // Peplum / Party Wear
+    {id:6,name:"Light Grey Embroidered Peplum",category:"Peplum",img:"img/pap1.png",color:"Pink",price:"₹2,500",priceOld:"₹3,125",discount:"25% OFF",tagline:"Delicate embroidery on net fabric — elegant and festive.",fabric:"Net",occasion:"Party / Festive",work:"Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(98 reviews)"},
+    {id:6,name:"Mustard Yellow Peplum",category:"Peplum",img:"img/pap2.png",color:"Mustard Yellow",price:"₹2,800",priceOld:"₹3,500",discount:"28% OFF",tagline:"Vibrant mustard Anarkali — traditional with a modern twist.",fabric:"Georgette",occasion:"Wedding / Party",work:"Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(74 reviews)"},
+    {id:6,name:"Sea Green Designer Peplum",category:"Peplum",img:"img/pap3.png",color:"Sea Green",price:"₹3,200",priceOld:"₹4,000",discount:"30% OFF",tagline:"Sea green lehenga suit — designer elegance for special occasions.",fabric:"Silk Blend",occasion:"Wedding / Festive",work:"Zari Work",sizes:["XS","S","M","L","XL","XXL"],rating:"(115 reviews)"},
+    {id:6,name:"Olive Green Peplum Suit",category:"Peplum",img:"img/pap4.png",color:"Olive Green",price:"₹3,000",priceOld:"₹3,750",discount:"26% OFF",tagline:"Olive green peplum suit — sophisticated and stylish.",fabric:"Organza",occasion:"Party / Casual",work:"Printed",sizes:["XS","S","M","L","XL","XXL"],rating:"(62 reviews)"},
+    {id:6,name:"Bright Yellow Peplum",category:"Peplum",img:"img/pap5.png",color:"Bright Yellow",price:"₹2,700",priceOld:"₹3,375",discount:"27% OFF",tagline:"Bright yellow party wear — radiant and celebratory.",fabric:"Chiffon",occasion:"Party / Festive",work:"Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(88 reviews)"},
+    {id:6,name:"Peach Designer Peplum",category:"Peplum",img:"img/pap6.png",color:"Peach",price:"₹3,100",priceOld:"₹3,875",discount:"32% OFF",tagline:"Peach sharara suit — designer flow and grace.",fabric:"Net",occasion:"Wedding / Party",work:"Thread Work",sizes:["XS","S","M","L","XL","XXL"],rating:"(51 reviews)"},
+    // Frock Suits
+    {id:7,name:"Blue & White Frock Suit",category:"Frock Suit",img:"img/fr1.png",color:"Blue & White",price:"₹2,799",priceOld:"₹3,499",discount:"20% OFF",tagline:"Elegant blue and white design — perfect for any occasion.",fabric:"Cotton Blend",occasion:"Casual / Party",work:"Printed",sizes:["XS","S","M","L","XL","XXL"],rating:"(98 reviews)"},
+    {id:7,name:"Royal Blue Anarkali Suit",category:"Frock Suit",img:"img/fr2.png",color:"Royal Blue",price:"₹3,199",priceOld:"₹3,999",discount:"20% OFF",tagline:"Regal royal blue Anarkali — grace and elegance in every fold.",fabric:"Chiffon",occasion:"Wedding / Party",work:"Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(74 reviews)"},
+    {id:7,name:"Magenta Pink Frock Suit",category:"Frock Suit",img:"img/fr3.png",color:"Magenta Pink",price:"₹3,299",priceOld:"₹4,199",discount:"21% OFF",tagline:"Vibrant magenta pink — bold and beautiful for festive occasions.",fabric:"Georgette",occasion:"Party / Festive",work:"Zari Work",sizes:["XS","S","M","L","XL","XXL"],rating:"(115 reviews)"},
+    // Pakistani Suits
+    {id:8,name:"Sea Green Embroidered Lawn Suit",category:"Pakistani Suit",img:"img/pak1.png",color:"Sea Green",price:"₹3,199",priceOld:"₹4,499",discount:"29% OFF",tagline:"Light and breezy embroidered lawn — perfect for summer festivities.",fabric:"Lawn + Chiffon Dupatta",occasion:"Light Festive / Summer",work:"Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(112 reviews)"},
+    {id:8,name:"Peach Printed Lawn Suit",category:"Pakistani Suit",img:"img/pak2.png",color:"Peach",price:"₹3,049",priceOld:"₹4,199",discount:"27% OFF",tagline:"Soft peach prints on breathable lawn — casual charm at its best.",fabric:"Lawn",occasion:"Casual / Daily Wear",work:"Digital Print",sizes:["XS","S","M","L","XL","XXL"],rating:"(87 reviews)"},
+    {id:8,name:"Black Embroidered Formal Suit",category:"Pakistani Suit",img:"img/pak3.png",color:"Black (Gold Dots)",price:"₹3,599",priceOld:"₹4,799",discount:"25% OFF",tagline:"Sophisticated black with golden embroidery — understated glamour.",fabric:"Chiffon / Net",occasion:"Party Wear",work:"Embroidery (Golden)",sizes:["XS","S","M","L","XL","XXL"],rating:"(143 reviews)"},
+    // Sharara
+    {id:9,name:"White Sharara Suit",category:"Sharara Suit",img:"img/shar1.png",color:"White",price:"₹3,000",priceOld:"₹4,000",discount:"25% OFF",tagline:"Pure white sharara — grace and elegance in every drape.",fabric:"Net",occasion:"Festive / Party",work:"Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(98 reviews)"},
+    {id:9,name:"Sky Blue Sharara Suit",category:"Sharara Suit",img:"img/shar19.png",color:"Sky Blue",price:"₹3,002",priceOld:"₹3,950",discount:"24% OFF",tagline:"Fresh sky blue — breezy and beautifully festive.",fabric:"Georgette",occasion:"Casual / Day",work:"Chikankari",sizes:["XS","S","M","L","XL","XXL"],rating:"(74 reviews)"},
+    {id:9,name:"Yellow Sharara Suit",category:"Sharara Suit",img:"img/shaar16.png",color:"Yellow",price:"₹3,003",priceOld:"₹3,900",discount:"23% OFF",tagline:"Bright yellow sharara — sunshine and festive energy combined.",fabric:"Silk Blend",occasion:"Wedding / Party",work:"Zari Work",sizes:["XS","S","M","L","XL","XXL"],rating:"(115 reviews)"},
+    {id:9,name:"Black Sharara Suit",category:"Sharara Suit",img:"img/shar4.png",color:"Black",price:"₹3,000",priceOld:"₹4,000",discount:"25% OFF",tagline:"Classic black sharara — bold, refined and endlessly stylish.",fabric:"Crepe",occasion:"Casual / Puja",work:"Digital Print",sizes:["XS","S","M","L","XL","XXL"],rating:"(62 reviews)"},
+    {id:9,name:"Light Peach Sharara Suit",category:"Sharara Suit",img:"img/shar5.png",color:"Light Peach",price:"₹3,002",priceOld:"₹3,950",discount:"24% OFF",tagline:"Soft peach sharara — contemporary grace for every occasion.",fabric:"Organza",occasion:"Office / Casual",work:"Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(88 reviews)"},
+    {id:9,name:"Maroon Sharara Suit",category:"Sharara Suit",img:"img/shar20.png",color:"Maroon",price:"₹3,000",priceOld:"₹4,000",discount:"25% OFF",tagline:"Rich maroon sharara — timeless tradition meets festive grandeur.",fabric:"Banarasi",occasion:"Festive",work:"Woven",sizes:["XS","S","M","L","XL","XXL"],rating:"(51 reviews)"},
+    // Plazo
+    {id:10,name:"Mint Green Plazo Suit",category:"Plazo Suit",img:"img/pal1.png",color:"Mint Green",price:"₹3,000",priceOld:"₹4,000",discount:"25% OFF",tagline:"Mint green Plazo Suit — timeless elegance for every festive occasion.",fabric:"Silk",occasion:"Festive / Party",work:"Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(98 reviews)"},
+    {id:10,name:"Bright Red Plazo Suit",category:"Plazo Suit",img:"img/pal2.png",color:"Bright Red",price:"₹3,002",priceOld:"₹3,950",discount:"24% OFF",tagline:"Bold red plazo — vibrant and festive-ready.",fabric:"Net",occasion:"Casual / Day",work:"Chikankari",sizes:["XS","S","M","L","XL","XXL"],rating:"(74 reviews)"},
+    {id:10,name:"Light Pink Cotton Plazo Suit",category:"Plazo Suit",img:"img/pal3.png",color:"Light Pink",price:"₹3,003",priceOld:"₹3,900",discount:"23% OFF",tagline:"Bold cotton — earthy warmth meets festive flair.",fabric:"Cotton",occasion:"Wedding / Party",work:"Zari Work",sizes:["XS","S","M","L","XL","XXL"],rating:"(115 reviews)"},
+    // Indo-Western
+    {id:11,name:"White with Blue Embroidery Dress",category:"Indo-Western",img:"img/ind1.png",color:"Off White",price:"₹5,087",priceOld:"₹6,899",discount:"27% OFF",tagline:"Rich with delicate embroidery — timeless festive charm.",fabric:"Georgette",occasion:"Festive / Party",work:"Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(98 reviews)"},
+    {id:11,name:"White Chikan Salwar Suit",category:"Indo-Western",img:"img/ind2.png",color:"White",price:"₹6,004",priceOld:"₹7,999",discount:"25% OFF",tagline:"Elegant white chikankari — grace in every thread.",fabric:"Cotton",occasion:"Casual / Day",work:"Chikankari",sizes:["XS","S","M","L","XL","XXL"],rating:"(74 reviews)"},
+    {id:11,name:"Magenta Anarkali Suit",category:"Indo-Western",img:"img/ind3.png",color:"Magenta",price:"₹4,899",priceOld:"₹6,499",discount:"25% OFF",tagline:"Bold magenta that commands every room you enter.",fabric:"Silk Blend",occasion:"Wedding / Party",work:"Zari Work",sizes:["XS","S","M","L","XL","XXL"],rating:"(115 reviews)"},
+    // Pazami Suits
+    {id:12,name:"Peach/Blush Pink Pazami Suit",category:"Pazami Suit",img:"img/paz1.png",color:"Peach",price:"₹3,500",priceOld:"₹5,000",discount:"27% OFF",tagline:"Peach with delicate embroidery — timeless festive charm.",fabric:"Georgette",occasion:"Festive / Party",work:"Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(98 reviews)"},
+    {id:12,name:"Black Chikan Pazami Suit",category:"Pazami Suit",img:"img/paz2.png",color:"Black",price:"₹4,000",priceOld:"₹5,000",discount:"25% OFF",tagline:"Black chikankari — grace in every thread.",fabric:"Cotton",occasion:"Casual / Day",work:"Chikankari",sizes:["XS","S","M","L","XL","XXL"],rating:"(74 reviews)"},
+    {id:12,name:"Off White/Cream Pazami Suit",category:"Pazami Suit",img:"img/paz3.png",color:"Off White",price:"₹4,899",priceOld:"₹6,500",discount:"25% OFF",tagline:"Off White elegance — commands every room you enter.",fabric:"Silk Blend",occasion:"Wedding / Party",work:"Zari Work",sizes:["XS","S","M","L","XL","XXL"],rating:"(115 reviews)"},
+  ];
+
+  /* ─────────────────────────────────────────────
+     CATEGORY → PAGE URL MAP  (single source of truth)
+     ───────────────────────────────────────────── */
+  const CATEGORY_URL = {
+    "salwar suit":    "product.html",
+    "saree":          "product1.html",
+    "gown":           "product2.html",
+    "pant suit":      "product3.html",
+    "lehenga":        "product4.html",
+    "peplum":         "product5.html",
+    "frock suit":     "prodct6.html",
+    "pakistani suit": "prodct7.html",
+    "sharara suit":   "prodct8.html",
+    "plazo suit":     "prodct9.html",
+    "indo-western":   "prodct10.html",
+    "pazami suit":    "prodct11.html",
+  };
+
+  function getCategoryUrl(category) {
+    if (!category) return "variety.html";
+    const key = category.toLowerCase().trim();
+    return CATEGORY_URL[key] || "variety.html";
+  }
+
+  /* ─── NAVIGATE TO PRODUCT PAGE ───────────────────────────────────────── */
+  function goToProduct(product) {
+    window.location.href = getCategoryUrl(product.category);
+  }
+
+  /* ─── CART LOGIC ─────────────────────────────────────────────────────── */
+  function getCart() {
+    try { return JSON.parse(localStorage.getItem('trendlilly_cart') || '[]'); }
+    catch(e) { return []; }
+  }
+  function saveCart(cart) {
+    localStorage.setItem('trendlilly_cart', JSON.stringify(cart));
+  }
+  function addToCart(product, selectedSize) {
+    var cart = getCart();
+    var key = product.name + '_' + selectedSize;
+    var existing = cart.find(function(i) { return i.key === key; });
+    if (existing) {
+      existing.qty = (existing.qty || 1) + 1;
+    } else {
+      cart.push({
+        key: key,
+        name: product.name,
+        category: product.category,
+        img: product.img,
+        price: product.price,
+        color: product.color,
+        size: selectedSize,
+        qty: 1
+      });
+    }
+    saveCart(cart);
+  }
+
+  /* ─── SEARCH LOGIC ───────────────────────────────────────────────────── */
+  function searchProducts(query) {
+    if (!query || query.trim().length < 1) return [];
+    var q = query.toLowerCase().trim();
+    return products.filter(function(p) {
+      return (
+        p.name.toLowerCase().includes(q) ||
+        (p.category && p.category.toLowerCase().includes(q)) ||
+        (p.color && p.color.toLowerCase().includes(q)) ||
+        (p.fabric && p.fabric.toLowerCase().includes(q)) ||
+        (p.occasion && p.occasion.toLowerCase().includes(q)) ||
+        (p.work && p.work.toLowerCase().includes(q)) ||
+        (p.tagline && p.tagline.toLowerCase().includes(q))
+      );
+    });
+  }
+
+  /* ─── FIND ALL SEARCH INPUTS ─────────────────────────────────────────── */
+  function findAllSearchInputs() {
+    var seen = new Set();
+    var inputs = [];
+    var selectors = [
+      '[data-search-input]',
+      '#searchInput','#search','#searchBar',
+      '.search-input','.searchBar',
+      '.search-bar input',
+      'input[name="q"]',
+      'input[type="search"]',
+      'input[placeholder*="search" i]'
+    ];
+    selectors.forEach(function(sel) {
+      document.querySelectorAll(sel).forEach(function(el) {
+        if (!seen.has(el)) { seen.add(el); inputs.push(el); }
+      });
+    });
+    return inputs;
+  }
+
+  /* ─── INJECT STYLES ──────────────────────────────────────────────────── */
+  function injectStyles() {
+    if (document.getElementById('__search-styles')) return;
+    var style = document.createElement('style');
+    style.id = '__search-styles';
+    style.textContent = `
+      /* ── DROPDOWN ── */
+      #__search-dropdown {
+        position: fixed;
+        z-index: 999999;
+        background: #fff;
+        border: 1px solid #e0c9d8;
+        border-radius: 14px;
+        box-shadow: 0 12px 40px rgba(122,45,82,0.18);
+        max-height: 440px;
+        overflow-y: auto;
+        font-family: inherit;
+        scrollbar-width: thin;
+        scrollbar-color: #c595b0 #f8eaf4;
+      }
+      #__search-dropdown::-webkit-scrollbar { width: 5px; }
+      #__search-dropdown::-webkit-scrollbar-thumb { background: #c595b0; border-radius: 4px; }
+
+      #__search-dropdown .sd-header {
+        padding: 10px 16px 8px;
+        font-size: 10px; font-weight: 700;
+        letter-spacing: 0.1em; text-transform: uppercase;
+        color: #b06090; border-bottom: 1px solid #f0dcea;
+        background: #fdf8fb;
+      }
+      #__search-dropdown .sd-item {
+        display: flex; align-items: center; gap: 12px;
+        padding: 10px 14px; cursor: pointer;
+        transition: background 0.15s;
+        border-bottom: 1px solid #faf0f6;
+      }
+      #__search-dropdown .sd-item:last-child { border-bottom: none; }
+      #__search-dropdown .sd-item:hover,
+      #__search-dropdown .sd-item.active { background: #fdf0f8; }
+      #__search-dropdown .sd-item img {
+        width: 50px; height: 58px; object-fit: cover;
+        border-radius: 8px; flex-shrink: 0;
+        border: 1px solid #eeddef;
+      }
+      #__search-dropdown .sd-info { flex: 1; min-width: 0; }
+      #__search-dropdown .sd-name {
+        font-size: 13px; font-weight: 700; color: #2d1a24;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+      #__search-dropdown .sd-meta {
+        font-size: 11px; color: #9c6b8a; margin-top: 2px;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+      #__search-dropdown .sd-right { text-align: right; flex-shrink: 0; }
+      #__search-dropdown .sd-price {
+        font-size: 13px; font-weight: 700; color: #c0166a;
+      }
+      #__search-dropdown .sd-old {
+        font-size: 10px; color: #bbb; text-decoration: line-through; margin-top: 1px;
+      }
+      #__search-dropdown .sd-discount {
+        font-size: 9.5px; color: #27ae60; font-weight: 700;
+        background: #eafaf1; padding: 1px 5px; border-radius: 4px;
+        margin-top: 2px; display: inline-block;
+      }
+      #__search-dropdown .sd-empty {
+        padding: 22px 16px; text-align: center; color: #b06090; font-size: 13px;
+      }
+      #__search-dropdown .sd-viewall {
+        display: block; text-align: center; padding: 12px;
+        font-size: 12px; font-weight: 700; color: #7a2d52;
+        background: #fdf5fb; border-top: 1px solid #f0dcea;
+        cursor: pointer; border-radius: 0 0 14px 14px;
+        transition: background 0.15s, color 0.15s;
+        letter-spacing: 0.5px;
+      }
+      #__search-dropdown .sd-viewall:hover { background: #f0dcea; color: #4a1a32; }
+
+      /* ── RESULTS PAGE ── */
+      #__search-results-page {
+        max-width: 1140px; margin: 28px auto 40px; padding: 0 20px;
+        font-family: inherit;
+      }
+      #__search-results-page .sr-topbar {
+        display: flex; align-items: center; justify-content: space-between;
+        margin-bottom: 20px; flex-wrap: wrap; gap: 10px;
+      }
+      #__search-results-page h2 {
+        font-size: 19px; color: #2d1a24;
+        font-family: 'Playfair Display', Georgia, serif;
+        font-style: italic;
+      }
+      #__search-results-page h2 span { color: #c595b0; }
+      #__search-results-page .sr-close {
+        border: none; background: none; font-size: 20px;
+        cursor: pointer; color: #c595b0; padding: 4px 8px;
+        border-radius: 50%; transition: background 0.15s;
+      }
+      #__search-results-page .sr-close:hover { background: #fde8f4; color: #7a2d52; }
+
+      /* Grid */
+      .sr-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+        gap: 20px;
+      }
+      @media (max-width: 600px) {
+        .sr-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      }
+      @media (max-width: 360px) {
+        .sr-grid { grid-template-columns: 1fr; }
+      }
+
+      /* Card */
+      .sr-card {
+        background: #fff;
+        border: 1px solid #eeddef;
+        border-radius: 14px;
+        overflow: hidden;
+        transition: box-shadow 0.25s, transform 0.25s;
+        display: flex; flex-direction: column;
+      }
+      .sr-card:hover {
+        box-shadow: 0 8px 30px rgba(122,45,82,0.18);
+        transform: translateY(-4px);
+      }
+      .sr-card-img-wrap {
+        position: relative; overflow: hidden;
+        cursor: pointer;
+      }
+      .sr-card-img-wrap img {
+        width: 100%; height: 230px; object-fit: cover; display: block;
+        transition: transform 0.4s ease;
+      }
+      .sr-card:hover .sr-card-img-wrap img { transform: scale(1.05); }
+      .sr-card-badge {
+        position: absolute; top: 10px; left: 10px;
+        background: rgba(255,255,255,0.9); color: #27ae60;
+        font-size: 9px; font-weight: 700; letter-spacing: 1px;
+        text-transform: uppercase; padding: 3px 8px; border-radius: 10px;
+        backdrop-filter: blur(4px);
+      }
+
+      .sr-card-body { padding: 12px 13px; flex: 1; display: flex; flex-direction: column; }
+      .sr-card-name {
+        font-size: 13px; font-weight: 700; color: #2d1a24;
+        margin-bottom: 3px;
+        display: -webkit-box; -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical; overflow: hidden;
+        line-height: 1.4;
+        cursor: pointer;
+      }
+      .sr-card-name:hover { color: #7a2d52; }
+      .sr-card-cat {
+        font-size: 10.5px; color: #9c6b8a; margin-bottom: 8px;
+        font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;
+      }
+      .sr-card-pricing {
+        display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+        margin-bottom: 10px;
+      }
+      .sr-card-price { font-size: 14.5px; font-weight: 700; color: #c0166a; }
+      .sr-card-old { font-size: 11px; color: #aaa; text-decoration: line-through; }
+      .sr-card-disc {
+        font-size: 10px; color: #27ae60; font-weight: 700;
+        background: #eafaf1; padding: 2px 6px; border-radius: 4px;
+      }
+
+      /* Size selector */
+      .sr-card-sizes {
+        display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 10px;
+      }
+      .sr-size-btn {
+        border: 1.5px solid #e0c9d8; background: #fff; color: #4a1a32;
+        font-size: 10px; font-weight: 700; padding: 3px 7px;
+        border-radius: 5px; cursor: pointer; transition: all 0.15s;
+        font-family: inherit; letter-spacing: 0.5px;
+      }
+      .sr-size-btn:hover { border-color: #c595b0; color: #7a2d52; }
+      .sr-size-btn.selected {
+        background: #7a2d52; color: white; border-color: #7a2d52;
+      }
+
+      /* Add to cart button */
+      .sr-atc-btn {
+        width: 100%; padding: 10px;
+        background: linear-gradient(135deg, #c595b0, #7a2d52);
+        color: white; border: none; border-radius: 8px;
+        font-size: 12px; font-weight: 700; letter-spacing: 1px;
+        text-transform: uppercase; cursor: pointer;
+        font-family: inherit; transition: opacity 0.2s, transform 0.1s;
+        margin-top: auto;
+      }
+      .sr-atc-btn:hover { opacity: 0.88; }
+      .sr-atc-btn:active { transform: scale(0.97); }
+      .sr-atc-btn.added {
+        background: linear-gradient(135deg, #27ae60, #1e8449);
+      }
+      .sr-atc-btn.needs-size {
+        background: linear-gradient(135deg, #e67e22, #c0392b);
+        animation: shake 0.3s ease;
+      }
+      @keyframes shake {
+        0%,100%{transform:translateX(0)} 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)}
+      }
+
+      /* View all in collection link */
+      .sr-view-collection {
+        display: block; text-align: center; margin-top: 10px;
+        padding: 8px; color: #7a2d52; font-size: 12px; font-weight: 700;
+        text-decoration: none; letter-spacing: 1px; text-transform: uppercase;
+        border-top: 1px solid #f0dcea; cursor: pointer;
+        transition: color 0.15s;
+      }
+      .sr-view-collection:hover { color: #c595b0; }
+
+      /* No results */
+      .sr-no-results {
+        grid-column: 1/-1; text-align: center;
+        padding: 40px 20px; color: #9c6b8a; font-size: 15px;
+      }
+      .sr-no-results strong { color: #7a2d52; }
+    `;
+    document.head.appendChild(style);
+  }
+
+  /* ─── DROPDOWN ───────────────────────────────────────────────────────── */
+  var dropdown = null;
+  var activeIndex = -1;
+  var activeInput = null;
+
+  function positionDropdown(input) {
+    if (!dropdown) return;
+    var rect = input.getBoundingClientRect();
+    dropdown.style.top   = (rect.bottom + 5) + 'px';
+    dropdown.style.left  = rect.left + 'px';
+    dropdown.style.width = Math.max(rect.width, 300) + 'px';
+  }
+
+  function removeDropdown() {
+    if (dropdown) { dropdown.remove(); dropdown = null; }
+    activeIndex = -1;
+    activeInput = null;
+  }
+
+  function showDropdown(input, results, query) {
+    removeDropdown();
+    activeInput = input;
+    activeIndex = -1;
+
+    dropdown = document.createElement('div');
+    dropdown.id = '__search-dropdown';
+
+    if (results.length === 0) {
+      dropdown.innerHTML = '<div class="sd-empty">No results for "<strong>' + escapeHtml(query) + '</strong>"</div>';
+    } else {
+      var header = document.createElement('div');
+      header.className = 'sd-header';
+      header.textContent = results.length + ' product' + (results.length !== 1 ? 's' : '') + ' found';
+      dropdown.appendChild(header);
+
+      var top = results.slice(0, 6);
+      top.forEach(function(p, i) {
+        var item = document.createElement('div');
+        item.className = 'sd-item';
+        item.dataset.index = i;
+        item.innerHTML =
+          '<img src="' + p.img + '" alt="' + escapeHtml(p.name) + '" onerror="this.style.background=\'#f5dde8\'">' +
+          '<div class="sd-info">' +
+            '<div class="sd-name">' + highlight(p.name, query) + '</div>' +
+            '<div class="sd-meta">' + escapeHtml(p.category) + ' · ' + escapeHtml(p.fabric || '') + '</div>' +
+            '<div class="sd-meta">' + escapeHtml(p.occasion || '') + '</div>' +
+          '</div>' +
+          '<div class="sd-right">' +
+            '<div class="sd-price">' + escapeHtml(p.price) + '</div>' +
+            '<div class="sd-old">' + escapeHtml(p.priceOld) + '</div>' +
+            '<div class="sd-discount">' + escapeHtml(p.discount) + '</div>' +
+          '</div>';
+        item.addEventListener('mousedown', function(e) { e.preventDefault(); goToProduct(p); });
+        item.addEventListener('touchend',  function(e) { e.preventDefault(); goToProduct(p); });
+        dropdown.appendChild(item);
+      });
+
+      // "View all" always shows results page so customer can Add to Cart
+      var viewAll = document.createElement('div');
+      viewAll.className = 'sd-viewall';
+      viewAll.textContent = results.length > 6
+        ? 'View all ' + results.length + ' results with Add to Cart →'
+        : 'View results with Add to Cart →';
+      viewAll.addEventListener('mousedown', function(e) {
+        e.preventDefault();
+        var q = activeInput ? activeInput.value.trim() : query;
+        showResultsPage(q, results);
+      });
+      viewAll.addEventListener('touchend', function(e) {
+        e.preventDefault();
+        var q = activeInput ? activeInput.value.trim() : query;
+        showResultsPage(q, results);
+      });
+      dropdown.appendChild(viewAll);
+    }
+
+    positionDropdown(input);
+    document.body.appendChild(dropdown);
+  }
+
+  /* ─── RESULTS PAGE (with Add to Cart) ───────────────────────────────── */
+  function showResultsPage(query, results) {
+    removeDropdown();
+    var existing = document.getElementById('__search-results-page');
+    if (existing) existing.remove();
+
+    // Find best container to prepend into
+    var container =
+      document.querySelector('main') ||
+      document.querySelector('.product-grid-wrap') ||
+      document.querySelector('.container') ||
+      document.querySelector('#content') ||
+      document.querySelector('section') ||
+      document.body;
+
+    var page = document.createElement('div');
+    page.id = '__search-results-page';
+
+    // Top bar
+    var topbar = document.createElement('div');
+    topbar.className = 'sr-topbar';
+    var h2 = document.createElement('h2');
+    h2.innerHTML = results.length > 0
+      ? 'Results for <span>"' + escapeHtml(query) + '"</span> — ' + results.length + ' item' + (results.length !== 1 ? 's' : '') + ' found'
+      : 'No results for <span>"' + escapeHtml(query) + '"</span>';
+    var closeBtn = document.createElement('button');
+    closeBtn.className = 'sr-close';
+    closeBtn.innerHTML = '✕';
+    closeBtn.title = 'Close results';
+    closeBtn.addEventListener('click', function() { page.remove(); });
+    topbar.appendChild(h2);
+    topbar.appendChild(closeBtn);
+    page.appendChild(topbar);
+
+    // Grid
+    var grid = document.createElement('div');
+    grid.className = 'sr-grid';
+
+    if (results.length === 0) {
+      var noRes = document.createElement('div');
+      noRes.className = 'sr-no-results';
+      noRes.innerHTML = 'No products found for <strong>"' + escapeHtml(query) + '"</strong>.<br>Try "saree", "gown", "pink", "festive"…';
+      grid.appendChild(noRes);
+    } else {
+      results.forEach(function(p) {
+        var card = document.createElement('div');
+        card.className = 'sr-card';
+
+        // Image
+        var imgWrap = document.createElement('div');
+        imgWrap.className = 'sr-card-img-wrap';
+        imgWrap.title = 'View full collection';
+        var img = document.createElement('img');
+        img.src = p.img;
+        img.alt = p.name;
+        img.onerror = function() { this.style.background = '#f5dde8'; this.src = ''; };
+        imgWrap.appendChild(img);
+        if (p.discount) {
+          var badge = document.createElement('div');
+          badge.className = 'sr-card-badge';
+          badge.textContent = p.discount;
+          imgWrap.appendChild(badge);
+        }
+        imgWrap.addEventListener('click', function() { goToProduct(p); });
+        card.appendChild(imgWrap);
+
+        // Body
+        var body = document.createElement('div');
+        body.className = 'sr-card-body';
+
+        var name = document.createElement('div');
+        name.className = 'sr-card-name';
+        name.innerHTML = highlight(p.name, query);
+        name.title = 'View full collection';
+        name.addEventListener('click', function() { goToProduct(p); });
+        body.appendChild(name);
+
+        var cat = document.createElement('div');
+        cat.className = 'sr-card-cat';
+        cat.textContent = p.category + (p.fabric ? ' · ' + p.fabric : '');
+        body.appendChild(cat);
+
+        var pricing = document.createElement('div');
+        pricing.className = 'sr-card-pricing';
+        pricing.innerHTML =
+          '<span class="sr-card-price">' + escapeHtml(p.price) + '</span>' +
+          '<span class="sr-card-old">' + escapeHtml(p.priceOld) + '</span>' +
+          '<span class="sr-card-disc">' + escapeHtml(p.discount) + '</span>';
+        body.appendChild(pricing);
+
+        // Sizes
+        var selectedSize = (p.sizes && p.sizes.length === 1) ? p.sizes[0] : null;
+        if (p.sizes && p.sizes.length > 0 && !(p.sizes.length === 1 && p.sizes[0] === 'Free Size')) {
+          var sizesWrap = document.createElement('div');
+          sizesWrap.className = 'sr-card-sizes';
+          p.sizes.forEach(function(sz) {
+            var btn = document.createElement('button');
+            btn.className = 'sr-size-btn';
+            btn.textContent = sz;
+            if (selectedSize === sz) btn.classList.add('selected');
+            btn.addEventListener('click', function() {
+              sizesWrap.querySelectorAll('.sr-size-btn').forEach(function(b) { b.classList.remove('selected'); });
+              btn.classList.add('selected');
+              selectedSize = sz;
+            });
+            sizesWrap.appendChild(btn);
+          });
+          body.appendChild(sizesWrap);
+        } else if (p.sizes && p.sizes[0] === 'Free Size') {
+          selectedSize = 'Free Size';
+          var freeTag = document.createElement('div');
+          freeTag.className = 'sr-card-cat';
+          freeTag.textContent = 'Free Size';
+          freeTag.style.marginBottom = '10px';
+          body.appendChild(freeTag);
+        }
+
+        // Add to Cart button
+        var atcBtn = document.createElement('button');
+        atcBtn.className = 'sr-atc-btn';
+        atcBtn.textContent = '🛒 Add to Cart';
+        atcBtn.addEventListener('click', function() {
+          if (!selectedSize) {
+            atcBtn.textContent = '⚠ Select a Size';
+            atcBtn.classList.add('needs-size');
+            setTimeout(function() {
+              atcBtn.textContent = '🛒 Add to Cart';
+              atcBtn.classList.remove('needs-size');
+            }, 1400);
+            return;
+          }
+          addToCart(p, selectedSize);
+          atcBtn.textContent = '✓ Added!';
+          atcBtn.classList.add('added');
+          setTimeout(function() {
+            atcBtn.textContent = '🛒 Add to Cart';
+            atcBtn.classList.remove('added');
+          }, 1600);
+        });
+        body.appendChild(atcBtn);
+
+        // View collection link
+        var viewLink = document.createElement('div');
+        viewLink.className = 'sr-view-collection';
+        viewLink.textContent = 'View Full Collection →';
+        viewLink.addEventListener('click', function() { goToProduct(p); });
+        body.appendChild(viewLink);
+
+        card.appendChild(body);
+        grid.appendChild(card);
+      });
+    }
+
+    page.appendChild(grid);
+    container.prepend(page);
+    page.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  /* ─── KEYBOARD NAV ───────────────────────────────────────────────────── */
+  function navigateDropdown(dir) {
+    if (!dropdown) return;
+    var items = dropdown.querySelectorAll('.sd-item');
+    if (!items.length) return;
+    if (activeIndex >= 0) items[activeIndex].classList.remove('active');
+    activeIndex = (activeIndex + dir + items.length) % items.length;
+    items[activeIndex].classList.add('active');
+    items[activeIndex].scrollIntoView({ block: 'nearest' });
+  }
+
+  /* ─── HELPERS ────────────────────────────────────────────────────────── */
+  function escapeHtml(str) {
+    return String(str || '')
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function highlight(text, query) {
+    if (!query) return escapeHtml(text);
+    var escaped = escapeHtml(text);
+    var re = new RegExp('(' + query.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi');
+    return escaped.replace(re, '<mark style="background:#fce4f0;color:#a0107a;border-radius:2px;padding:0 1px">$1</mark>');
+  }
+
+  /* ─── WIRE ONE INPUT ─────────────────────────────────────────────────── */
+  function wireInput(input) {
+    var timer;
+    input.addEventListener('input', function() {
+      clearTimeout(timer);
+      var q = this.value.trim();
+      if (q.length < 1) { removeDropdown(); return; }
+      var self = this;
+      timer = setTimeout(function() {
+        showDropdown(self, searchProducts(q), q);
+      }, 160);
+    });
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'ArrowDown') { e.preventDefault(); navigateDropdown(1); }
+      if (e.key === 'ArrowUp')   { e.preventDefault(); navigateDropdown(-1); }
+      if (e.key === 'Escape')    { removeDropdown(); }
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        var items = dropdown && dropdown.querySelectorAll('.sd-item');
+        if (items && activeIndex >= 0 && items[activeIndex]) {
+          items[activeIndex].dispatchEvent(new MouseEvent('mousedown'));
+        } else {
+          var q = this.value.trim();
+          if (q) showResultsPage(q, searchProducts(q));
+        }
+      }
+    });
+    input.addEventListener('focus', function() {
+      var q = this.value.trim();
+      if (q.length >= 1) showDropdown(this, searchProducts(q), q);
+    });
+  }
+
+  /* ─── INIT ───────────────────────────────────────────────────────────── */
+  function init() {
+    injectStyles();
+    var inputs = findAllSearchInputs();
+    inputs.forEach(wireInput);
+
+    document.addEventListener('mousedown', function(e) {
+      if (!dropdown) return;
+      if (!dropdown.contains(e.target) && e.target !== activeInput) removeDropdown();
+    });
+    document.addEventListener('touchstart', function(e) {
+      if (!dropdown) return;
+      if (!dropdown.contains(e.target) && e.target !== activeInput) removeDropdown();
+    }, { passive: true });
+
+    window.addEventListener('resize', function() {
+      if (dropdown && activeInput) positionDropdown(activeInput);
+    });
+    window.addEventListener('scroll', function() {
+      if (dropdown && activeInput) positionDropdown(activeInput);
+    }, { passive: true });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+})();
+
+localStorage.setItem("lastPage", window.location.href);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+ * search.js
+ * Universal search bar — works on index.html, variety.html,
+ * product.html, product1.html … product11.html
+ *
+ * HOW TO USE
+ * ----------
+ * 1. Copy this file into your project's frontend/ folder (same place as your HTML files).
+ * 2. In every HTML page add this ONE line just before </body>:
+ *        <script src="search.js"></script>
+ * 3. Make sure each page has a search input.  The script finds it automatically
+ *    if it has any of these: id="searchInput", id="search", class="search-input",
+ *    class="searchBar", name="q", or type="search".
+ *    You can also add  data-search-input  to your own element.
+ * 4. That's it — no other changes needed.
+ */
+
+(function () {
+  "use strict";
+
+  /* ─────────────────────────────────────────────
+     1.  FULL PRODUCT DATABASE  (copied from server.js)
+     ───────────────────────────────────────────── */
+  const products = [
+    {id:1,name:"Light Steel Blue Salwar Suit",category:"Salwar Suit",img:"img/sast1.png",color:"Light Steel Blue",price:"₹5087",priceOld:"₹70.00",discount:"27% OFF",tagline:"Rich navy with delicate embroidery — timeless festive charm.",fabric:"Georgette",occasion:"Festive / Party",work:"Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(98 reviews)"},
+    {id:1,name:"Mint Green Salwar Suit",category:"Salwar Suit",img:"img/sast2.png",color:"Mint Green",price:"₹6004",priceOld:"₹80.00",discount:"25% OFF",tagline:"Elegant white chikankari — grace in every thread.",fabric:"Cotton",occasion:"Casual / Day",work:"Chikankari",sizes:["XS","S","M","L","XL","XXL"],rating:"(74 reviews)"},
+    {id:1,name:"Soft Coral Salwar Suit",category:"Salwar Suit",img:"img/sast3.png",color:"Soft Coral Pink",price:"₹4899",priceOld:"₹65.00",discount:"25% OFF",tagline:"Bold magenta that commands every room you enter.",fabric:"Silk Blend",occasion:"Wedding / Party",work:"Zari Work",sizes:["XS","S","M","L","XL","XXL"],rating:"(115 reviews)"},
+    {id:1,name:"Deep Pink Salwar Suit",category:"Salwar Suit",img:"img/sast4.png",color:"Deep Pink",price:"₹4077",priceOld:"₹55.00",discount:"26% OFF",tagline:"Soft and dreamy — a wardrobe must-have for every occasion.",fabric:"Crepe",occasion:"Casual / Puja",work:"Digital Print",sizes:["XS","S","M","L","XL","XXL"],rating:"(62 reviews)"},
+    {id:1,name:"Mustard Yellow Salwar Suit",category:"Salwar Suit",img:"img/sast5.png",color:"Mustard Yellow",price:"₹4266",priceOld:"₹58.00",discount:"26% OFF",tagline:"Contemporary grey with subtle finesse — modern ethnic.",fabric:"Art Silk",occasion:"Office / Casual",work:"Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(88 reviews)"},
+    {id:1,name:"Cream Color Salwar Suit",category:"Salwar Suit",img:"img/sast6.png",color:"Offwhite/Cream",price:"₹5589",priceOld:"₹74.00",discount:"24% OFF",tagline:"Earthy warmth meets ethnic artistry — effortlessly chic.",fabric:"Banarasi",occasion:"Festive",work:"Woven",sizes:["XS","S","M","L","XL","XXL"],rating:"(51 reviews)"},
+    {id:1,name:"Hot Pink Salwar Suit",category:"Salwar Suit",img:"img/sast7.png",color:"Hot Pink",price:"₹999",priceOld:"₹1499",discount:"33% OFF",tagline:"Lavender serenity — light, fresh and festival-ready.",fabric:"Cotton Silk",occasion:"Puja / Casual",work:"Block Print",sizes:["S","M","L","XL","XXL"],rating:"(203 reviews)"},
+    {id:1,name:"Royal Blue Salwar Suit",category:"Salwar Suit",img:"img/sast8.png",color:"Royal Blue",price:"₹38.96",priceOld:"₹52.00",discount:"25% OFF",tagline:"Classic navy with vibrant prints — versatile and vivid.",fabric:"Poly Crepe",occasion:"Daily Wear",work:"Digital Print",sizes:["S","M","L","XL","XXL"],rating:"(141 reviews)"},
+    {id:9,name:"Blush Pink Salwar Suit",category:"Salwar Suit",img:"img/sast9.png",color:"Blush Pink",price:"₹1,099",priceOld:"₹1,499",discount:"27% OFF",tagline:"Floral pink elegance — the bloom of ethnic fashion.",fabric:"Organza",occasion:"Wedding / Party",work:"Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(176 reviews)"},
+    {id:1,name:"Bright Blue Salwar Suit",category:"Salwar Suit",img:"img/sast10.png",color:"Bright Blue",price:"₹2000",priceOld:"₹130.00",discount:"27% OFF",tagline:"Auspicious red — for every celebration worth remembering.",fabric:"Heavy Silk",occasion:"Wedding / Bridal",work:"Heavy Zari",sizes:["XS","S","M","L","XL","XXL"],rating:"(89 reviews)"},
+    {id:1,name:"Ash Grey Salwar Suit",category:"Salwar Suit",img:"img/sast11.png",color:"Ash Grey",price:"₹1,199",priceOld:"₹1,699",discount:"29% OFF",tagline:"Sunshine yellow — radiant ethnic wear for every festivity.",fabric:"Cotton",occasion:"Casual / Puja",work:"Block Print",sizes:["S","M","L","XL","XXL"],rating:"(67 reviews)"},
+    {id:2,name:"Burnt Orange Salwar Suit",category:"Salwar Suit",img:"img/sast12.png",color:"Burnt Orange",price:"₹1,399",priceOld:"₹1,899",discount:"26% OFF",tagline:"Lush green Anarkali — grace, flow and a timeless presence.",fabric:"Silk Blend",occasion:"Party / Festive",work:"Embroidery",sizes:["S","M","L","XL","XXL"],rating:"(93 reviews)"},
+    {id:3,name:"Taupe Brown Salwar Suit",category:"Salwar Suit",img:"img/sast13.png",color:"Taupe Brown",price:"₹1,099",priceOld:"₹1,499",discount:"27% OFF",tagline:"Royal blue, regal aura — confidence in every stitch.",fabric:"Georgette",occasion:"Casual / Office",work:"Printed",sizes:["S","M","L","XL","XXL"],rating:"(112 reviews)"},
+    {id:4,name:"Black & White Salwar Suit",category:"Salwar Suit",img:"img/sast14.png",color:"Black&White",price:"₹1,249",priceOld:"₹1,699",discount:"26% OFF",tagline:"Vibrant orange — the energy of tradition in every wear.",fabric:"Crepe",occasion:"Festive",work:"Embroidery",sizes:["S","M","L","XL","XXL"],rating:"(58 reviews)"},
+    {id:5,name:"Golden Yellow Salwar Suit",category:"Salwar Suit",img:"img/sast15.png",color:"Golden Yellow",price:"₹949",priceOld:"₹1,299",discount:"27% OFF",tagline:"Soft peach tones — gentle charm for everyday elegance.",fabric:"Cotton Silk",occasion:"Casual / Daily",work:"Thread Work",sizes:["S","M","L","XL","XXL"],rating:"(47 reviews)"},
+    {id:1,name:"Indigo Blue Salwar Suit",category:"Salwar Suit",img:"img/sast16.png",color:"Indigo Blue",price:"₹1,149",priceOld:"₹1,599",discount:"28% OFF",tagline:"Rich mustard hues — earthy and effortlessly stylish.",fabric:"Art Silk",occasion:"Festive / Puja",work:"Block Print",sizes:["S","M","L","XL","XXL"],rating:"(71 reviews)"},
+    {id:1,name:"Crimson Salwar Suit",category:"Salwar Suit",img:"img/sast17.png",color:"Crimson Red",price:"₹1,299",priceOld:"₹1,799",discount:"28% OFF",tagline:"Teal serenity — modern meets traditional in perfect balance.",fabric:"Georgette",occasion:"Party / Festive",work:"Embroidery",sizes:["S","M","L","XL","XXL"],rating:"(84 reviews)"},
+    {id:1,name:"Violet Blue Salwar Suit",category:"Salwar Suit",img:"img/sast18.png",color:"Violet Blue",price:"₹1,499",priceOld:"₹1,999",discount:"25% OFF",tagline:"Violet Blue — timeless richness for every grand occasion.",fabric:"Banarasi",occasion:"Wedding / Party",work:"Woven Zari",sizes:["XS","S","M","L","XL","XXL"],rating:"(129 reviews)"},
+    // Sarees
+   {id:2,
+    name: "Powder Blue Saree",
+    category: "Featured Pick",
+    img: "img/sar1.png",
+    color: "Powder Blue",
+    hex: "#B7C9E2",
+    price: "₹1,300",
+    priceOld: "₹2,000",
+    discount: "35% OFF",
+    tagline: "Serene powder blue drape — effortlessly elegant for every occasion.",
+    fabric: "Georgette",
+    occasion: "Casual / Office",
+    work: "Digital Print",
+    swatches: ["#B7C9E2"],
+    sizes: ["Free Size"],
+    rating: "(112 reviews)"
+  },
+
+    {id:2,name:"Ivory Cream Floral Saree",category:"Saree",img:"img/sar2.png",color:"Ivory / Cream",price:"₹1,300",priceOld:"₹2,200",discount:"41% OFF",tagline:"Timeless ivory with floral grace — pure elegance in every pleat.",fabric:"Cotton Silk",occasion:"Puja / Festive",work:"Floral Print",sizes:["Free Size"],rating:"(87 reviews)"},
+    {id:2,name:"Pastel Multicolor Saree",category:"Saree",img:"img/sar3.png",color:"Soft Pink–Blue Mix",price:"₹1,300",priceOld:"₹2,500",discount:"48% OFF",tagline:"Dreamy pastels blended beautifully — a festive statement drape.",fabric:"Organza",occasion:"Wedding / Party",work:"Embroidery",sizes:["Free Size"],rating:"(143 reviews)"},
+    {id:2,name:"Dusty Rose Pink Saree",category:"Saree",img:"img/sar4.png",color:"Dusty Rose Pink",price:"₹1,300",priceOld:"₹2,000",discount:"35% OFF",tagline:"Muted rose tones with timeless appeal — soft and sophisticated.",fabric:"Crepe",occasion:"Casual / Festive",work:"Thread Work",sizes:["Free Size"],rating:"(76 reviews)"},
+    {id:2,name:"Navy Blue Saree",category:"Saree",img:"img/sar5.png",color:"Navy Blue",price:"₹1,300",priceOld:"₹2,500",discount:"48% OFF",tagline:"Deep navy richness — regal, bold and effortlessly commanding.",fabric:"Banarasi Silk",occasion:"Wedding / Party",work:"Woven Zari",sizes:["Free Size"],rating:"(198 reviews)"},
+    {id:2,name:"Peach Apricot Saree",category:"Saree",img:"img/sar6.png",color:"Peach / Apricot",price:"₹1,300",priceOld:"₹2,200",discount:"41% OFF",tagline:"Warm peach glow — a sunshine drape for your happiest moments.",fabric:"Cotton Silk",occasion:"Casual / Day",work:"Block Print",sizes:["Free Size"],rating:"(64 reviews)"},
+    {id:2,name:"Beige Printed Saree",category:"Saree",img:"img/sar7.png",color:"Beige with Print",price:"₹1,300",priceOld:"₹2,000",discount:"35% OFF",tagline:"Earthy beige with artistic prints — understated and elegant.",fabric:"Art Silk",occasion:"Casual / Office",work:"Digital Print",sizes:["Free Size"],rating:"(91 reviews)"},
+    {id:2,name:"Soft Blush Pink Saree",category:"Saree",img:"img/sar8.png",color:"Soft Blush Pink",price:"₹1,300",priceOld:"₹2,200",discount:"41% OFF",tagline:"Delicate blush pink — soft romance woven into every thread.",fabric:"Georgette",occasion:"Engagement / Party",work:"Embroidery",sizes:["Free Size"],rating:"(118 reviews)"},
+    {id:2,name:"Bright Yellow Saree",category:"Saree",img:"img/sar9.png",color:"Bright Yellow",price:"₹1,300",priceOld:"₹2,000",discount:"35% OFF",tagline:"Radiant sunshine yellow — festive cheer draped in silk.",fabric:"Cotton",occasion:"Haldi / Festive",work:"Block Print",sizes:["Free Size"],rating:"(55 reviews)"},
+    {id:2,name:"Rose Pink Saree",category:"Saree",img:"img/sar10.png",color:"Rose Pink",price:"₹1,300",priceOld:"₹2,500",discount:"48% OFF",tagline:"Deep rose bloom — for the woman who dresses with intention.",fabric:"Silk Blend",occasion:"Wedding / Party",work:"Zari Work",sizes:["Free Size"],rating:"(167 reviews)"},
+    {id:2,name:"Seafoam Green Saree",category:"Saree",img:"img/sar11.png",color:"Seafoam Green",price:"₹1,300",priceOld:"₹2,000",discount:"35% OFF",tagline:"Cool seafoam serenity — fresh, breezy and utterly graceful.",fabric:"Cotton Silk",occasion:"Casual / Puja",work:"Thread Work",sizes:["Free Size"],rating:"(73 reviews)"},
+    {id:2,name:"Mauve Brown Saree",category:"Saree",img:"img/sar12.png",color:"Mauve Brown",price:"₹1,300",priceOld:"₹2,200",discount:"41% OFF",tagline:"Warm mauve earth tones — rooted elegance for every festivity.",fabric:"Banarasi",occasion:"Festive / Party",work:"Woven",sizes:["Free Size"],rating:"(84 reviews)"},
+    {id:2,name:"Muted Purple Saree",category:"Saree",img:"img/sar13.png",color:"Muted Purple",price:"₹1,300",priceOld:"₹2,000",discount:"35% OFF",tagline:"Dusty purple mystique — a drape that exudes quiet confidence.",fabric:"Georgette",occasion:"Party / Evening",work:"Embroidery",sizes:["Free Size"],rating:"(99 reviews)"},
+    {id:2,name:"Aqua Green Saree",category:"Saree",img:"img/sar14.png",color:"Aqua Green",price:"₹1,300",priceOld:"₹2,500",discount:"48% OFF",tagline:"Vivid aqua — bold, modern and effortlessly ethnic.",fabric:"Art Silk",occasion:"Festive / Party",work:"Digital Print",sizes:["Free Size"],rating:"(61 reviews)"},
+    {id:2,name:"Taupe Grey Saree",category:"Saree",img:"img/sar15.png",color:"Taupe Grey",price:"₹1,300",priceOld:"₹2,000",discount:"35% OFF",tagline:"Refined taupe grey — timeless neutral that never goes out of style.",fabric:"Crepe",occasion:"Office / Casual",work:"Printed",sizes:["Free Size"],rating:"(47 reviews)"},
+    {id:2,name:"Deep Purple Saree",category:"Saree",img:"img/sar16.png",color:"Deep Purple",price:"₹1,300",priceOld:"₹2,500",discount:"48% OFF",tagline:"Royal deep purple — luxurious, bold and made to be remembered.",fabric:"Heavy Silk",occasion:"Wedding / Bridal",work:"Heavy Zari",sizes:["Free Size"],rating:"(132 reviews)"},
+    {id:2,name:"Teal Blue Saree",category:"Saree",img:"img/sar17.png",color:"Teal Blue",price:"₹1,300",priceOld:"₹2,200",discount:"41% OFF",tagline:"Rich teal blue — a modern classic that shines at every celebration.",fabric:"Georgette",occasion:"Party / Festive",work:"Embroidery",sizes:["Free Size"],rating:"(88 reviews)"},
+    {id:2,name:"Maroon Red Saree",category:"Saree",img:"img/sar18.png",color:"Maroon Red",price:"₹1,300",priceOld:"₹2,500",discount:"48% OFF",tagline:"Deep maroon red — auspicious, timeless and eternally bridal.",fabric:"Banarasi Silk",occasion:"Wedding / Bridal",work:"Woven Zari",sizes:["Free Size"],rating:"(204 reviews)"},
+    // Gowns
+    {id:3,name:"Black Flared Gown",category:"Gown",img:"img/gown1.png",color:"Black",price:"₹1,300",priceOld:"₹2,500",discount:"48% OFF",tagline:"Sleek black flared gown — power, poise and pure elegance in one.",fabric:"Georgette / Silk",occasion:"Evening / Party",work:"Minimal Embellishment",sizes:["XS","S","M","L","XL","XXL"],rating:"(138 reviews)"},
+    {id:3,name:"Deep Wine Purple Gown",category:"Gown",img:"img/gown2.png",color:"Wine Purple",price:"₹1,300",priceOld:"₹2,500",discount:"48% OFF",tagline:"Rich wine purple velvet — heavy flare for your most royal moments.",fabric:"Velvet",occasion:"Wedding",work:"Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(192 reviews)"},
+    {id:3,name:"Steel Blue Gown",category:"Gown",img:"img/gown3.png",color:"Steel Blue",price:"₹1,300",priceOld:"₹2,200",discount:"41% OFF",tagline:"Polished steel blue satin — formal elegance with every step.",fabric:"Satin / Silk",occasion:"Formal",work:"Plain / Minimal",sizes:["XS","S","M","L","XL","XXL"],rating:"(87 reviews)"},
+    {id:3,name:"Maroon Red Gown",category:"Gown",img:"img/gown4.png",color:"Maroon",price:"₹1,300",priceOld:"₹2,500",discount:"48% OFF",tagline:"Deep maroon silk — auspicious, bold and wedding-ready.",fabric:"Silk",occasion:"Wedding",work:"Zari Work",sizes:["XS","S","M","L","XL","XXL"],rating:"(211 reviews)"},
+    {id:3,name:"Champagne Beige Gown",category:"Gown",img:"img/gown5.png",color:"Champagne",price:"₹1,300",priceOld:"₹2,000",discount:"35% OFF",tagline:"Shimmering champagne net — a designer dream for every festivity.",fabric:"Net / Organza",occasion:"Festive",work:"Sequin Work",sizes:["XS","S","M","L","XL","XXL"],rating:"(74 reviews)"},
+    {id:3,name:"Sage Green Gown",category:"Gown",img:"img/gown6.png",color:"Sage Green",price:"₹1,300",priceOld:"₹2,000",discount:"35% OFF",tagline:"Earthy sage green cotton silk — effortlessly chic for every day.",fabric:"Cotton Silk",occasion:"Casual / Festive",work:"Block Print",sizes:["XS","S","M","L","XL","XXL"],rating:"(63 reviews)"},
+    {id:3,name:"Royal Blue Gown",category:"Gown",img:"img/gown7.png",color:"Royal Blue",price:"₹1,300",priceOld:"₹2,500",discount:"48% OFF",tagline:"Striking royal blue silk — a flowy drape that commands attention.",fabric:"Silk",occasion:"Party",work:"Embroidery",sizes:["S","M","L","XL","XXL"],rating:"(149 reviews)"},
+    {id:3,name:"Dusty Pink Embroidered Gown",category:"Gown",img:"img/gown8.png",color:"Dusty Pink",price:"₹1,300",priceOld:"₹2,500",discount:"48% OFF",tagline:"Dusty pink net with heavy embroidery — bridal beauty redefined.",fabric:"Net",occasion:"Wedding",work:"Heavy Embroidery",sizes:["S","M","L","XL","XXL"],rating:"(176 reviews)"},
+    {id:3,name:"Mauve Pink Gown",category:"Gown",img:"img/gown19.png",color:"Mauve",price:"₹1,300",priceOld:"₹2,200",discount:"41% OFF",tagline:"Elegant mauve georgette — understated sophistication at its finest.",fabric:"Georgette",occasion:"Formal",work:"Thread Work",sizes:["S","M","L","XL","XXL"],rating:"(98 reviews)"},
+    {id:3,name:"Teal Green Gown",category:"Gown",img:"img/gown21.png",color:"Teal",price:"₹1,300",priceOld:"₹2,500",discount:"48% OFF",tagline:"Vivid teal silk — a designer masterpiece for every grand festivity.",fabric:"Silk",occasion:"Festive",work:"Zari Border",sizes:["S","M","L","XL","XXL"],rating:"(121 reviews)"},
+    {id:3,name:"Jet Black Gown",category:"Gown",img:"img/gown11.png",color:"Jet Black",price:"₹1,300",priceOld:"₹2,000",discount:"35% OFF",tagline:"Minimal jet black satin — timeless after-dark glamour.",fabric:"Satin",occasion:"Evening",work:"Plain",sizes:["S","M","L","XL","XXL"],rating:"(83 reviews)"},
+    {id:3,name:"Coffee Brown Gown",category:"Gown",img:"img/gown12.png",color:"Coffee Brown",price:"₹1,300",priceOld:"₹2,000",discount:"35% OFF",tagline:"Warm coffee brown cotton — casual ease with an ethnic soul.",fabric:"Cotton",occasion:"Daily Wear",work:"Digital Print",sizes:["S","M","L","XL","XXL"],rating:"(55 reviews)"},
+    {id:3,name:"Lavender Purple Gown",category:"Gown",img:"img/gown13.png",color:"Lavender",price:"₹1,300",priceOld:"₹2,200",discount:"41% OFF",tagline:"Dreamy lavender net — light, floaty and perfectly festive.",fabric:"Net / Organza",occasion:"Festive",work:"Embroidery",sizes:["S","M","L","XL","XXL"],rating:"(107 reviews)"},
+    {id:3,name:"Dark Plum Gown",category:"Gown",img:"img/gown14.png",color:"Dark Plum",price:"₹1,300",priceOld:"₹2,500",discount:"48% OFF",tagline:"Deep plum velvet — heavy, lush and made for grand weddings.",fabric:"Velvet",occasion:"Wedding",work:"Heavy Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(162 reviews)"},
+    {id:3,name:"Ice Blue Gown",category:"Gown",img:"img/gown15.png",color:"Ice Blue",price:"₹1,300",priceOld:"₹2,200",discount:"41% OFF",tagline:"Cool ice blue net — a breezy designer pick for every party.",fabric:"Net",occasion:"Party",work:"Sequin & Thread Work",sizes:["S","M","L","XL","XXL"],rating:"(69 reviews)"},
+    {id:3,name:"Navy Blue Gown",category:"Gown",img:"img/gown16.png",color:"Navy Blue",price:"₹1,300",priceOld:"₹2,500",discount:"48% OFF",tagline:"Classic navy silk — poised, polished and timelessly elegant.",fabric:"Silk",occasion:"Formal",work:"Woven Border",sizes:["S","M","L","XL","XXL"],rating:"(94 reviews)"},
+    {id:3,name:"Mocha Brown Gown",category:"Gown",img:"img/gown17.png",color:"Mocha Brown",price:"₹1,300",priceOld:"₹2,000",discount:"35% OFF",tagline:"Warm mocha cotton silk — grounded, chic and everyday beautiful.",fabric:"Cotton Silk",occasion:"Casual",work:"Block Print",sizes:["S","M","L","XL","XXL"],rating:"(48 reviews)"},
+    {id:3,name:"Soft Baby Pink Gown",category:"Gown",img:"img/gown20.png",color:"Baby Pink",price:"₹1,300",priceOld:"₹2,000",discount:"35% OFF",tagline:"Soft baby pink organza — delicate, feminine and day-perfect.",fabric:"Organza",occasion:"Day Wear",work:"Thread Work",sizes:["XS","S","M","L","XL","XXL"],rating:"(77 reviews)"},
+    // Pant Suits
+    {id:4,name:"Peach Net Suit",category:"Pant Suit",img:"img/pent1.png",color:"Peach",price:"$50.87",priceOld:"$70.00",discount:"27% OFF",tagline:"Elegant peach Anarkali with Churidar and Net Dupatta — perfect for weddings.",fabric:"Net / Organza",occasion:"Wedding / Festive",work:"Anarkali",sizes:["XS","S","M","L","XL","XXL"],rating:"(98 reviews)"},
+    {id:4,name:"Mint White Suit",category:"Pant Suit",img:"img/pent2.png",color:"Mint White",price:"$60.04",priceOld:"$80.00",discount:"25% OFF",tagline:"Fresh mint white Straight Suit with Pant and Light Chiffon Dupatta — ideal for daily wear.",fabric:"Cotton",occasion:"Daily / Summer",work:"Straight Suit",sizes:["XS","S","M","L","XL","XXL"],rating:"(74 reviews)"},
+    {id:4,name:"Pistachio Green Suit",category:"Pant Suit",img:"img/pent3.png",color:"Pistachio",price:"$48.99",priceOld:"$65.00",discount:"25% OFF",tagline:"Vibrant pistachio A-line Suit with Palazzo and Net Dupatta — festive elegance.",fabric:"Georgette",occasion:"Festive",work:"A-line Suit",sizes:["XS","S","M","L","XL","XXL"],rating:"(115 reviews)"},
+    {id:4,name:"Ice Blue Suit",category:"Pant Suit",img:"img/pent4.png",color:"Ice Blue",price:"$40.77",priceOld:"$55.00",discount:"26% OFF",tagline:"Cool ice blue Straight Suit with Pant and Organza Dupatta — formal sophistication.",fabric:"Silk Blend",occasion:"Formal",work:"Straight Suit",sizes:["XS","S","M","L","XL","XXL"],rating:"(62 reviews)"},
+    {id:4,name:"Cream Ivory Suit",category:"Pant Suit",img:"img/pent5.png",color:"Ivory",price:"$42.66",priceOld:"$58.00",discount:"26% OFF",tagline:"Classic ivory Classic Suit with Pant and Embroidered Dupatta — traditional charm.",fabric:"Cotton Silk",occasion:"Traditional",work:"Classic Suit",sizes:["XS","S","M","L","XL","XXL"],rating:"(88 reviews)"},
+    {id:4,name:"Lavender Purple Suit",category:"Pant Suit",img:"img/pent6.png",color:"Lavender",price:"$55.89",priceOld:"$74.00",discount:"24% OFF",tagline:"Soft lavender Flared Suit with Palazzo and Chiffon Dupatta — party ready.",fabric:"Georgette",occasion:"Party",work:"Flared Suit",sizes:["XS","S","M","L","XL","XXL"],rating:"(51 reviews)"},
+    {id:4,name:"Aqua Green Suit",category:"Pant Suit",img:"img/pent7.png",color:"Aqua",price:"₹999",priceOld:"₹1499",discount:"33% OFF",tagline:"Refreshing aqua Straight Suit with Pant and Printed Dupatta — casual comfort.",fabric:"Cotton",occasion:"Casual",work:"Straight Suit",sizes:["S","M","L","XL","XXL"],rating:"(203 reviews)"},
+    {id:4,name:"Powder Blue Suit",category:"Pant Suit",img:"img/pent8.png",color:"Powder Blue",price:"$38.96",priceOld:"$52.00",discount:"26% OFF",tagline:"Delicate powder blue Embroidered Suit with Palazzo and Net Dupatta — festive beauty.",fabric:"Chiffon",occasion:"Festive",work:"Embroidered Suit",sizes:["XS","S","M","L","XL","XXL"],rating:"(134 reviews)"},
+    {id:4,name:"Champagne Gold Suit",category:"Pant Suit",img:"img/pent9.png",color:"Champagne",price:"$67.87",priceOld:"$90.00",discount:"25% OFF",tagline:"Luxurious champagne Elegant Suit with Pant and Light Net Dupatta — wedding glamour.",fabric:"Silk",occasion:"Wedding",work:"Elegant Suit",sizes:["XS","S","M","L","XL","XXL"],rating:"(176 reviews)"},
+    {id:4,name:"Soft Pink Suit",category:"Pant Suit",img:"img/pent10.png",color:"Baby Pink",price:"$95.34",priceOld:"$130.00",discount:"27% OFF",tagline:"Gentle baby pink Straight Suit with Pant and Chiffon Dupatta — day wear elegance.",fabric:"Georgette",occasion:"Day Wear",work:"Straight Suit",sizes:["XS","S","M","L","XL","XXL"],rating:"(89 reviews)"},
+    {id:4,name:"Blush Pink Suit",category:"Pant Suit",img:"img/pent11.png",color:"Blush",price:"₹1,199",priceOld:"₹1,699",discount:"29% OFF",tagline:"Sweet blush Printed Suit with Pant and Printed Dupatta — casual charm.",fabric:"Cotton",occasion:"Casual",work:"Printed Suit",sizes:["S","M","L","XL","XXL"],rating:"(67 reviews)"},
+    {id:4,name:"Sky Blue Suit",category:"Pant Suit",img:"img/pent12.png",color:"Sky Blue",price:"₹1,399",priceOld:"₹1,899",discount:"26% OFF",tagline:"Bright sky blue Flowing Suit with Palazzo and Net Dupatta — party flow.",fabric:"Chiffon",occasion:"Party",work:"Flowing Suit",sizes:["S","M","L","XL","XXL"],rating:"(93 reviews)"},
+    {id:4,name:"White Floral Suit",category:"Pant Suit",img:"img/pent13.png",color:"White",price:"₹1,099",priceOld:"₹1,499",discount:"27% OFF",tagline:"Pure white Floral Suit with Pant and Printed Dupatta — daily freshness.",fabric:"Cotton",occasion:"Daily",work:"Floral Suit",sizes:["S","M","L","XL","XXL"],rating:"(112 reviews)"},
+    {id:4,name:"Beige Printed Suit",category:"Pant Suit",img:"img/pent14.png",color:"Beige",price:"₹1,249",priceOld:"₹1,699",discount:"26% OFF",tagline:"Neutral beige Straight Suit with Pant and Cotton Dupatta — casual style.",fabric:"Cotton",occasion:"Casual",work:"Straight Suit",sizes:["S","M","L","XL","XXL"],rating:"(58 reviews)"},
+    {id:4,name:"Off White Suit",category:"Pant Suit",img:"img/pent15.png",color:"Off White",price:"₹949",priceOld:"₹1,299",discount:"27% OFF",tagline:"Subtle off white Designer Suit with Palazzo and Heavy Net Dupatta — wedding elegance.",fabric:"Net",occasion:"Wedding",work:"Designer Suit",sizes:["S","M","L","XL","XXL"],rating:"(47 reviews)"},
+    {id:4,name:"Cream Minimal Suit",category:"Pant Suit",img:"img/pent16.png",color:"Cream",price:"₹1,149",priceOld:"₹1,599",discount:"28% OFF",tagline:"Simple cream Minimal Suit with Pant and Light Dupatta — office appropriate.",fabric:"Cotton Silk",occasion:"Office",work:"Minimal Suit",sizes:["S","M","L","XL","XXL"],rating:"(71 reviews)"},
+    {id:4,name:"Floral Organza Suit",category:"Pant Suit",img:"img/pent17.png",color:"Light Pink Floral",price:"₹1,299",priceOld:"₹1,799",discount:"28% OFF",tagline:"Floral light pink Designer Suit with Palazzo and Organza Floral Dupatta — festive delight.",fabric:"Organza",occasion:"Festive",work:"Designer Suit",sizes:["S","M","L","XL","XXL"],rating:"(84 reviews)"},
+    {id:4,name:"Teal Embroidered Suit",category:"Pant Suit",img:"img/pent18.png",color:"Teal",price:"₹1,499",priceOld:"₹1,999",discount:"25% OFF",tagline:"Rich teal Designer Suit with Pant and Embroidered Dupatta — party statement.",fabric:"Silk",occasion:"Party",work:"Designer Suit",sizes:["XS","S","M","L","XL","XXL"],rating:"(129 reviews)"},
+    // Lehenga
+    {id:5,name:"Black Blouse with Cream Skirt",category:"Lehenga",img:"img/lah1.png",color:"Off White Lehenga",price:"₹4,399",priceOld:"₹6,026",discount:"27% OFF",tagline:"Rich navy with delicate embroidery — timeless festive charm.",fabric:"Georgette",occasion:"Festive / Party",work:"Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(98 reviews)"},
+    {id:5,name:"Red Lehenga",category:"Lehenga",img:"img/lah2.png",color:"Red Lehnga",price:"₹4,899",priceOld:"₹6532",discount:"25% OFF",tagline:"Elegant white chikankari — grace in every thread.",fabric:"Cotton",occasion:"Casual / Day",work:"Chikankari",sizes:["XS","S","M","L","XL","XXL"],rating:"(74 reviews)"},
+    {id:5,name:"Mustard Yellow Lehenga",category:"Lehenga",img:"img/lah3.png",color:"Mustard Yellow Lehenga",price:"₹6265",priceOld:"₹6265",discount:"25% OFF",tagline:"Bold magenta that commands every room you enter.",fabric:"Silk Blend",occasion:"Wedding / Party",work:"Zari Work",sizes:["XS","S","M","L","XL","XXL"],rating:"(115 reviews)"},
+    {id:5,name:"Floral Printed Lehenga",category:"Lehenga",img:"img/lah9.png",color:"Floral Printed Lehenga",price:"₹6215",priceOld:"₹55.00",discount:"26% OFF",tagline:"Soft and dreamy — a wardrobe must-have for every occasion.",fabric:"Crepe",occasion:"Casual / Puja",work:"Digital Print",sizes:["XS","S","M","L","XL","XXL"],rating:"(62 reviews)"},
+    {id:5,name:"Pink Lehenga",category:"Lehenga",img:"img/lah5.png",color:"Pink Lehenga",price:"₹4799",priceOld:"₹6485",discount:"26% OFF",tagline:"Contemporary grey with subtle finesse — modern ethnic.",fabric:"Art Silk",occasion:"Office / Casual",work:"Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(88 reviews)"},
+    {id:5,name:"Beige Lehenga",category:"Lehenga",img:"img/lah6.png",color:"Beige Lehenga",price:"₹4999",priceOld:"₹6578",discount:"24% OFF",tagline:"Earthy warmth meets ethnic artistry — effortlessly chic.",fabric:"Banarasi",occasion:"Festive",work:"Woven",sizes:["XS","S","M","L","XL","XXL"],rating:"(51 reviews)"},
+    {id:5,name:"Peach Floral Lehenga",category:"Lehenga",img:"img/lahim1.png",color:"Peach Floral Lehenga",price:"₹4999",priceOld:"₹7461",discount:"33% OFF",tagline:"Lavender serenity — light, fresh and festival-ready.",fabric:"Cotton Silk",occasion:"Puja / Casual",work:"Block Print",sizes:["S","M","L","XL","XXL"],rating:"(203 reviews)"},
+    {id:5,name:"Soft Pink Floral Lehenga",category:"Lehenga",img:"img/lahim2.png",color:"Soft Pink Floral Lehenga",price:"₹5599",priceOld:"₹7465",discount:"25% OFF",tagline:"Classic navy with vibrant prints — versatile and vivid.",fabric:"Poly Crepe",occasion:"Daily Wear",work:"Digital Print",sizes:["S","M","L","XL","XXL"],rating:"(141 reviews)"},
+    {id:5,name:"Aqua Blue Lehenga",category:"Lehenga",img:"img/lahim3.png",color:"Aqua Blue Lehenga",price:"₹5699",priceOld:"₹7599",discount:"25% OFF",tagline:"Floral pink elegance — the bloom of ethnic fashion.",fabric:"Organza",occasion:"Wedding / Party",work:"Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(176 reviews)"},
+    {id:5,name:"Sage Green Lehenga",category:"Lehenga",img:"img/lahim4.png",color:"Sage Green Lehenga",price:"₹4866",priceOld:"₹6711",discount:"27% OFF",tagline:"Auspicious red — for every celebration worth remembering.",fabric:"Heavy Silk",occasion:"Wedding / Bridal",work:"Heavy Zari",sizes:["XS","S","M","L","XL","XXL"],rating:"(89 reviews)"},
+    {id:5,name:"Purple Lehenga",category:"Lehenga",img:"img/lahim6.png",color:"Purple Lehenga",price:"₹5999",priceOld:"₹8107",discount:"26% OFF",tagline:"Lush green Anarkali — grace, flow and a timeless presence.",fabric:"Silk Blend",occasion:"Party / Festive",work:"Embroidery",sizes:["S","M","L","XL","XXL"],rating:"(93 reviews)"},
+    {id:5,name:"Mauve Lehenga",category:"Lehenga",img:"img/lahim7.png",color:"Mauve Lehenga",price:"₹4899",priceOld:"₹6711",discount:"27% OFF",tagline:"Royal blue, regal aura — confidence in every stitch.",fabric:"Georgette",occasion:"Casual / Office",work:"Printed",sizes:["S","M","L","XL","XXL"],rating:"(112 reviews)"},
+    {id:5,name:"Floral Pink Lehenga",category:"Lehenga",img:"img/lahim8.png",color:"Floral Pink Lehenga",price:"₹6699",priceOld:"₹9053",discount:"26% OFF",tagline:"Vibrant orange — the energy of tradition in every wear.",fabric:"Crepe",occasion:"Festive",work:"Embroidery",sizes:["S","M","L","XL","XXL"],rating:"(58 reviews)"},
+    {id:5,name:"Light Pink Lehenga",category:"Lehenga",img:"img/lahim9.png",color:"Light Pink Lehenga",price:"₹4599",priceOld:"₹6300",discount:"27% OFF",tagline:"Soft peach tones — gentle charm for everyday elegance.",fabric:"Cotton Silk",occasion:"Casual / Daily",work:"Thread Work",sizes:["S","M","L","XL","XXL"],rating:"(47 reviews)"},
+    {id:5,name:"Dusty Green Sage Lehenga",category:"Lehenga",img:"img/lahim10.png",color:"Dusty Green Sage Lehenga",price:"₹5899",priceOld:"₹8193",discount:"28% OFF",tagline:"Rich mustard hues — earthy and effortlessly stylish.",fabric:"Art Silk",occasion:"Festive / Puja",work:"Block Print",sizes:["S","M","L","XL","XXL"],rating:"(71 reviews)"},
+    {id:5,name:"Maroon Lehenga",category:"Lehenga",img:"img/lahim11.png",color:"Maroon Lehenga",price:"₹4899",priceOld:"₹6804",discount:"28% OFF",tagline:"Teal serenity — modern meets traditional in perfect balance.",fabric:"Georgette",occasion:"Party / Festive",work:"Embroidery",sizes:["S","M","L","XL","XXL"],rating:"(84 reviews)"},
+    {id:5,name:"Deep Purple Lehenga",category:"Lehenga",img:"img/lahim12.png",color:"Deep Purple Lehenga",price:"₹4999",priceOld:"₹6665",discount:"25% OFF",tagline:"Deep maroon — timeless richness for every grand occasion.",fabric:"Banarasi",occasion:"Wedding / Party",work:"Woven Zari",sizes:["XS","S","M","L","XL","XXL"],rating:"(129 reviews)"},
+    // Party / Anarkali Suits
+    {id:6,name:"Light Grey Embroidered Peplum Style",category:"Party Wear",img:"img/pap1.png",color:"Pink",price:"₹2,500",priceOld:"₹3,125",discount:"25% OFF",tagline:"Delicate pink embroidery on net fabric — elegant and festive.",fabric:"Net",occasion:"Party / Festive",work:"Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(98 reviews)"},
+    {id:6,name:"Mustard Yellow Peplum Style",category:"Party Wear",img:"img/pap2.png",color:"Mustard Yellow",price:"₹2,800",priceOld:"₹3,500",discount:"28% OFF",tagline:"Vibrant mustard yellow Anarkali — traditional with a modern twist.",fabric:"Georgette",occasion:"Wedding / Party",work:"Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(74 reviews)"},
+    {id:6,name:"Sea Green Designer Peplum Style",category:"Party Wear",img:"img/pap3.png",color:"Sea Green",price:"₹3,200",priceOld:"₹4,000",discount:"30% OFF",tagline:"Sea green lehenga suit — designer elegance for special occasions.",fabric:"Silk Blend",occasion:"Wedding / Festive",work:"Zari Work",sizes:["XS","S","M","L","XL","XXL"],rating:"(115 reviews)"},
+    {id:6,name:"Olive Green Peplum Suit",category:"Party Wear",img:"img/pap4.png",color:"Olive Green",price:"₹3,000",priceOld:"₹3,750",discount:"26% OFF",tagline:"Olive green peplum suit — sophisticated and stylish.",fabric:"Organza",occasion:"Party / Casual",work:"Printed",sizes:["XS","S","M","L","XL","XXL"],rating:"(62 reviews)"},
+    {id:6,name:"Bright Yellow Party Wear Peplum Style",category:"Party Wear",img:"img/pap5.png",color:"Bright Yellow",price:"₹2,700",priceOld:"₹3,375",discount:"27% OFF",tagline:"Bright yellow party wear — radiant and celebratory.",fabric:"Chiffon",occasion:"Party / Festive",work:"Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(88 reviews)"},
+    {id:6,name:"Peach Designer Peplum Style",category:"Party Wear",img:"img/pap6.png",color:"Peach",price:"₹3,100",priceOld:"₹3,875",discount:"32% OFF",tagline:"Peach sharara suit — designer flow and grace.",fabric:"Net",occasion:"Wedding / Party",work:"Thread Work",sizes:["XS","S","M","L","XL","XXL"],rating:"(51 reviews)"},
+    // S6rara
+    {id:6,name:"White Sharara Suit",category:"Sharara",img:"img/shar1.png",color:"White",price:"₹3,000",priceOld:"₹4,000",discount:"25% OFF",tagline:"Pure white sharara — grace and elegance in every drape.",fabric:"Net",occasion:"Festive / Party",work:"Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(98 reviews)"},
+    {id:6,name:"Sky Blue Sharara Suit",category:"Sharara",img:"img/shar19.png",color:"Sky Blue",price:"₹3,002",priceOld:"₹3,950",discount:"24% OFF",tagline:"Fresh sky blue — breezy and beautifully festive.",fabric:"Georgette",occasion:"Casual / Day",work:"Chikankari",sizes:["XS","S","M","L","XL","XXL"],rating:"(74 reviews)"},
+    {id:6,name:"Yellow Sharara Suit",category:"Sharara",img:"img/shaar16.png",color:"Yellow",price:"₹3,003",priceOld:"₹3,900",discount:"23% OFF",tagline:"Bright yellow sharara — sunshine and festive energy combined.",fabric:"Silk Blend",occasion:"Wedding / Party",work:"Zari Work",sizes:["XS","S","M","L","XL","XXL"],rating:"(115 reviews)"},
+    {id:6,name:"Black Sharara Suit",category:"Sharara",img:"img/shar4.png",color:"Black",price:"₹3,000",priceOld:"₹4,000",discount:"25% OFF",tagline:"Classic black sharara — bold, refined and endlessly stylish.",fabric:"Crepe",occasion:"Casual / Puja",work:"Digital Print",sizes:["XS","S","M","L","XL","XXL"],rating:"(62 reviews)"},
+    {id:6,name:"Light Peach Sharara Suit",category:"Sharara",img:"img/shar5.png",color:"Grey",price:"₹3,002",priceOld:"₹3,950",discount:"24% OFF",tagline:"Soft grey sharara — contemporary grace for every occasion.",fabric:"Organza",occasion:"Office / Casual",work:"Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(88 reviews)"},
+    {id:6,name:"Maroon Sharara Suit",category:"Sharara",img:"img/shar20.png",color:"Maroon",price:"₹3,000",priceOld:"₹4,000",discount:"25% OFF",tagline:"Rich maroon sharara — timeless tradition meets festive grandeur.",fabric:"Banarasi",occasion:"Festive",work:"Woven",sizes:["XS","S","M","L","XL","XXL"],rating:"(51 reviews)"},
+    // Plazo
+    {id:7,name:"Mint Green Plazo Suit",category:"Plazo",img:"img/pal1.png",color:"Navy Blue",price:"₹3,000",priceOld:"₹4,000",discount:"25% OFF",tagline:"Mint green Plazo Suit — timeless elegance for every festive occasion.",fabric:"Silk",occasion:"Festive / Party",work:"Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(98 reviews)"},
+    {id:7,name:"Bright Red Plazo Suit",category:"Plazo",img:"img/pal2.png",color:"White",price:"₹3,002",priceOld:"₹3,950",discount:"24% OFF",tagline:"Pure white net — grace and charm in every thread.",fabric:"Net",occasion:"Casual / Day",work:"Chikankari",sizes:["XS","S","M","L","XL","XXL"],rating:"(74 reviews)"},
+    {id:7,name:"Light Pink Cotton Plazo Suit",category:"Plazo",img:"img/pal3.png",color:"Mustard Yellow",price:"₹3,003",priceOld:"₹3,900",discount:"23% OFF",tagline:"Bold mustard cotton — earthy warmth meets festive flair.",fabric:"Cotton",occasion:"Wedding / Party",work:"Zari Work",sizes:["XS","S","M","L","XL","XXL"],rating:"(115 reviews)"},
+    // Indo-Western
+    {id:8,name:"White with Blue Embroidery Dress",category:"Indo-Western",img:"img/ind1.png",color:"Off White",price:"₹5087",priceOld:"$7000",discount:"27% OFF",tagline:"Rich with delicate embroidery — timeless festive charm.",fabric:"Georgette",occasion:"Festive / Party",work:"Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(98 reviews)"},
+    {id:8,name:"White Chikan Salwar Suit",category:"Indo-Western",img:"img/ind2.png",color:"White",price:"₹6004",priceOld:"$8000",discount:"25% OFF",tagline:"Elegant white chikankari — grace in every thread.",fabric:"Cotton",occasion:"Casual / Day",work:"Chikankari",sizes:["XS","S","M","L","XL","XXL"],rating:"(74 reviews)"},
+    {id:8,name:"Magenta Anarkali Suit",category:"Indo-Western",img:"img/ind3.png",color:"Magenta",price:"₹4899",priceOld:"$6500",discount:"25% OFF",tagline:"Bold magenta that commands every room you enter.",fabric:"Silk Blend",occasion:"Wedding / Party",work:"Zari Work",sizes:["XS","S","M","L","XL","XXL"],rating:"(115 reviews)"},
+    // Pakistani Suits
+    {id:9,name:"Sea Green Embroidered Lawn Suit",category:"Pakistani Suit",img:"img/pak1.png",color:"Sea Green",price:"₹3,199",priceOld:"₹4,499",discount:"29% OFF",tagline:"Light and breezy embroidered lawn — perfect for summer festivities.",fabric:"Lawn + Chiffon Dupatta",occasion:"Light Festive / Summer",work:"Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(112 reviews)"},
+    {id:9,name:"Peach Printed Lawn Suit",category:"Pakistani Suit",img:"img/pak2.png",color:"Peach",price:"₹3,049",priceOld:"₹4,199",discount:"27% OFF",tagline:"Soft peach prints on breathable lawn — casual charm at its best.",fabric:"Lawn",occasion:"Casual / Daily Wear",work:"Digital Print",sizes:["XS","S","M","L","XL","XXL"],rating:"(87 reviews)"},
+    {id:9,name:"Black Embroidered Formal Suit",category:"Pakistani Suit",img:"img/pak3.png",color:"Black (Gold Dots)",price:"₹3,599",priceOld:"₹4,799",discount:"25% OFF",tagline:"Sophisticated black with golden embroidery — understated glamour.",fabric:"Chiffon / Net",occasion:"Party Wear",work:"Embroidery (Golden)",sizes:["XS","S","M","L","XL","XXL"],rating:"(143 reviews)"},
+    // Frock Suits
+    {id:10,name:"Blue & White Frock Suit",category:"Frock Suit",img:"img/fr1.png",color:"Blue & White",price:"₹2,799",priceOld:"₹3,499",discount:"20% OFF",tagline:"Elegant blue and white design — perfect for any occasion.",fabric:"Cotton Blend",occasion:"Casual / Party",work:"Printed",sizes:["XS","S","M","L","XL","XXL"],rating:"(98 reviews)"},
+    {id:10,name:"Royal Blue Anarkali Suit",category:"Frock Suit",img:"img/fr2.png",color:"Royal Blue",price:"₹3,199",priceOld:"₹3,999",discount:"20% OFF",tagline:"Regal royal blue Anarkali — grace and elegance in every fold.",fabric:"Chiffon",occasion:"Wedding / Party",work:"Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(74 reviews)"},
+    {id:19,name:"Magenta Pink Frock Suit",category:"Frock Suit",img:"img/fr3.png",color:"Magenta Pink",price:"₹3,299",priceOld:"₹4,199",discount:"21% OFF",tagline:"Vibrant magenta pink — bold and beautiful for festive occasions.",fabric:"Georgette",occasion:"Party / Festive",work:"Zari Work",sizes:["XS","S","M","L","XL","XXL"],rating:"(115 reviews)"},
+    // Pazami Suits
+    {id:11,name:"Peach/Blush Pink Pazami Suit",category:"Pazami Suit",img:"img/paz1.png",color:"Peach",price:"₹3500",priceOld:"₹5000",discount:"27% OFF",tagline:"Peach with delicate embroidery — timeless festive charm.",fabric:"Georgette",occasion:"Festive / Party",work:"Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(98 reviews)"},
+    {id:11,name:"Black Chikan Pazami Suit",category:"Pazami Suit",img:"img/paz2.png",color:"Black",price:"₹4000",priceOld:"₹5000",discount:"25% OFF",tagline:"Black white chikankari — grace in every thread.",fabric:"Cotton",occasion:"Casual / Day",work:"Chikankari",sizes:["XS","S","M","L","XL","XXL"],rating:"(74 reviews)"},
+    {id:11,name:"Off White/Cream Suit",category:"Pazami Suit",img:"img/paz3.png",color:"Off White",price:"₹4899",priceOld:"₹6500",discount:"25% OFF",tagline:"Off White magenta that commands every room you enter.",fabric:"Silk Blend",occasion:"Wedding / Party",work:"Zari Work",sizes:["XS","S","M","L","XL","XXL"],rating:"(115 reviews)"},
+  ];
+
+
+
+
+
+
+  /* ─── 2. NAVIGATE TO PRODUCT ──────────────────────────────────────────── */
+  // id=1 → product.html, id=2 → product1.html, id=N → product{N-1}.html
+  function goToProduct(product) {
+    var suffix = product.id === 1 ? '' : String(product.id - 1);
+    window.location.href = 'product' + suffix + '.html';
+  }
+
+  /* ─── 3. SEARCH LOGIC ─────────────────────────────────────────────────── */
+  function searchProducts(query) {
+    if (!query || query.trim().length < 1) return [];
+    const q = query.toLowerCase().trim();
+    return products.filter(p =>
+      p.name.toLowerCase().includes(q) ||
+      (p.category && p.category.toLowerCase().includes(q)) ||
+      (p.color && p.color.toLowerCase().includes(q)) ||
+      (p.fabric && p.fabric.toLowerCase().includes(q)) ||
+      (p.occasion && p.occasion.toLowerCase().includes(q)) ||
+      (p.work && p.work.toLowerCase().includes(q)) ||
+      (p.tagline && p.tagline.toLowerCase().includes(q))
+    );
+  }
+
+  /* ─── 4. FIND *ALL* SEARCH INPUTS (desktop + mobile) ─────────────────── */
+  function findAllSearchInputs() {
+    const seen = new Set();
+    const inputs = [];
+    const selectors = [
+      '[data-search-input]',
+      '#searchInput', '#search', '#searchBar',
+      '.search-input', '.searchBar',
+      '.search-bar input',
+      'input[name="q"]',
+      'input[type="search"]',
+      'input[placeholder*="search" i]'
+    ];
+    selectors.forEach(sel => {
+      document.querySelectorAll(sel).forEach(el => {
+        if (!seen.has(el)) { seen.add(el); inputs.push(el); }
+      });
+    });
+    return inputs;
+  }
+
+  /* ─── 5. STYLES ───────────────────────────────────────────────────────── */
+  function injectStyles() {
+    if (document.getElementById('__search-styles')) return;
+    const style = document.createElement('style');
+    style.id = '__search-styles';
+    style.textContent = `
+      #__search-dropdown {
+        position: fixed;           /* fixed so it escapes any overflow:hidden parent */
+        z-index: 999999;
+        background: #fff;
+        border: 1px solid #e0c9d8;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(180,100,140,0.18);
+        max-height: 420px;
+        overflow-y: auto;
+        font-family: inherit;
+        scrollbar-width: thin;
+        scrollbar-color: #c595b0 #f8eaf4;
+      }
+      #__search-dropdown::-webkit-scrollbar { width: 5px; }
+      #__search-dropdown::-webkit-scrollbar-thumb { background: #c595b0; border-radius: 4px; }
+      #__search-dropdown .sd-header {
+        padding: 10px 16px 6px; font-size: 11px; font-weight: 700;
+        letter-spacing: 0.08em; text-transform: uppercase;
+        color: #b06090; border-bottom: 1px solid #f0dcea;
+      }
+      #__search-dropdown .sd-item {
+        display: flex; align-items: center; gap: 12px;
+        padding: 10px 14px; cursor: pointer; transition: background 0.15s;
+        border-bottom: 1px solid #faf0f6;
+      }
+      #__search-dropdown .sd-item:last-child { border-bottom: none; }
+      #__search-dropdown .sd-item:hover,
+      #__search-dropdown .sd-item.active { background: #fdf0f8; }
+      #__search-dropdown .sd-item img {
+        width: 52px; height: 60px; object-fit: cover;
+        border-radius: 7px; flex-shrink: 0; border: 1px solid #eeddef;
+      }
+      #__search-dropdown .sd-info { flex: 1; min-width: 0; }
+      #__search-dropdown .sd-name {
+        font-size: 13.5px; font-weight: 600; color: #2d1a24;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+      #__search-dropdown .sd-meta {
+        font-size: 11.5px; color: #9c6b8a; margin-top: 2px;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+      #__search-dropdown .sd-price {
+        font-size: 13px; font-weight: 700; color: #c0166a;
+        white-space: nowrap; margin-left: 4px;
+      }
+      #__search-dropdown .sd-discount {
+        font-size: 10.5px; color: #27ae60; font-weight: 600; margin-left: 2px;
+      }
+      #__search-dropdown .sd-empty {
+        padding: 22px 16px; text-align: center; color: #b06090; font-size: 13px;
+      }
+      #__search-dropdown .sd-viewall {
+        display: block; text-align: center; padding: 11px;
+        font-size: 13px; font-weight: 700; color: #c595b0;
+        background: #fdf5fb; border-top: 1px solid #f0dcea;
+        cursor: pointer; border-radius: 0 0 12px 12px;
+        transition: background 0.15s, color 0.15s;
+      }
+      #__search-dropdown .sd-viewall:hover { background: #f0dcea; color: #a0407a; }
+      /* Results page */
+      #__search-results-page {
+        max-width: 1100px; margin: 30px auto; padding: 0 16px; font-family: inherit;
+      }
+      #__search-results-page h2 { font-size: 20px; color: #2d1a24; margin-bottom: 18px; }
+      #__search-results-page h2 span { color: #c595b0; }
+      .sr-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+      .sr-card {
+        background: #fff; border: 1px solid #eeddef; border-radius: 12px;
+        overflow: hidden; transition: box-shadow 0.2s, transform 0.2s;
+        cursor: pointer; display: block;
+      }
+      .sr-card:hover { box-shadow: 0 6px 24px rgba(180,100,140,0.18); transform: translateY(-3px); }
+      .sr-card img { width: 100%; height: 220px; object-fit: cover; }
+      .sr-card-body { padding: 12px; }
+      .sr-card-name {
+        font-size: 13.5px; font-weight: 600; color: #2d1a24;
+        margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+      .sr-card-cat { font-size: 11px; color: #9c6b8a; margin-bottom: 6px; }
+      .sr-card-price { font-size: 14px; font-weight: 700; color: #c0166a; display: flex; align-items: center; gap: 6px; }
+      .sr-card-old { font-size: 11px; color: #aaa; text-decoration: line-through; }
+      .sr-card-disc { font-size: 10.5px; color: #27ae60; font-weight: 700; background: #eafaf1; padding: 1px 5px; border-radius: 4px; }
+    `;
+    document.head.appendChild(style);
+  }
+
+  /* ─── 6. DROPDOWN ─────────────────────────────────────────────────────── */
+  let dropdown = null;
+  let activeIndex = -1;
+  let activeInput = null;
+
+  function positionDropdown(input) {
+    if (!dropdown) return;
+    const rect = input.getBoundingClientRect();
+    // Use fixed coords (already viewport-relative since dropdown is position:fixed)
+    dropdown.style.top   = (rect.bottom + 4) + 'px';
+    dropdown.style.left  = rect.left + 'px';
+    dropdown.style.width = Math.max(rect.width, 280) + 'px';
+  }
+
+  function removeDropdown() {
+    if (dropdown) { dropdown.remove(); dropdown = null; }
+    activeIndex = -1;
+    activeInput = null;
+  }
+
+  function showDropdown(input, results, query) {
+    removeDropdown();
+    activeInput = input;
+    activeIndex = -1;
+
+    dropdown = document.createElement('div');
+    dropdown.id = '__search-dropdown';
+
+    if (results.length === 0) {
+      dropdown.innerHTML = `<div class="sd-empty">No results for "<strong>${escapeHtml(query)}</strong>"</div>`;
+    } else {
+      const top = results.slice(0, 6);
+      const header = document.createElement('div');
+      header.className = 'sd-header';
+      header.textContent = 'Products (' + results.length + ' found)';
+      dropdown.appendChild(header);
+
+      top.forEach((p, i) => {
+        const item = document.createElement('div');
+        item.className = 'sd-item';
+        item.dataset.index = i;
+        item.innerHTML =
+          '<img src="' + p.img + '" alt="' + escapeHtml(p.name) + '" onerror="this.src=\'img/placeholder.png\'">' +
+          '<div class="sd-info">' +
+            '<div class="sd-name">' + highlight(p.name, query) + '</div>' +
+            '<div class="sd-meta">' + escapeHtml(p.category) + ' · ' + escapeHtml(p.fabric || '') + '</div>' +
+            '<div class="sd-meta">' + escapeHtml(p.occasion || '') + '</div>' +
+          '</div>' +
+          '<div>' +
+            '<div class="sd-price">' + escapeHtml(p.price) + '</div>' +
+            '<div class="sd-discount">' + escapeHtml(p.discount) + '</div>' +
+          '</div>';
+
+        // Both mousedown (desktop) and touchend (mobile) trigger navigation
+        item.addEventListener('mousedown', function(e) { e.preventDefault(); goToProduct(p); });
+        item.addEventListener('touchend',  function(e) { e.preventDefault(); goToProduct(p); });
+        dropdown.appendChild(item);
+      });
+
+      if (results.length > 6) {
+        const viewAll = document.createElement('div');
+        viewAll.className = 'sd-viewall';
+        viewAll.textContent = 'View all ' + results.length + ' results →';
+viewAll.addEventListener('mousedown', (e) => {
+  e.preventDefault();
+
+  if (!results.length) return;
+
+  // Get category of first result
+  const category = results[0].category.toLowerCase();
+
+  // Redirect based on category
+  if (category.includes("salwar")) {
+    window.location.href = "product.html";
+  }
+  else if (category.includes("saree")) {
+    window.location.href = "product1.html";
+  }
+  else if (category.includes("gown")) {
+    window.location.href = "product2.html";
+  }
+  else if (category.includes("pent-palazo")) {
+    window.location.href = "product3.html";
+  }
+  else if (category.includes("lehenga")) {
+    window.location.href = "product4.html";
+  }
+  else if (category.includes("Peplum")) {
+    window.location.href = "product5.html";
+  }
+  else if (category.includes("Frock Suit")) {
+    window.location.href = "product6.html";
+  }
+  
+  else if (category.includes("Pakistani Suit ")) {
+    window.location.href = "product7.html";
+  }
+  
+  else if (category.includes("Sharara Suits")) {
+    window.location.href = "product8.html";
+  }
+  
+  else if (category.includes("Plazo Suits")) {
+    window.location.href = "product9.html";
+  }
+  
+  else if (category.includes("Indo-Western")) {
+    window.location.href = "product10.html";
+  }
+  
+  else if (category.includes("Pazami Suits")) {
+    window.location.href = "product11.html";
+  }
+  
+
+  else {
+    // fallback
+    window.location.href = "index.html";
+  }
+});
+        viewAll.addEventListener('touchend',  function(e) { e.preventDefault(); showResultsPage(query, results); });
+        dropdown.appendChild(viewAll);
+      }
+    }
+
+    positionDropdown(input);
+    document.body.appendChild(dropdown);
+  }
+
+  /* ─── 7. RESULTS PAGE ─────────────────────────────────────────────────── */
+  function showResultsPage(query, results) {
+    removeDropdown();
+    var existing = document.getElementById('__search-results-page');
+    if (existing) existing.remove();
+
+    var container =
+      document.querySelector('main') ||
+      document.querySelector('.container') ||
+      document.querySelector('#content') ||
+      document.querySelector('section') ||
+      document.body;
+
+    var page = document.createElement('div');
+    page.id = '__search-results-page';
+
+    var h2 = document.createElement('h2');
+    h2.innerHTML = 'Results for <span>"' + escapeHtml(query) + '"</span> — ' +
+      results.length + ' item' + (results.length !== 1 ? 's' : '') + ' found';
+    var closeBtn = document.createElement('button');
+    closeBtn.textContent = '✕';
+    closeBtn.style.cssText = 'float:right;border:none;background:none;font-size:20px;cursor:pointer;color:#c595b0;';
+    closeBtn.addEventListener('click', function() { page.remove(); });
+    h2.appendChild(closeBtn);
+    page.appendChild(h2);
+
+    var grid = document.createElement('div');
+    grid.className = 'sr-grid';
+    results.forEach(function(p) {
+      var card = document.createElement('div');
+      card.className = 'sr-card';
+      card.innerHTML =
+        '<img src="' + p.img + '" alt="' + escapeHtml(p.name) + '" onerror="this.src=\'img/placeholder.png\'">' +
+        '<div class="sr-card-body">' +
+          '<div class="sr-card-name">' + highlight(p.name, query) + '</div>' +
+          '<div class="sr-card-cat">' + escapeHtml(p.category) + '</div>' +
+          '<div class="sr-card-price">' + escapeHtml(p.price) +
+            '<span class="sr-card-old">' + escapeHtml(p.priceOld) + '</span>' +
+            '<span class="sr-card-disc">' + escapeHtml(p.discount) + '</span>' +
+          '</div>' +
+        '</div>';
+      card.addEventListener('click',    function() { goToProduct(p); });
+      card.addEventListener('touchend', function(e) { e.preventDefault(); goToProduct(p); });
+      grid.appendChild(card);
+    });
+    page.appendChild(grid);
+    container.prepend(page);
+    page.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  /* ─── 8. KEYBOARD NAV ─────────────────────────────────────────────────── */
+  function navigateDropdown(dir) {
+    if (!dropdown) return;
+    var items = dropdown.querySelectorAll('.sd-item');
+    if (!items.length) return;
+    if (activeIndex >= 0) items[activeIndex].classList.remove('active');
+    activeIndex = (activeIndex + dir + items.length) % items.length;
+    items[activeIndex].classList.add('active');
+    items[activeIndex].scrollIntoView({ block: 'nearest' });
+  }
+
+  /* ─── 9. HELPERS ──────────────────────────────────────────────────────── */
+  function escapeHtml(str) {
+    return String(str || '')
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function highlight(text, query) {
+    if (!query) return escapeHtml(text);
+    var escaped = escapeHtml(text);
+    var re = new RegExp('(' + query.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi');
+    return escaped.replace(re, '<mark style="background:#fce4f0;color:#a0107a;border-radius:2px;padding:0 1px">$1</mark>');
+  }
+
+  /* ─── 10. WIRE ONE INPUT ──────────────────────────────────────────────── */
+  function wireInput(input) {
+    var timer;
+
+    input.addEventListener('input', function() {
+      clearTimeout(timer);
+      var q = this.value.trim();
+      if (q.length < 1) { removeDropdown(); return; }
+      var self = this;
+      timer = setTimeout(function() {
+        showDropdown(self, searchProducts(q), q);
+      }, 180);
+    });
+
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'ArrowDown') { e.preventDefault(); navigateDropdown(1); }
+      if (e.key === 'ArrowUp')   { e.preventDefault(); navigateDropdown(-1); }
+      if (e.key === 'Escape')    { removeDropdown(); }
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        var items = dropdown && dropdown.querySelectorAll('.sd-item');
+        if (items && activeIndex >= 0 && items[activeIndex]) {
+          items[activeIndex].dispatchEvent(new MouseEvent('mousedown'));
+        } else {
+          var q = this.value.trim();
+          if (q) showResultsPage(q, searchProducts(q));
+        }
+      }
+    });
+
+    input.addEventListener('focus', function() {
+      var q = this.value.trim();
+      if (q.length >= 1) showDropdown(this, searchProducts(q), q);
+    });
+  }
+
+  /* ─── 11. INIT ────────────────────────────────────────────────────────── */
+  function init() {
+    injectStyles();
+
+    var inputs = findAllSearchInputs();
+    inputs.forEach(wireInput);
+
+    // Close on outside click or touch
+    document.addEventListener('mousedown', function(e) {
+      if (!dropdown) return;
+      if (!dropdown.contains(e.target) && e.target !== activeInput) removeDropdown();
+    });
+    document.addEventListener('touchstart', function(e) {
+      if (!dropdown) return;
+      if (!dropdown.contains(e.target) && e.target !== activeInput) removeDropdown();
+    }, { passive: true });
+
+    // Reposition on resize / scroll
+    window.addEventListener('resize', function() {
+      if (dropdown && activeInput) positionDropdown(activeInput);
+    });
+    window.addEventListener('scroll', function() {
+      if (dropdown && activeInput) positionDropdown(activeInput);
+    }, { passive: true });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+})();
+
+localStorage.setItem("lastPage", window.location.href);
+

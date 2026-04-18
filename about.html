@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us — TrendLilly</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --rose: #c595b0;
+            --deep: #7a2d52;
+            --blush: #faedeb;
+            --plum: #4a1a32;
+            --soft: #f5dde8;
+            --white: #fff;
+            --text: #3d1a28;
+            --gold: #c9a96e;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body {
+            background-color: var(--blush);
+            font-family: 'DM Sans', sans-serif;
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* NAV */
+        nav {
+            position: sticky; top: 0; z-index: 300;
+            background: rgba(255,255,255,0.97);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(197,149,176,0.2);
+            box-shadow: 0 2px 20px rgba(122,45,82,0.08);
+        }
+        .navbar {
+            max-width: 1200px; margin: 0 auto;
+            height: 58px; display: flex; align-items: center;
+            padding: 0 24px; gap: 12px;
+        }
+        .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 22px; font-style: italic; font-weight: 700;
+            color: var(--deep); text-decoration: none; letter-spacing: 1px; flex-shrink: 0;
+        }
+        .logo span { color: var(--rose); }
+        .nav-links { display: flex; align-items: center; gap: 2px; margin: 0 auto; }
+        .nav-links a {
+            text-decoration: none; color: #5a3040;
+            font-size: 12px; font-weight: 700; letter-spacing: 2px;
+            text-transform: uppercase; padding: 6px 14px; border-radius: 20px;
+            transition: background 0.25s, color 0.25s;
+        }
+        .nav-links a:hover, .nav-links a.active { background: var(--soft); color: var(--deep); }
+        .nav-search {
+            display: flex; align-items: center;
+            border: 1.5px solid #ddb8cc; border-radius: 24px;
+            overflow: hidden; background: #fdf6f9; flex-shrink: 0;
+            transition: border-color 0.25s, box-shadow 0.25s;
+        }
+        .nav-search:focus-within { border-color: var(--rose); box-shadow: 0 0 0 3px rgba(197,149,176,0.18); }
+        .nav-search input {
+            border: none; background: transparent;
+            padding: 7px 14px; font-size: 12px; font-family: 'DM Sans', sans-serif;
+            color: var(--text); width: 140px; outline: none;
+        }
+        .nav-search input::placeholder { color: #b89aaa; }
+        .nav-search button {
+            border: none; background: linear-gradient(135deg, var(--rose), var(--deep));
+            color: white; padding: 7px 14px; font-size: 11px; font-weight: 700;
+            letter-spacing: 1px; cursor: pointer; font-family: 'DM Sans', sans-serif;
+            transition: opacity 0.2s;
+        }
+        .nav-search button:hover { opacity: 0.85; }
+        .nav-cart {
+            display: flex; align-items: center; gap: 5px;
+            margin-left: 10px; text-decoration: none;
+            color: var(--deep); font-size: 12px; font-weight: 700;
+            letter-spacing: 0.5px; flex-shrink: 0; padding: 6px 10px;
+            border-radius: 20px; transition: background 0.2s;
+        }
+        .nav-cart:hover { background: var(--soft); }
+        .nav-cart svg { width: 18px; height: 18px; }
+        .hamburger {
+            display: none; flex-direction: column; cursor: pointer; gap: 5px;
+            margin-left: auto; padding: 6px; background: none; border: none;
+        }
+        .hamburger span {
+            display: block; width: 22px; height: 2px; background: var(--deep);
+            border-radius: 3px; transition: all 0.3s;
+        }
+        .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+        .mobile-nav {
+            display: none; flex-direction: column;
+            background: white; border-top: 1px solid var(--soft);
+        }
+        .mobile-nav.open { display: flex; }
+        .mobile-nav a {
+            text-decoration: none; color: var(--text); font-size: 13px;
+            font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+            padding: 14px 24px; border-bottom: 1px solid #f2e0ea;
+            transition: background 0.2s, color 0.2s;
+        }
+        .mobile-nav a:hover { background: #fdf0f6; color: var(--deep); }
+        .mobile-nav .search-row { display: flex; padding: 14px 20px; }
+        .mobile-nav .search-row input {
+            flex: 1; padding: 9px 14px; border: 1.5px solid #ddb8cc;
+            border-radius: 24px 0 0 24px; font-size: 13px; font-family: 'DM Sans', sans-serif;
+            color: var(--text); outline: none; background: #fdf6f9;
+        }
+        .mobile-nav .search-row button {
+            padding: 9px 16px; background: linear-gradient(135deg, var(--rose), var(--deep));
+            color: white; border: none; border-radius: 0 24px 24px 0;
+            font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'DM Sans', sans-serif;
+        }
+       .banner{
+    position: relative;
+    height: 450px;
+    width: 100%;
+    background-size: auto;
+    background-position: center;
+    animation: slider 18s linear infinite;
+    margin-bottom: 500px;
+}
+   .hero-curve {
+            position: absolute; bottom: -1px; left: 0; right: 0;
+            height: 60px; overflow: hidden;
+        }
+        .hero-curve svg { width: 100%; height: 100%; display: block; }
+
+@keyframes slider {
+    0% {
+        background-image: url(img/banner1.png);
+    }
+    33% {
+        background-image: url(img/abo2.png) ;
+    }
+    66% {
+        background-image: url(img/abo3.png);
+    }
+    100% {
+        background-image: url(img/banner1.png);
+    }
+}
+
+    
+        /* SECTION */
+        .section { max-width: 1200px; margin: 0 auto; padding: 80px 24px; }
+        .section-label {
+            font-size: 11px; font-weight: 700; letter-spacing: 4px;
+            text-transform: uppercase; color: var(--rose); margin-bottom: 12px; display: block;
+        }
+        .section-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(32px, 5vw, 60px); font-weight: 400; font-style: italic;
+            color: var(--plum); line-height: 1.1; margin-bottom: 20px;
+        }
+
+        /* STORY */
+        .story-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 70px; align-items: center; }
+        .story-visual { position: relative; }
+        .story-img-frame {
+            width: 100%; aspect-ratio: 4/5;
+            background: linear-gradient(160deg, #c595b0, #7a2d52);
+            border-radius: 4px 60px 4px 60px; position: relative; overflow: hidden;
+            box-shadow: 20px 30px 60px rgba(74,26,50,0.25);
+        }
+        .story-img-frame::before {
+            content: ''; position: absolute; inset: 0;
+            background: url('img/abo2.png') center/cover no-repeat;
+            mix-blend-mode: multiply; opacity: 0.4;
+        }
+        .story-img-inner {
+            position: absolute; inset: 0;
+            display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 12px;
+        }
+        .story-img-icon { font-size: 64px; opacity: 0.9; }
+        .story-badge {
+            position: absolute; bottom: -20px; right: -20px;
+            width: 110px; height: 110px; background: white; border-radius: 50%;
+            box-shadow: 0 10px 40px rgba(74,26,50,0.18);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+        }
+        .story-badge strong {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 36px; font-weight: 600; color: var(--deep); line-height: 1;
+        }
+        .story-badge span {
+            font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+            text-transform: uppercase; color: var(--rose); text-align: center; line-height: 1.3;
+        }
+        .story-accent-line {
+            position: absolute; top: 40px; left: -30px;
+            width: 60px; height: 3px;
+            background: linear-gradient(90deg, var(--gold), var(--rose)); border-radius: 2px;
+        }
+
+        /* BEAUTIFUL STORY TEXT */
+        .opening-quote {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(18px, 2.4vw, 24px); font-style: italic; font-weight: 300;
+            color: var(--deep); line-height: 1.55;
+            border-left: 3px solid var(--rose);
+            padding: 10px 0 10px 20px; margin-bottom: 28px;
+            position: relative;
+        }
+        .opening-quote::before {
+            content: '\201C';
+            font-size: 80px; color: var(--rose); opacity: 0.15;
+            position: absolute; top: -18px; left: -8px;
+            font-family: 'Cormorant Garamond', serif; line-height: 1; pointer-events: none;
+        }
+        .story-text p {
+            font-size: clamp(14px, 1.6vw, 15.5px); line-height: 1.95;
+            color: #5a3040; margin-bottom: 18px; font-weight: 300;
+        }
+        .story-text p:last-of-type { margin-bottom: 0; }
+        .highlight-word { color: var(--deep); font-weight: 500; font-style: italic; }
+        .text-tag {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: var(--soft); color: var(--deep);
+            font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+            text-transform: uppercase; padding: 6px 16px; border-radius: 20px; margin-top: 24px;
+        }
+
+        /* DIVIDER */
+        .divider { display: flex; align-items: center; gap: 16px; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .divider-line { flex: 1; height: 1px; background: rgba(197,149,176,0.3); }
+        .divider-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--rose); }
+
+        /* VALUES */
+        .values-bg {
+            background: linear-gradient(135deg, #fff8fb, #faedeb);
+            border-top: 1px solid rgba(197,149,176,0.15);
+            border-bottom: 1px solid rgba(197,149,176,0.15);
+        }
+        .values-header { text-align: center; margin-bottom: 56px; }
+        .values-subtitle {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(15px, 1.8vw, 18px); font-style: italic;
+            color: #9a6080; max-width: 520px; margin: 10px auto 0; line-height: 1.7;
+        }
+        .values-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+        .value-card {
+            background: white; border-radius: 24px; padding: 38px 28px; text-align: center;
+            box-shadow: 0 4px 30px rgba(122,45,82,0.07);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative; overflow: hidden;
+            animation: fadeUp 0.7s ease both;
+        }
+        .value-card:nth-child(1) { animation-delay: 0.1s; }
+        .value-card:nth-child(2) { animation-delay: 0.25s; }
+        .value-card:nth-child(3) { animation-delay: 0.4s; }
+        .value-card:nth-child(4) { animation-delay: 0.55s; }
+        .value-card:nth-child(5) { animation-delay: 0.7s; }
+        .value-card:nth-child(6) { animation-delay: 0.85s; }
+        .value-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0;
+            height: 3px; background: linear-gradient(90deg, var(--rose), var(--deep));
+        }
+        .value-card:hover { transform: translateY(-6px); box-shadow: 0 16px 50px rgba(122,45,82,0.15); }
+        .value-icon { font-size: 38px; margin-bottom: 16px; display: block; }
+        .value-card h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 21px; font-weight: 600; font-style: italic;
+            color: var(--deep); margin-bottom: 10px;
+        }
+        .value-card p { font-size: 13.5px; color: #7a5065; line-height: 1.7; font-weight: 300; }
+
+        /* STATS */
+        .stats-strip { background: linear-gradient(135deg, var(--plum), var(--deep)); padding: 60px 24px; }
+        .stats-inner {
+            max-width: 1000px; margin: 0 auto;
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; text-align: center;
+        }
+        .stat-num {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(38px, 5vw, 56px); font-weight: 300; font-style: italic;
+            color: white; line-height: 1; margin-bottom: 6px;
+        }
+        .stat-num span { color: var(--rose); }
+        .stat-label { font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(255,255,255,0.55); }
+
+        /* PROMISE */
+        .promise-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 70px; align-items: center; }
+        .promise-img-frame {
+            width: 100%; aspect-ratio: 3/4;
+            border-radius: 60px 4px 60px 4px;
+            background: linear-gradient(160deg, #f5dde8, #c595b0 60%, #7a2d52);
+            position: relative; overflow: hidden;
+            box-shadow: -20px 30px 60px rgba(74,26,50,0.2);
+        }
+        .promise-img-frame::after {
+            content: ''; position: absolute; inset: 0;
+            background: url('img/im59.png') center/cover no-repeat; opacity: 0.35;
+        }
+        .promise-img-inner {
+            position: absolute; inset: 0; z-index: 2;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .promise-img-quote {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(17px, 2.2vw, 26px); font-style: italic; font-weight: 300;
+            color: white; text-align: center; padding: 28px;
+            line-height: 1.5; text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+        }
+        .promise-intro {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(17px, 2.2vw, 22px); font-style: italic;
+            color: var(--deep); line-height: 1.6; margin-bottom: 28px; font-weight: 400;
+        }
+        .promise-list { list-style: none; }
+        .promise-list li {
+            display: flex; align-items: flex-start; gap: 16px;
+            padding: 16px 0; border-bottom: 1px solid rgba(197,149,176,0.2);
+            font-size: clamp(13px, 1.5vw, 15px); color: #5a3040; line-height: 1.65;
+        }
+        .promise-list li:last-child { border-bottom: none; }
+        .promise-check {
+            width: 28px; height: 28px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--rose), var(--deep));
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; margin-top: 2px; color: white; font-size: 13px;
+        }
+
+        /* TEAM */
+        .team-header { text-align: center; margin-bottom: 52px; }
+        .team-sub {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(15px, 1.8vw, 18px); font-style: italic;
+            color: #9a6080; max-width: 480px; margin: 10px auto 0; line-height: 1.6;
+        }
+        .team-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+        .team-card { text-align: center; animation: fadeUp 0.7s ease both; }
+        .team-card:nth-child(1) { animation-delay: 0.1s; }
+        .team-card:nth-child(2) { animation-delay: 0.25s; }
+        .team-card:nth-child(3) { animation-delay: 0.4s; }
+        .team-avatar {
+            width: 110px; height: 110px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--soft), var(--rose));
+            margin: 0 auto 16px;
+            display: flex; align-items: center; justify-content: center; font-size: 44px;
+            box-shadow: 0 6px 24px rgba(122,45,82,0.15); transition: transform 0.3s ease;
+        }
+        .team-card:hover .team-avatar { transform: scale(1.06); }
+        .team-card h4 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 22px; font-weight: 600; font-style: italic; color: var(--deep); margin-bottom: 4px;
+        }
+        .team-card .role {
+            font-size: 10px; font-weight: 700; letter-spacing: 2px;
+            text-transform: uppercase; color: var(--rose); margin-bottom: 10px;
+        }
+        .team-card p { font-size: 13px; color: #7a5065; line-height: 1.65; font-weight: 300; }
+
+        /* CTA */
+        .cta-banner {
+            background: linear-gradient(135deg, #f5dde8 0%, #faedeb 100%);
+            border-top: 1px solid rgba(197,149,176,0.25);
+            border-bottom: 1px solid rgba(197,149,176,0.25);
+            padding: 80px 24px; text-align: center;
+        }
+        .cta-banner h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(30px, 5vw, 60px); font-weight: 300; font-style: italic;
+            color: var(--plum); margin-bottom: 16px;
+        }
+        .cta-banner p {
+            font-size: clamp(14px, 1.8vw, 16px); color: #7a5065;
+            max-width: 480px; margin: 0 auto 36px; font-weight: 300; line-height: 1.7;
+        }
+        .cta-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--rose), var(--deep));
+            color: white; text-decoration: none; padding: 16px 40px;
+            border-radius: 50px; font-size: 13px; font-weight: 700;
+            letter-spacing: 2px; text-transform: uppercase;
+            box-shadow: 0 8px 30px rgba(122,45,82,0.3);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 40px rgba(122,45,82,0.4); }
+
+        /* FOOTER */
+        footer { background: var(--plum); padding: 40px 24px; color: rgba(255,255,255,0.8); text-align: center; font-size: 13px; }
+        .footer-brand {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 32px; font-style: italic; color: white; letter-spacing: 3px; margin-bottom: 10px;
+        }
+        footer p { margin: 5px 0; opacity: 0.7; font-size: 12px; letter-spacing: 1px; }
+        footer strong { color: var(--rose); }
+        .footer-divider { width: 40px; height: 1px; background: rgba(197,149,176,0.4); margin: 16px auto; }
+
+        /* ===== MOBILE RESPONSIVE ===== */
+        @media (max-width: 960px) {
+            .nav-links, .nav-search { display: none; }
+            .hamburger { display: flex; }
+            .nav-cart { margin-left: auto; }
+
+            .story-grid { grid-template-columns: 1fr; gap: 0; }
+            .story-visual { max-width: 400px; width: 100%; margin: 0 auto 64px; }
+            .story-accent-line { left: 0; top: -16px; }
+            .story-badge { bottom: -16px; right: 0; }
+
+            .values-grid { grid-template-columns: 1fr 1fr; gap: 20px; }
+            .stats-inner { grid-template-columns: repeat(2, 1fr); gap: 28px; }
+
+            .promise-grid { grid-template-columns: 1fr; gap: 0; }
+            .promise-img-frame { max-width: 380px; margin: 0 auto 52px; aspect-ratio: 4/3; border-radius: 40px 4px 40px 4px; }
+
+            .team-grid { grid-template-columns: 1fr 1fr; gap: 20px; }
+        }
+
+        @media (max-width: 600px) {
+            .section { padding: 56px 18px; }
+
+            /* Hero */
+            .hero { min-height: 400px; }
+            .hero-inner { padding: 56px 18px; }
+            .hero-label { font-size: 10px; letter-spacing: 2.5px; }
+            .hero-scroll { margin-top: 28px; }
+
+            /* Story */
+            .story-visual { max-width: 100%; margin: 0 0 52px; }
+            .story-img-frame { border-radius: 4px 40px 4px 40px; }
+            .story-badge { width: 86px; height: 86px; right: 4px; bottom: -12px; }
+            .story-badge strong { font-size: 26px; }
+            .story-badge span { font-size: 8.5px; }
+            .story-accent-line { display: none; }
+            .opening-quote { font-size: 17px; padding-left: 15px; margin-bottom: 20px; }
+            .opening-quote::before { font-size: 56px; }
+            .story-text p { font-size: 14px; line-height: 1.85; margin-bottom: 14px; }
+            .text-tag { font-size: 10px; padding: 5px 13px; }
+
+            /* Values */
+            .values-grid { grid-template-columns: 1fr; gap: 14px; }
+            .value-card { padding: 28px 22px; }
+
+            /* Stats */
+            .stats-strip { padding: 44px 18px; }
+            .stats-inner { grid-template-columns: 1fr 1fr; gap: 20px; }
+            .stat-num { font-size: 36px; }
+            .stat-label { font-size: 10px; letter-spacing: 1.5px; }
+
+            /* Promise */
+            .promise-img-frame { display: none; }
+            .promise-intro { font-size: 17px; }
+
+            /* Team */
+            .team-grid { grid-template-columns: 1fr; max-width: 300px; margin: 0 auto; }
+            .team-avatar { width: 96px; height: 96px; font-size: 38px; }
+
+            /* CTA */
+            .cta-banner { padding: 56px 18px; }
+            .cta-btn { padding: 14px 28px; font-size: 12px; }
+
+            /* Footer */
+            footer { padding: 30px 18px; }
+            .footer-brand { font-size: 24px; }
+        }
+
+        /* Restore promise image on slightly wider phones */
+        @media (min-width: 480px) and (max-width: 600px) {
+            .promise-img-frame {
+                display: block; max-width: 280px; margin: 0 auto 36px;
+                aspect-ratio: 4/3; border-radius: 30px 4px 30px 4px;
+            }
+        }
+
+        /* Scroll reveal */
+        .reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.75s ease, transform 0.75s ease; }
+        .reveal.visible { opacity: 1; transform: none; }
+    </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+    <div class="navbar">
+        <a class="logo">TrendLilly<span>.</span></a>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="about.html" class="active">About</a>
+            <a href="variety.html">Variety</a>
+            <a href="contact.html">Contact</a>
+        </div>
+        <div class="nav-search">
+            <input placeholder="Search clothes…" type="text">
+            <button>Search</button>
+        </div>
+        <a href="mycart.html" class="nav-cart">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.35 6.15A1 1 0 007.6 20h9.8a1 1 0 00.97-.77L19 13M7 13H5.4M10 21a1 1 0 100-2 1 1 0 000 2zm7 0a1 1 0 100-2 1 1 0 000 2z"/>
+            </svg>
+            Cart
+        </a>
+        <button class="hamburger" id="hamburgerBtn" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+    <div class="mobile-nav" id="mobileNav">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="variety.html">Variety</a>
+        <a href="contact.html">Contact</a>
+        <div class="search-row">
+            <input placeholder="Search clothes…" type="text">
+            <button>Search</button>
+        </div>
+    </div>
+</nav>
+
+<!-- HERO -->
+
+<div class="banner">
+
+    <div class="banner-content">
+         <div class="hero-curve">
+        <svg viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0,60 C360,0 1080,0 1440,60 L1440,60 L0,60 Z" fill="#faedeb"/>
+        </svg>
+    </div>
+
+    </div><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<!-- OUR STORY -->
+<div id="story" class="section">
+    <div class="story-grid">
+        <div class="story-visual reveal">
+            <div class="story-accent-line"></div>
+            <div class="story-img-frame">
+                <div class="story-img-inner">
+                    <div class="story-img-icon">🌸</div>
+                </div>
+            </div>
+            <div class="story-badge">
+                <strong>2026</strong>
+                <span>Founded<br>with Love</span>
+            </div>
+        </div>
+
+        <div class="story-text reveal">
+            <span class="section-label">Our Story</span>
+            <h2 class="section-title">Born from a Passion<br>for Fashion</h2>
+
+            <div class="opening-quote">
+                Every great style begins with a single, fearless choice — to wear what makes you feel <em>alive</em>.
+            </div>
+
+            <p>
+                TrendLilly Boutique was born from a deep passion for fashion and an even deeper dream — to help every woman discover her most <span class="highlight-word">confident, radiant self</span> through the clothes she wears. We believe clothing is never just fabric and thread; it is the language of your identity.
+            </p>
+            <p>
+                Our journey began with one powerful idea: weaving modern trends into timeless elegance. We set out to build a boutique where every piece feels both <span class="highlight-word">effortlessly beautiful</span> and deeply personal — designed to carry you through every season, every milestone, and every ordinary Tuesday turned extraordinary.
+            </p>
+            <p>
+                From breezy everyday wear to stunning occasion pieces, every design we curate is chosen with care, intention, and love. TrendLilly grows with the grace and warmth of our community — and we are forever inspired by the women who wear our story.
+            </p>
+
+            <span class="text-tag">🌸 Crafted for Her. Always.</span>
+        </div>
+    </div>
+</div>
+
+<div class="divider"><div class="divider-line"></div><div class="divider-dot"></div><div class="divider-line"></div></div>
+
+<!-- VALUES -->
+<div class="values-bg">
+    <div class="section">
+        <div class="values-header reveal">
+            <span class="section-label">What We Stand For</span>
+            <h2 class="section-title">Our Core Values</h2>
+            <p class="values-subtitle">Every stitch, every silhouette, every style — guided by principles we hold close to our heart.</p>
+        </div>
+        <div class="values-grid">
+            <div class="value-card">
+                <span class="value-icon">💎</span>
+                <h3>Quality First</h3>
+                <p>Every piece is hand-picked for exceptional craftsmanship, luxurious feel, and lasting beauty. We never compromise on quality.</p>
+            </div>
+            <div class="value-card">
+                <span class="value-icon">🌸</span>
+                <h3>Feminine Elegance</h3>
+                <p>Our collections celebrate femininity in all its forms — graceful, bold, subtle, or daring. Style should feel like an extension of your soul.</p>
+            </div>
+            <div class="value-card">
+                <span class="value-icon">✨</span>
+                <h3>Self-Expression</h3>
+                <p>Fashion is your voice. We curate pieces that help you tell your story — powerfully, authentically, and without apology.</p>
+            </div>
+            <div class="value-card">
+                <span class="value-icon">🤍</span>
+                <h3>Customer Love</h3>
+                <p>Our customers are at the heart of everything we do. Your satisfaction, comfort, and joy drive every single decision we make.</p>
+            </div>
+            <div class="value-card">
+                <span class="value-icon">💐</span>
+                <h3>Thoughtful Curation</h3>
+                <p>We don't just sell clothes — we tell stories through style. Each collection blends timeless beauty with contemporary trends.</p>
+            </div>
+            <div class="value-card">
+                <span class="value-icon">🌿</span>
+                <h3>Affordability</h3>
+                <p>Luxury should be accessible. Every woman deserves to feel beautiful and confident — without compromise, without barriers.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-strip">
+    <div class="stats-inner">
+        <div class="reveal"><div class="stat-num">500<span>+</span></div><div class="stat-label">Happy Customers</div></div>
+        <div class="reveal"><div class="stat-num">120<span>+</span></div><div class="stat-label">Styles Available</div></div>
+        <div class="reveal"><div class="stat-num">3<span>x</span></div><div class="stat-label">Collections / Year</div></div>
+        <div class="reveal"><div class="stat-num">100<span>%</span></div><div class="stat-label">Passion-Driven</div></div>
+    </div>
+</div>
+
+<!-- PROMISE -->
+<div class="section">
+    <div class="promise-grid">
+        <div class="reveal">
+            <span class="section-label">Our Promise</span>
+            <h2 class="section-title">What You Can Always<br>Expect from Us</h2>
+            <p class="promise-intro">At TrendLilly, we are more than a boutique — we are a sisterhood built on trust, style, and genuine care for every woman who chooses us.</p>
+            <ul class="promise-list">
+                <li>
+                    <span class="promise-check">✓</span>
+                    <span><strong>Carefully selected collections</strong> — every piece is reviewed for quality, style, and versatility before it ever reaches you.</span>
+                </li>
+                <li>
+                    <span class="promise-check">✓</span>
+                    <span><strong>Honest, transparent shopping</strong> — no hidden charges, no surprises. Just beautiful clothes and warm, clear communication.</span>
+                </li>
+                <li>
+                    <span class="promise-check">✓</span>
+                    <span><strong>Fashion for every occasion</strong> — from daily ease to your most special celebrations, we have something perfect waiting.</span>
+                </li>
+                <li>
+                    <span class="promise-check">✓</span>
+                    <span><strong>A joyful shopping experience</strong> — simple, inspiring, and warm. Because finding something beautiful should feel as lovely as wearing it.</span>
+                </li>
+                <li>
+                    <span class="promise-check">✓</span>
+                    <span><strong>Ever-evolving style</strong> — we stay ahead of trends so you always have something fresh, exciting, and entirely you to discover.</span>
+                </li>
+            </ul>
+        </div>
+        <div class="promise-img-frame reveal">
+            <div class="promise-img-inner">
+                <div class="promise-img-quote">"Fashion is the armor<br>to survive everyday life."</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="divider"><div class="divider-line"></div><div class="divider-dot"></div><div class="divider-line"></div></div>
+
+<!-- TEAM -->
+<div class="section">
+    <div class="team-header reveal">
+        <span class="section-label">The People Behind TrendLilly</span>
+        <h2 class="section-title">Meet Our Team</h2>
+        <p class="team-sub">Passionate people who love fashion as much as they love the women who wear it.</p>
+    </div>
+    <div class="team-grid">
+        <div class="team-card">
+            <div class="team-avatar">👩‍🎨</div>
+            <h4>Lilly</h4>
+            <div class="role">Founder & Creative Director</div>
+            <p>The heart and soul of TrendLilly. Lilly brings a lifelong love of fashion and an eye for timeless elegance to every collection.</p>
+        </div>
+        <div class="team-card">
+            <div class="team-avatar">👗</div>
+            <h4>Style Team</h4>
+            <div class="role">Curation & Styling</div>
+            <p>Our dedicated stylists handpick every piece, ensuring it meets TrendLilly's standards of quality, beauty, and modern flair.</p>
+        </div>
+        <div class="team-card">
+            <div class="team-avatar">💌</div>
+            <h4>Customer Care</h4>
+            <div class="role">Experience & Support</div>
+            <p>Always here to help you find your perfect outfit and ensure your TrendLilly experience is nothing short of delightful.</p>
+        </div>
+    </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-banner">
+    <h2 class="reveal">Ready to Find Your<br>Perfect Look?</h2>
+    <p class="reveal">Explore our latest collections and discover pieces designed to make you feel confident, elegant, and beautifully you.</p>
+    <a href="variety.html" class="cta-btn">Shop the Collection</a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-brand">TrendLilly</div>
+    <div class="footer-divider"></div>
+    <p>&copy; 2026 TrendLilly &nbsp;|&nbsp; Made with ♥</p>
+    <p>Follow us on Instagram: <strong>Trendlilly_@26</strong></p>
+</footer>
+
+<script>
+    function toggleMenu() {
+        document.getElementById('hamburgerBtn').classList.toggle('open');
+        document.getElementById('mobileNav').classList.toggle('open');
+    }
+
+    /* Intersection Observer scroll reveal */
+    const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                e.target.classList.add('visible');
+                io.unobserve(e.target);
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+</body>
+</html>

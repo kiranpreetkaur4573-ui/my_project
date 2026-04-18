@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>My Wishlist — Fashion.In</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --rose:#c595b0;
+  --deep:#7a2d52;
+  --blush:#faedeb;
+  --plum:#4a1a32;
+  --soft:#f5dde8;
+  --white:#fff;
+  --text:#3d1a28;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#faedeb;font-family:'DM Sans',Arial,sans-serif;min-height:100vh;}
+
+/* ── TOP BAR ── */
+.top-bar{background:var(--plum);color:rgba(255,255,255,.88);text-align:center;font-size:11px;letter-spacing:2.5px;padding:8px 16px;text-transform:uppercase;overflow:hidden;}
+.top-bar-inner{display:inline-block;white-space:nowrap;animation:marquee 22s linear infinite;}
+@keyframes marquee{0%{transform:translateX(40vw);}100%{transform:translateX(-100%);}}
+
+/* ── NAVBAR ── */
+nav{position:sticky;top:0;z-index:300;background:rgba(255,255,255,.97);backdrop-filter:blur(12px);border-bottom:1px solid rgba(197,149,176,.2);box-shadow:0 2px 20px rgba(122,45,82,.08);}
+.navbar{max-width:1400px;margin:0 auto;height:60px;display:flex;align-items:center;padding:0 24px;gap:12px;}
+.nav-left{display:flex;align-items:center;gap:14px;flex-shrink:0;}
+.back-arrow{color:var(--plum);font-size:20px;text-decoration:none;display:flex;align-items:center;}
+.logo{font-family:'Cormorant Garamond',serif;font-size:22px;font-style:italic;font-weight:700;color:var(--deep);text-decoration:none;letter-spacing:1px;}
+.logo span{color:var(--rose);}
+.nav-links{display:flex;align-items:center;gap:2px;margin:0 auto;}
+.nav-links a{text-decoration:none;color:#5a3040;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:6px 14px;border-radius:20px;transition:background .25s,color .25s;white-space:nowrap;}
+.nav-links a:hover,.nav-links a.active{background:var(--soft);color:var(--deep);}
+.nav-cart{display:flex;align-items:center;gap:5px;margin-left:10px;text-decoration:none;color:var(--deep);font-size:12px;font-weight:700;flex-shrink:0;padding:6px 10px;border-radius:20px;transition:background .2s;}
+.nav-cart:hover{background:var(--soft);}
+.nav-cart i{font-size:18px;}
+
+/* ── PAGE HERO ── */
+.page-hero{text-align:center;padding:52px 20px 36px;position:relative;}
+.page-hero::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(197,149,176,.12),rgba(122,45,82,.07));pointer-events:none;}
+.page-hero .heart-icon{font-size:42px;color:var(--rose);display:block;margin-bottom:14px;animation:heartbeat 2.4s ease-in-out infinite;}
+@keyframes heartbeat{0%,100%{transform:scale(1);}14%{transform:scale(1.18);}28%{transform:scale(1);}42%{transform:scale(1.12);}70%{transform:scale(1);}}
+.page-hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(30px,6vw,52px);font-style:italic;color:var(--plum);letter-spacing:2px;margin-bottom:8px;}
+.page-hero p{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--rose);}
+
+/* ── DIVIDER ── */
+.divider{display:flex;align-items:center;gap:16px;margin:0 20px 32px;}
+.divider-line{flex:1;height:1px;background:linear-gradient(to right,transparent,var(--rose),transparent);}
+.divider-diamond{width:8px;height:8px;background:var(--rose);transform:rotate(45deg);flex-shrink:0;}
+
+/* ── META + TOOLBAR ── */
+.wl-meta{text-align:center;margin-bottom:20px;}
+.wl-count{display:inline-block;background:var(--deep);color:white;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:6px 20px;border-radius:30px;}
+.wl-toolbar{display:flex;justify-content:flex-end;padding:0 24px;margin-bottom:18px;}
+.btn-clear{background:none;border:1.5px solid #ddb8cc;color:#9a7080;padding:7px 18px;border-radius:24px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;}
+.btn-clear:hover{border-color:var(--rose);color:var(--deep);background:var(--soft);}
+
+/* ── GRID ── */
+.wl-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;padding:0 24px;margin-bottom:60px;}
+
+/* ── PRODUCT CARD ── */
+.wl-card{background:white;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(122,45,82,.08);border:2px solid transparent;transition:.35s;position:relative;animation:fadeUp .45s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+.wl-card:hover{transform:translateY(-6px);box-shadow:0 14px 40px rgba(122,45,82,.18);border-color:var(--rose);}
+.card-img-wrap{position:relative;overflow:hidden;height:320px;}
+.card-img-wrap img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .45s;}
+.wl-card:hover .card-img-wrap img{transform:scale(1.05);}
+.card-badge{position:absolute;top:12px;left:12px;background:var(--deep);color:white;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;border-radius:20px;}
+.remove-btn{position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.92);border:1.5px solid #e8c8d8;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#e04060;font-size:14px;transition:background .2s,transform .2s;box-shadow:0 2px 8px rgba(122,45,82,.12);}
+.remove-btn:hover{background:#fff0f4;transform:scale(1.12) rotate(12deg);}
+.card-body{padding:14px 16px 18px;}
+.card-category{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--rose);margin-bottom:5px;}
+.card-name{font-family:'Cormorant Garamond',serif;font-size:17px;font-style:italic;color:var(--plum);margin-bottom:4px;line-height:1.3;}
+.card-fabric{font-size:11px;color:#9a7080;margin-bottom:10px;}
+.card-price-row{display:flex;align-items:baseline;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.card-price{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--deep);}
+.card-old{font-size:13px;color:#b09098;text-decoration:line-through;}
+.card-disc{font-size:10px;font-weight:700;letter-spacing:1px;color:white;background:linear-gradient(135deg,#e07090,var(--deep));padding:2px 8px;border-radius:20px;}
+.card-actions{display:flex;gap:8px;}
+.btn-bag{flex:1;padding:10px;border:none;background:linear-gradient(135deg,var(--rose),var(--deep));color:white;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-radius:24px;cursor:pointer;transition:opacity .2s,transform .2s;box-shadow:0 4px 14px rgba(122,45,82,.25);}
+.btn-bag:hover{opacity:.88;transform:translateY(-1px);}
+
+/* ── EMPTY STATE ── */
+.empty-state{text-align:center;padding:80px 20px 100px;display:none;}
+.empty-state.show{display:block;}
+.empty-heart{font-size:64px;color:#ddb8cc;display:block;margin-bottom:20px;animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:.5;transform:scale(.96);}50%{opacity:1;transform:scale(1.04);}}
+.empty-state h2{font-family:'Cormorant Garamond',serif;font-size:32px;font-style:italic;color:var(--plum);margin-bottom:10px;}
+.empty-state p{font-size:13px;color:#9a7080;margin-bottom:28px;letter-spacing:.5px;}
+.btn-shop{display:inline-block;padding:13px 36px;background:linear-gradient(135deg,var(--rose),var(--deep));color:white;border-radius:30px;text-decoration:none;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;box-shadow:0 6px 20px rgba(122,45,82,.28);transition:opacity .2s,transform .2s;}
+.btn-shop:hover{opacity:.88;transform:translateY(-2px);}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--plum);color:white;padding:12px 28px;border-radius:30px;font-size:13px;font-weight:600;letter-spacing:.5px;z-index:10000;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── FOOTER ── */
+footer{background:var(--plum);padding:32px 20px;color:rgba(255,255,255,.8);text-align:center;font-size:13px;}
+.footer-brand{font-family:'Cormorant Garamond',serif;font-size:28px;font-style:italic;color:white;letter-spacing:3px;margin-bottom:10px;}
+footer p{margin:5px 0;opacity:.75;font-size:12px;letter-spacing:1px;}
+footer strong{color:var(--rose);}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1100px){.wl-grid{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:768px){.wl-grid{grid-template-columns:repeat(2,1fr);gap:14px;padding:0 14px;}.card-img-wrap{height:240px;}.nav-links{display:none;}}
+@media(max-width:500px){.wl-grid{gap:10px;padding:0 10px;}.card-img-wrap{height:180px;}.card-body{padding:10px 12px 14px;}.card-name{font-size:14px;}.card-price{font-size:18px;}}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <span class="top-bar-inner">✦ Free shipping on orders above ₹999 &nbsp;|&nbsp; New arrivals every Friday &nbsp;|&nbsp; Exclusive designs &nbsp;|&nbsp; 100% authentic fabric ✦</span>
+</div>
+
+<nav>
+  <div class="navbar">
+    <div class="nav-left">
+      <a href="javascript:history.back()" class="back-arrow"><i class="fa-solid fa-arrow-left"></i></a>
+      <a href="index.html" class="logo">Fashion<span>.In</span></a>
+    </div>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="product8.html">Palazo Suits</a>
+      <a href="product4.html">Lehengas</a>
+      <a href="product1.html">Sarees</a>
+    </div>
+    <a href="mycart.html"       class="nav-cart" style="margin-left:auto;"><i class="fa-solid fa-cart-shopping"></i></a>
+    <a href="btnWishlist.html"  class="nav-cart active" style="color:var(--rose);margin-left:0;"><i class="fa-solid fa-heart"></i></a>
+  </div>
+</nav>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <i class="fa-solid fa-heart heart-icon"></i>
+  <h1>My Wishlist</h1>
+  <p>Pieces you've fallen in love with</p>
+</div>
+
+<div class="divider"><div class="divider-line"></div><div class="divider-diamond"></div><div class="divider-line"></div></div>
+
+<div class="wl-meta"><span class="wl-count" id="wlCount">0 items saved</span></div>
+<div class="wl-toolbar"><button class="btn-clear" id="btnClearAll"><i class="fa-regular fa-trash-can" style="margin-right:6px;"></i>Clear All</button></div>
+
+<div class="wl-grid" id="wlGrid"></div>
+
+<div class="empty-state" id="emptyState">
+  <i class="fa-regular fa-heart empty-heart"></i>
+  <h2>Your wishlist is empty</h2>
+  <p>Browse our collections and tap the ♡ heart on any product to save it here.</p>
+  <a href="product8.html" class="btn-shop"><i class="fa-solid fa-bag-shopping" style="margin-right:8px;"></i>Shop Now</a>
+</div>
+
+<footer>
+  <div class="footer-brand">Trendlilly</div>
+  <p>&copy; 2026 TrendLilly &nbsp;|&nbsp; Organized by me</p>
+  <p>Follow us on Instagram: <strong>Trendlilly_@26</strong></p>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ── Full product catalogue (mirrors product8.html) ────── */
+const products = {
+  1:  { name:"White Sharara Suit",       category:"Featured Pick", img:"img/shar1.png",   color:"White",    price:"₹3,000", priceOld:"₹4,000", discount:"25% OFF", fabric:"Net",       occasion:"Festive / Party",  work:"Embroidery"    },
+  2:  { name:"Sky Blue Sharara Suit",    category:"Featured Pick", img:"img/shar19.png",  color:"Sky Blue", price:"₹3,002", priceOld:"₹3,950", discount:"24% OFF", fabric:"Georgette", occasion:"Casual / Day",     work:"Chikankari"    },
+  3:  { name:"Yellow Sharara Suit",      category:"Featured Pick", img:"img/shaar16.png", color:"Yellow",   price:"₹3,003", priceOld:"₹3,900", discount:"23% OFF", fabric:"Silk Blend",occasion:"Wedding / Party",  work:"Zari Work"     },
+  4:  { name:"Black Sharara Suit",       category:"Featured Pick", img:"img/shar4.png",   color:"Black",    price:"₹3,000", priceOld:"₹4,000", discount:"25% OFF", fabric:"Crepe",     occasion:"Casual / Puja",    work:"Digital Print" },
+  5:  { name:"Light Peach Sharara Suit", category:"Featured Pick", img:"img/shar5.png",   color:"Grey",     price:"₹3,002", priceOld:"₹3,950", discount:"24% OFF", fabric:"Organza",   occasion:"Office / Casual",  work:"Embroidery"    },
+  6:  { name:"Maroon Sharara Suit",      category:"Featured Pick", img:"img/shar20.png",  color:"Maroon",   price:"₹3,000", priceOld:"₹4,000", discount:"25% OFF", fabric:"Banarasi",  occasion:"Festive",          work:"Woven"         },
+  7:  { name:"Peach Sharara Suit",       category:"Collection",    img:"img/shar7.png",   color:"Lavender", price:"₹3,003", priceOld:"₹3,900", discount:"23% OFF", fabric:"Net",       occasion:"Puja / Casual",    work:"Block Print"   },
+  8:  { name:"Maroon Sharara Suit",      category:"Collection",    img:"img/shar8.png",   color:"Red",      price:"₹3,000", priceOld:"₹4,000", discount:"25% OFF", fabric:"Silk",      occasion:"Daily Wear",       work:"Embroidery"    },
+  9:  { name:"BabyPink Sharara Suit",    category:"Collection",    img:"img/shar9.png",   color:"Pink",     price:"₹3,002", priceOld:"₹3,950", discount:"24% OFF", fabric:"Net",       occasion:"Wedding / Party",  work:"Embroidery"    },
+  10: { name:"Yellow Sharara Suit",      category:"Collection",    img:"img/shar10.png",  color:"Yellow",   price:"₹3,003", priceOld:"₹3,900", discount:"23% OFF", fabric:"Silk",      occasion:"Wedding / Bridal", work:"Heavy Zari"    },
+  11: { name:"Pale Green Sharara Suit",  category:"Collection",    img:"img/shar11.png",  color:"Green",    price:"₹3,000", priceOld:"₹4,000", discount:"25% OFF", fabric:"Georgette", occasion:"Party / Festive",  work:"Embroidery"    },
+  12: { name:"Off White Sharara Suit",   category:"Collection",    img:"img/shar12.png",  color:"Off White",price:"₹3,002", priceOld:"₹3,950", discount:"24% OFF", fabric:"Silk",      occasion:"Casual / Office",  work:"Printed"       },
+  13: { name:"Baby Pink Sharara Suit",   category:"Collection",    img:"img/shar13.png",  color:"Rani Pink",price:"₹3,003", priceOld:"₹3,900", discount:"23% OFF", fabric:"Lawn",      occasion:"Festive",          work:"Embroidery"    },
+  14: { name:"Maroon Sharara Suit",      category:"Collection",    img:"img/shar14.png",  color:"Maroon",   price:"₹3,000", priceOld:"₹4,000", discount:"25% OFF", fabric:"Chiffon",   occasion:"Casual / Daily",   work:"Thread Work"   },
+  15: { name:"White Sharara Suit",       category:"Collection",    img:"img/shar15.png",  color:"White",    price:"₹3,002", priceOld:"₹3,950", discount:"24% OFF", fabric:"Chiffon",   occasion:"Festive / Puja",   work:"Block Print"   },
+  16: { name:"Magenta Sharara Suit",     category:"Collection",    img:"img/shar16.png",  color:"Magenta",  price:"₹3,003", priceOld:"₹3,900", discount:"23% OFF", fabric:"Art Silk",  occasion:"Party / Festive",  work:"Embroidery"    },
+  17: { name:"Black Sharara Suit",       category:"Collection",    img:"img/shar17.png",  color:"Black",    price:"₹3,000", priceOld:"₹4,000", discount:"25% OFF", fabric:"Net",       occasion:"Wedding / Party",  work:"Woven Zari"    },
+  18: { name:"Yellow Sharara Suit",      category:"Collection",    img:"img/shar18.png",  color:"Yellow",   price:"₹3,002", priceOld:"₹3,950", discount:"24% OFF", fabric:"Cotton",    occasion:"Casual",           work:"Digital Print" },
+};
+
+/* ── localStorage key — MUST match what product8.html uses ── */
+const LS_KEY = 'wishlist_ids';
+
+function getIds()      { try { return JSON.parse(localStorage.getItem(LS_KEY)) || []; } catch { return []; } }
+function saveIds(ids)  { localStorage.setItem(LS_KEY, JSON.stringify(ids)); }
+function removeId(id)  { saveIds(getIds().filter(i => i !== id)); }
+
+/* ── Cart helper ── */
+function addToCart(p, id) {
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+  cart.push({ id:Date.now(), productId:id, name:p.name, price:p.price, image:p.img, quantity:1, size:'', color:p.color, addedAt:new Date().toISOString() });
+  localStorage.setItem('cart', JSON.stringify(cart));
+}
+
+/* ── Toast ── */
+const toast = document.getElementById('toast');
+let toastTimer;
+function showToast(msg) {
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+}
+
+/* ── Render ── */
+const grid    = document.getElementById('wlGrid');
+const empty   = document.getElementById('emptyState');
+const wlCount = document.getElementById('wlCount');
+const btnClear= document.getElementById('btnClearAll');
+
+function render() {
+  const ids = getIds();
+  grid.innerHTML = '';
+
+  if (!ids.length) {
+    empty.classList.add('show');
+    btnClear.style.display = 'none';
+    wlCount.textContent = '0 items saved';
+    return;
+  }
+
+  empty.classList.remove('show');
+  btnClear.style.display = '';
+  wlCount.textContent = `${ids.length} item${ids.length > 1 ? 's' : ''} saved`;
+
+  ids.forEach((id, idx) => {
+    const p = products[id];
+    if (!p) return;
+
+    const card = document.createElement('div');
+    card.className = 'wl-card';
+    card.style.animationDelay = `${idx * 0.07}s`;
+    card.innerHTML = `
+      <div class="card-img-wrap">
+        <img src="${p.img}" alt="${p.name}" loading="lazy">
+        <span class="card-badge">${p.occasion}</span>
+        <button class="remove-btn" title="Remove from wishlist"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="card-body">
+        <div class="card-category">${p.category}</div>
+        <div class="card-name">${p.name}</div>
+        <div class="card-fabric">${p.fabric} · ${p.work}</div>
+        <div class="card-price-row">
+          <span class="card-price">${p.price}</span>
+          <span class="card-old">${p.priceOld}</span>
+          <span class="card-disc">${p.discount}</span>
+        </div>
+        <div class="card-actions">
+          <button class="btn-bag"><i class="fa-solid fa-bag-shopping" style="margin-right:6px;"></i>Add to Bag</button>
+        </div>
+      </div>`;
+
+    card.querySelector('.remove-btn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      removeId(id);
+      card.style.transition = 'opacity .3s,transform .3s';
+      card.style.opacity = '0';
+      card.style.transform = 'scale(.94)';
+      setTimeout(render, 320);
+      showToast('Removed from wishlist');
+    });
+
+    card.querySelector('.btn-bag').addEventListener('click', (e) => {
+      e.stopPropagation();
+      addToCart(p, id);
+      showToast(`Added ${p.name} to bag 🛍️`);
+      setTimeout(() => { window.location.href = 'mycart.html'; }, 900);
+    });
+
+    grid.appendChild(card);
+  });
+}
+
+btnClear.addEventListener('click', () => {
+  if (!confirm('Remove all items from your wishlist?')) return;
+  saveIds([]);
+  render();
+  showToast('Wishlist cleared');
+});
+
+render();
+</script>
+</body>
+</html>
