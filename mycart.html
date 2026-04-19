@@ -133,7 +133,7 @@
 
   <header class="cart-header">
     <h1>My Cart</h1>
-    <a class="back-link" onclick="history.back()" href="#">← Continue Shopping</a>
+    <a class="back-link" onclick="history.back()" href="variety.html">← Continue Shopping</a>
     <div id="syncBadge" style="display:none;">
       <span class="sync-badge"><i class="fa-solid fa-cloud"></i> Cart synced to your account</span>
     </div>
@@ -178,6 +178,10 @@
       var hasPrice = i.price && i.price !== 'undefined' && String(i.price).trim() !== '';
       var hasImage = i.image && i.image !== 'undefined' && i.image.trim() !== '';
       return hasName && hasPrice && hasImage;
+    }).map(function(i) {
+      var qty = parseInt(i.quantity, 10);
+      if (isNaN(qty) || qty < 1) qty = 1;
+      return Object.assign({}, i, { quantity: qty });
     });
   }
 
@@ -242,7 +246,6 @@
       const data     = doc.exists ? doc.data() : {};
       const rawItems = data.items || [];
       const items    = cleanItems(rawItems);
-      // Auto-save cleaned version back if any were removed
       if (items.length !== rawItems.length) saveCartToFirestore(items);
       localStorage.setItem('cart', JSON.stringify(items));
       renderCart(items, true);
@@ -287,7 +290,7 @@
   }
 
   function getLocalCart()      { return cleanItems(JSON.parse(localStorage.getItem('cart') || '[]')); }
-  function saveLocalCart(items){ localStorage.setItem('cart', JSON.stringify(items)); }
+  function saveLocalCart(items){ localStorage.setItem('cart', JSON.stringify(cleanItems(items))); }
   function renderCartFromLocal(){ renderCart(getLocalCart(), false); }
 
   async function removeItem(itemId, size) {
@@ -297,11 +300,11 @@
       items = cleanItems(snap.exists ? (snap.data().items || []) : []);
       items = items.filter(function(i){ return !(i.id == itemId && i.size === size); });
       await saveCartToFirestore(items);
-      renderCart(items, true);
+      renderCart(cleanItems(items), true);
     } else {
       items = getLocalCart().filter(function(i){ return !(i.id == itemId && i.size === size); });
       saveLocalCart(items);
-      renderCart(items, false);
+      renderCart(cleanItems(items), false);
     }
     showToast('Item removed from cart.');
   }
@@ -316,16 +319,24 @@
     }
     const item = items.find(function(i){ return i.id == itemId && i.size === size; });
     if (!item) return;
-    const newQty = item.quantity + delta;
+    const newQty = (parseInt(item.quantity, 10) || 0) + delta;
     if (newQty < 1) return;
     item.quantity = newQty;
-    if (currentUser) { await saveCartToFirestore(items); renderCart(items, true); }
-    else             { saveLocalCart(items); renderCart(items, false); }
+    if (currentUser) { await saveCartToFirestore(items); renderCart(cleanItems(items), true); }
+    else             { saveLocalCart(items); renderCart(cleanItems(items), false); }
   }
 
+  /* ── FIXED: handles &#8377; (HTML entity for ₹) and commas in price ── */
   function calculateTotal(items) {
-    return items.reduce(function(sum, i){
-      return sum + parseFloat(String(i.price).replace(/[^\d.]/g, '')) * i.quantity;
+    return items.reduce(function(sum, i) {
+      var rawPrice = String(i.price);
+      rawPrice = rawPrice.replace(/&#\d+;/g, '');    // remove &#8377; and similar HTML entities
+      rawPrice = rawPrice.replace(/&[a-z]+;/gi, ''); // remove &amp; &nbsp; etc
+      rawPrice = rawPrice.replace(/,/g, '');          // remove thousand separators like 1,300
+      rawPrice = rawPrice.replace(/[^\d.]/g, '');     // remove ₹ or any other remaining symbols
+      var price = parseFloat(rawPrice) || 0;
+      var qty   = parseInt(i.quantity, 10) || 1;
+      return sum + price * qty;
     }, 0);
   }
 
@@ -346,17 +357,16 @@
     const subtotal   = calculateTotal(items);
     const shipping   = subtotal >= 1000 ? 0 : 99;
     const finalTotal = subtotal + shipping;
-    const totalItems = items.reduce(function(n, i){ return n + i.quantity; }, 0);
+    const totalItems = items.reduce(function(n, i){ return n + (parseInt(i.quantity, 10) || 1); }, 0);
 
     const checkoutAction = currentUser
       ? `onclick="window.location.href='order.html'"`
       : `onclick="goLogin()"`;
 
-    // Safe display helpers — never show "undefined"
-    function safeName(v)  { return (!v || v === 'undefined') ? 'Unknown Item'  : v; }
-    function safeSize(v)  { return (!v || v === 'undefined') ? '—'             : v; }
-    function safeColor(v) { return (!v || v === 'undefined') ? '—'             : v; }
-    function safePrice(v) { return (!v || v === 'undefined') ? '₹0'            : v; }
+    function safeName(v)  { return (!v || v === 'undefined') ? 'Unknown Item' : v; }
+    function safeSize(v)  { return (!v || v === 'undefined') ? '—'            : v; }
+    function safeColor(v) { return (!v || v === 'undefined') ? '—'            : v; }
+    function safePrice(v) { return (!v || v === 'undefined') ? '₹0'           : v; }
 
     cartContent.innerHTML = `
       <div class="cart-items">
