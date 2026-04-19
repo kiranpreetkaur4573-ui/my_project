@@ -317,6 +317,41 @@ footer strong{color:var(--rose);}
     max-height:unset;
   }
 }
+/* ── ✅ PANEL STOCK STATUS ── */
+.stock-tag{display:inline-block;font-size:9px;font-weight:700;letter-spacing:1.2px;padding:3px 8px;border-radius:20px;margin-top:5px;text-transform:uppercase;transition:all .3s ease;}
+.stock-tag.loading{background:rgba(158,107,128,.1);color:#9e6b80;}
+.stock-tag.in     {background:rgba(46,125,79,.12); color:#2e7d4f;}
+.stock-tag.low    {background:rgba(240,165,0,.15);  color:#a06800;}
+.stock-tag.out    {background:rgba(192,57,43,.12);  color:#c0392b;}
+
+/* Out of stock card dimming + ribbon */
+.latim.out-of-stock,.im.out-of-stock{opacity:.65;cursor:not-allowed;}
+.latim.out-of-stock:hover,.im.out-of-stock:hover{transform:none;border-color:transparent;box-shadow:0 4px 20px rgba(122,45,82,.08);}
+.latim.out-of-stock::after,.im.out-of-stock::after{content:"Out of Stock";position:absolute;top:14px;right:-28px;background:#c0392b;color:white;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 36px;transform:rotate(45deg);pointer-events:none;}
+
+.panel-stock-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+}
+.panel-stock-status.in  { background: rgba(46,125,79,.1);  color: #2e7d4f; }
+.panel-stock-status.low { background: rgba(240,165,0,.15);  color: #a06800; }
+.panel-stock-status.out { background: rgba(192,57,43,.1);   color: #c0392b; }
+.panel-stock-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  flex-shrink: 0;
+}
+.in  .panel-stock-dot { background: #2e7d4f; }
+.low .panel-stock-dot { background: #f0a500; }
+.out .panel-stock-dot { background: #c0392b; }
+
 
 @media(max-width:600px){
   .top-bar{font-size:10px;padding:6px 10px;}
@@ -348,6 +383,114 @@ footer strong{color:var(--rose);}
 }
 
 </style>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDpnSVwV3QP9MP4tuU5SCtXiwpdAUD0vlc",
+  authDomain: "trendlilly-boutique.firebaseapp.com",
+  projectId: "trendlilly-boutique",
+  storageBucket: "trendlilly-boutique.firebasestorage.app",
+  messagingSenderId: "929563690255",
+  appId: "1:929563690255:web:b535b31e9cb2f6158b6a7a"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+// ── NAME → CARD NUMBER MAP ──
+// Key   = normalized name from Firestore (lowercase, trimmed)
+// Value = card number (matches data-id on .latim / .im and id="stock-N")
+const NAME_TO_NUM = {
+  "blue & white frock suit":"1","royal blue anarkali suit":"2",
+  "magenta pink frock suit":"3","deep red bridal suit":"4",
+  "lavender designer suit":"5","sky blue ethnic suit":"6",
+  "black party wear frock suit":"7","pink & mint anarkali suit":"8",
+  "cream elegant frock suit":"9","baby pink designer suit":"10",
+  "beige traditional suit":"11","wine red frock suit":"12",
+  "lime green anarkali suit":"13","purple designer suit":"14",
+  "red festive frock suit":"15","teal blue party wear suit":"16",
+  "brown elegant suit":"17","multicolor designer frock suit":"18"
+};
+
+// Store live stock by card number so overlay can read instantly
+window._stockData = {};
+
+function applyStock(num, stock) {
+  // Save globally
+  window._stockData[String(num)] = stock;
+
+  // ── Update badge on card ──
+  const badge = document.getElementById("stock-" + num);
+  if (badge) {
+    if (stock === 0) {
+      badge.textContent = "Out of Stock";
+      badge.className   = "stock-tag out";
+    } else if (stock <= 5) {
+      badge.textContent = `Only ${stock} left!`;
+      badge.className   = "stock-tag low";
+    } else {
+      badge.textContent = "In Stock";
+      badge.className   = "stock-tag in";
+    }
+  }
+
+  // ── Dim/ribbon the card if out of stock ──
+  const card = document.querySelector(`.latim[data-id="${num}"], .im[data-id="${num}"]`);
+  if (card) {
+    card.classList.toggle("out-of-stock", stock === 0);
+  }
+
+  // ── If overlay is open for this product, update the pill live ──
+  const panelStockEl = document.getElementById("panelStockStatus");
+  if (panelStockEl && panelStockEl.dataset.productId === String(num)) {
+    window.updatePanelStock(String(num), stock);
+  }
+}
+
+onSnapshot(collection(db, "products"), (snapshot) => {
+  snapshot.forEach((docSnap) => {
+    const data  = docSnap.data();
+
+    // Read stock — handles both "stock" (lowercase) and "Stock" (uppercase)
+    const stock = parseInt(data.stock !== undefined ? data.stock : data.Stock) || 0;
+
+    // ── Only match by EXACT name (lowercase) — no partial matching ──
+    // Partial matching caused wrong products to get each other's stock values
+    const rawName = (data.name || "").toLowerCase().trim();
+    const num = NAME_TO_NUM[rawName];
+
+    if (num) {
+      applyStock(num, stock);
+    }
+    // Non-saree products (salwar suits, lehengas etc.) are silently ignored
+  });
+});
+
+// ── Update the stock pill inside the product overlay ──
+window.updatePanelStock = function(num, stock) {
+  const el = document.getElementById("panelStockStatus");
+  if (!el) return;
+  el.dataset.productId = String(num);
+  const buyBtn = document.getElementById("btnBuy");
+
+  if (stock === 0) {
+    el.className = "panel-stock-status out";
+    el.innerHTML = `<span class="panel-stock-dot"></span> Out of Stock`;
+    if (buyBtn) { buyBtn.disabled = true; buyBtn.innerHTML = `<i class="fa-solid fa-ban" style="margin-right:8px;"></i>Out of Stock`; }
+  } else if (stock <= 5) {
+    el.className = "panel-stock-status low";
+    el.innerHTML = `<span class="panel-stock-dot"></span> Only ${stock} left!`;
+    if (buyBtn) { buyBtn.disabled = false; buyBtn.innerHTML = `<i class="fa-solid fa-bag-shopping" style="margin-right:8px;"></i>Add to Bag`; }
+  } else {
+    el.className = "panel-stock-status in";
+    el.innerHTML = `<span class="panel-stock-dot"></span> In Stock`;
+    if (buyBtn) { buyBtn.disabled = false; buyBtn.innerHTML = `<i class="fa-solid fa-bag-shopping" style="margin-right:8px;"></i>Add to Bag`; }
+  }
+};
+</script>
+
 
 </head>
 <body>
@@ -372,9 +515,9 @@ footer strong{color:var(--rose);}
     </div>
     
         <div class="nav-search">
-               <input data-search-input type="text" placeholder="Search...">
+               <input id="desktopSearchInput" data-search-input type="text" placeholder="Search...">
                <script src="server.js"></script>
-            <button>Search</button>
+            <button id="desktopSearchBtn">Search</button>
         </div>
     <a href="mycart.html" class="nav-cart"><i class="fa-solid fa-cart-shopping"></i></a>
     <a href="contact.html" class="nav-cart" style="margin-left:0;"><i class="fa-solid fa-phone"></i></a>
@@ -384,10 +527,10 @@ footer strong{color:var(--rose);}
   </div>
   <div class="mobile-nav" id="mobileNav">
     <div class="search-row">
-            <input data-search-input type="text" placeholder="Search...">
+            <input id="mobileSearchInput" data-search-input type="text" placeholder="Search...">
                <script src="server.js"></script>
         
-            <button>Search</button>
+            <button id="mobileSearchBtn">Search</button>
         </div>
     <a href="index.html">Home</a>
     <a href="product6.html" class="active">Frock Suits</a>
@@ -408,12 +551,12 @@ footer strong{color:var(--rose);}
 <div class="section-heading"><h2>Featured Picks</h2><p>Handpicked for you</p></div>
 
 <div class="lat">
-  <div class="latim" data-id="1"><img src="img/fr1.png" alt="Blue & White Frock Suit"><div class="latim-body"><p>Blue & White Frock Suit</p><h3>₹2,799</h3></div></div>
-  <div class="latim" data-id="2"><img src="img/fr2.png" alt="Royal Blue Anarkali Suit"><div class="latim-body"><p>Royal Blue Anarkali Suit</p><h3>₹3,199</h3></div></div>
-  <div class="latim" data-id="3"><img src="img/fr3.png" alt="Magenta Pink Frock Suit"><div class="latim-body"><p>Magenta Pink Frock Suit</p><h3>₹3,299</h3></div></div>
-  <div class="latim" data-id="4"><img src="img/fr4.png" alt="Deep Red Bridal Suit"><div class="latim-body"><p>Deep Red Bridal Suit</p><h3>₹3,499</h3></div></div>
-  <div class="latim" data-id="5"><img src="img/fr5.png" alt="Lavender Designer Suit"><div class="latim-body"><p>Lavender Designer Suit</p><h3>₹2,899</h3></div></div>
-  <div class="latim" data-id="6"><img src="img/fr6.png" alt="Sky Blue Ethnic Suit"><div class="latim-body"><p>Sky Blue Ethnic Suit</p><h3>₹2,699</h3></div></div>
+  <div class="latim" data-id="1"><img src="img/fr1.png" alt="Blue & White Frock Suit"><div class="latim-body"><p>Blue & White Frock Suit</p><h3>₹2,799</h3><span id="stock-1" class="stock-tag loading">Loading...</span></div></div>
+  <div class="latim" data-id="2"><img src="img/fr2.png" alt="Royal Blue Anarkali Suit"><div class="latim-body"><p>Royal Blue Anarkali Suit</p><h3>₹3,199</h3><span id="stock-2" class="stock-tag loading">Loading...</span></div></div>
+  <div class="latim" data-id="3"><img src="img/fr3.png" alt="Magenta Pink Frock Suit"><div class="latim-body"><p>Magenta Pink Frock Suit</p><h3>₹3,299</h3><span id="stock-3" class="stock-tag loading">Loading...</span></div></div>
+  <div class="latim" data-id="4"><img src="img/fr4.png" alt="Deep Red Bridal Suit"><div class="latim-body"><p>Deep Red Bridal Suit</p><h3>₹3,499</h3><span id="stock-4" class="stock-tag loading">Loading...</span></div></div>
+  <div class="latim" data-id="5"><img src="img/fr5.png" alt="Lavender Designer Suit"><div class="latim-body"><p>Lavender Designer Suit</p><h3>₹2,899</h3><span id="stock-5" class="stock-tag loading">Loading...</span></div></div>
+  <div class="latim" data-id="6"><img src="img/fr6.png" alt="Sky Blue Ethnic Suit"><div class="latim-body"><p>Sky Blue Ethnic Suit</p><h3>₹2,699</h3><span id="stock-6" class="stock-tag loading">Loading...</span></div></div>
 </div>
 
 <!-- BANNER -->
@@ -424,20 +567,20 @@ footer strong{color:var(--rose);}
 <div class="section-heading"><h2>Collection</h2><p>Browse our full collection</p></div>
 
 <div class="col">
-  <div class="im" data-id="7"><img src="img/fr7.png" alt="Black Party Wear Frock Suit"><div class="im-body"><h3>Black Party Wear Frock Suit</h3><div class="tag">₹3,099</div></div></div>
-  <div class="im" data-id="8"><img src="img/fr8.png" alt="Pink & Mint Anarkali Suit"><div class="im-body"><h3>Pink & Mint Anarkali Suit</h3><div class="tag">₹2,799</div></div></div>
-  <div class="im" data-id="9"><img src="img/fr9.png" alt="Cream Elegant Frock Suit"><div class="im-body"><h3>Cream Elegant Frock Suit</h3><div class="tag">₹2,999</div></div></div>
-  <div class="im" data-id="10"><img src="img/fr10.png" alt="Baby Pink Designer Suit"><div class="im-body"><h3>Baby Pink Designer Suit</h3><div class="tag">₹2,699</div></div></div>
+  <div class="im" data-id="7"><img src="img/fr7.png" alt="Black Party Wear Frock Suit"><div class="im-body"><h3>Black Party Wear Frock Suit</h3><div class="tag">₹3,099</div><span id="stock-7" class="stock-tag loading">Loading...</span></div></div>
+  <div class="im" data-id="8"><img src="img/fr8.png" alt="Pink & Mint Anarkali Suit"><div class="im-body"><h3>Pink & Mint Anarkali Suit</h3><div class="tag">₹2,799</div><span id="stock-8" class="stock-tag loading">Loading...</span></div></div>
+  <div class="im" data-id="9"><img src="img/fr9.png" alt="Cream Elegant Frock Suit"><div class="im-body"><h3>Cream Elegant Frock Suit</h3><div class="tag">₹2,999</div><span id="stock-9" class="stock-tag loading">Loading...</span></div></div>
+  <div class="im" data-id="10"><img src="img/fr10.png" alt="Baby Pink Designer Suit"><div class="im-body"><h3>Baby Pink Designer Suit</h3><div class="tag">₹2,699</div><span id="stock-10" class="stock-tag loading">Loading...</span></div></div>
 </div>
 <div class="col">
-  <div class="im" data-id="11"><img src="img/fr11.png" alt="Beige Traditional Suit"><div class="im-body"><h3>Beige Traditional Suit</h3><div class="tag">₹2,599</div></div></div>
-  <div class="im" data-id="12"><img src="img/fr12.png" alt="Wine Red Frock Suit"><div class="im-body"><h3>Wine Red Frock Suit</h3><div class="tag">₹3,399</div></div></div>
-  <div class="im" data-id="13"><img src="img/fr13.png" alt="Lime Green Anarkali Suit"><div class="im-body"><h3>Lime Green Anarkali Suit</h3><div class="tag">₹2,799</div></div></div>
-  <div class="im" data-id="14"><img src="img/fr14.png" alt="Purple Designer Suit"><div class="im-body"><h3>Purple Designer Suit</h3><div class="tag">₹3,099</div></div></div>
-  <div class="im" data-id="15"><img src="img/fr15.png" alt="Red Festive Frock Suit"><div class="im-body"><h3>Red Festive Frock Suit</h3><div class="tag">₹3,299</div></div></div>
-  <div class="im" data-id="16"><img src="img/fr16.png" alt="Teal Blue Party Wear Suit"><div class="im-body"><h3>Teal Blue Party Wear Suit</h3><div class="tag">₹2,899</div></div></div>
-  <div class="im" data-id="17"><img src="img/fr17.png" alt="Brown Elegant Suit"><div class="im-body"><h3>Brown Elegant Suit</h3><div class="tag">₹2,599</div></div></div>
-  <div class="im" data-id="18"><img src="img/fr18.png" alt="Multicolor Designer Frock Suit"><div class="im-body"><h3>Multicolor Designer Frock Suit</h3><div class="tag">₹3,199</div></div></div>
+  <div class="im" data-id="11"><img src="img/fr11.png" alt="Beige Traditional Suit"><div class="im-body"><h3>Beige Traditional Suit</h3><div class="tag">₹2,599</div><span id="stock-11" class="stock-tag loading">Loading...</span></div></div>
+  <div class="im" data-id="12"><img src="img/fr12.png" alt="Wine Red Frock Suit"><div class="im-body"><h3>Wine Red Frock Suit</h3><div class="tag">₹3,399</div><span id="stock-12" class="stock-tag loading">Loading...</span></div></div>
+  <div class="im" data-id="13"><img src="img/fr13.png" alt="Lime Green Anarkali Suit"><div class="im-body"><h3>Lime Green Anarkali Suit</h3><div class="tag">₹2,799</div><span id="stock-13" class="stock-tag loading">Loading...</span></div></div>
+  <div class="im" data-id="14"><img src="img/fr14.png" alt="Purple Designer Suit"><div class="im-body"><h3>Purple Designer Suit</h3><div class="tag">₹3,099</div><span id="stock-14" class="stock-tag loading">Loading...</span></div></div>
+  <div class="im" data-id="15"><img src="img/fr15.png" alt="Red Festive Frock Suit"><div class="im-body"><h3>Red Festive Frock Suit</h3><div class="tag">₹3,299</div><span id="stock-15" class="stock-tag loading">Loading...</span></div></div>
+  <div class="im" data-id="16"><img src="img/fr16.png" alt="Teal Blue Party Wear Suit"><div class="im-body"><h3>Teal Blue Party Wear Suit</h3><div class="tag">₹2,899</div><span id="stock-16" class="stock-tag loading">Loading...</span></div></div>
+  <div class="im" data-id="17"><img src="img/fr17.png" alt="Brown Elegant Suit"><div class="im-body"><h3>Brown Elegant Suit</h3><div class="tag">₹2,599</div><span id="stock-17" class="stock-tag loading">Loading...</span></div></div>
+  <div class="im" data-id="18"><img src="img/fr18.png" alt="Multicolor Designer Frock Suit"><div class="im-body"><h3>Multicolor Designer Frock Suit</h3><div class="tag">₹3,199</div><span id="stock-18" class="stock-tag loading">Loading...</span></div></div>
 </div>
 
 <footer>
@@ -472,6 +615,12 @@ footer strong{color:var(--rose);}
         <span class="panel-price-old" id="panelPriceOld"></span>
         <span class="panel-discount" id="panelDiscount"></span>
       </div>
+      
+      <div id="panelStockStatus" class="panel-stock-status in"><span class="panel-stock-dot"></span> In Stock</div>
+      
+       <div class="panel-section-label">Select Colour</div>
+      <div class="color-swatches" id="panelColors"></div>
+
 
       <!-- Color -->
       <div class="panel-section-label">Select Colour</div>
@@ -532,214 +681,140 @@ const products = {
 };
 
 // ── DOM refs ──────────────────────────────────────────────
-const overlay       = document.getElementById('overlay');
-const backdrop      = document.getElementById('overlayBackdrop');
-const panelClose    = document.getElementById('panelClose');
-const panelImg      = document.getElementById('panelImg');
-const panelBadge    = document.getElementById('panelBadge');
-const panelCategory = document.getElementById('panelCategory');
-const panelName     = document.getElementById('panelName');
-const panelTagline  = document.getElementById('panelTagline');
-const panelRating   = document.getElementById('panelRating');
-const panelPrice    = document.getElementById('panelPrice');
-const panelPriceOld = document.getElementById('panelPriceOld');
-const panelDiscount = document.getElementById('panelDiscount');
-const panelColors   = document.getElementById('panelColors');
-const panelSizes    = document.getElementById('panelSizes');
-const panelDetails  = document.getElementById('panelDetails');
-const qtyVal        = document.getElementById('qtyVal');
-const qtyMinus      = document.getElementById('qtyMinus');
-const qtyPlus       = document.getElementById('qtyPlus');
-const btnBuy        = document.getElementById('btnBuy');
-const btnWishlist   = document.getElementById('btnWishlist');
-const toast         = document.getElementById('toast');
 
-let currentProduct = null;
-let qty = 1;
-let selectedSize = '';
-let selectedColor = '';
-const WISH_KEY = 'wishlist_ids';
+const overlay=document.getElementById('overlay'),backdrop=document.getElementById('overlayBackdrop'),panelClose=document.getElementById('panelClose');
+const panelImg=document.getElementById('panelImg'),panelBadge=document.getElementById('panelBadge'),panelCategory=document.getElementById('panelCategory');
+const panelName=document.getElementById('panelName'),panelTagline=document.getElementById('panelTagline'),panelRating=document.getElementById('panelRating');
+const panelPrice=document.getElementById('panelPrice'),panelPriceOld=document.getElementById('panelPriceOld'),panelDiscount=document.getElementById('panelDiscount');
+const panelColors=document.getElementById('panelColors'),panelSizes=document.getElementById('panelSizes'),panelDetails=document.getElementById('panelDetails');
+const qtyVal=document.getElementById('qtyVal'),qtyMinus=document.getElementById('qtyMinus'),qtyPlus=document.getElementById('qtyPlus');
+const btnBuy=document.getElementById('btnBuy'),btnWishlist=document.getElementById('btnWishlist'),toast=document.getElementById('toast');
+
+
+let currentProduct=null,currentProductId=null,qty=1,selectedSize='',selectedColor='';
+
+const WISH_KEY='wishlist_ids';
 function getWishlist(){try{return new Set(JSON.parse(localStorage.getItem(WISH_KEY))||[]);}catch{return new Set();}}
 function saveWishlist(s){localStorage.setItem(WISH_KEY,JSON.stringify([...s]));}
-let wishlist = getWishlist();
+let wishlist=getWishlist();
 
-// ── Cart functions ──────────────────────────────────────
-function addToCart(product, quantity, size, color) {
-  let cart = JSON.parse(localStorage.getItem('cart')) || [];
-  
-  const cartItem = {
-    id: Date.now(), // Simple unique ID
-    productId: Object.keys(products).find(key => products[key] === product),
-    name: product.name,
-    price: product.price,
-    image: product.img,
-    quantity: quantity,
-    size: size,
-    color: color,
-    addedAt: new Date().toISOString()
-  };
-  
-  cart.push(cartItem);
-  localStorage.setItem('cart', JSON.stringify(cart));
+function getCart(){try{return JSON.parse(localStorage.getItem('cart'))||[];}catch{return[];}}
+function addToCartLS(product,productId,quantity,size,color){
+  const cart=getCart();
+  cart.push({id:Date.now(),productId,name:product.name,price:product.price,image:product.img,quantity,size,color,addedAt:new Date().toISOString()});
+  localStorage.setItem('cart',JSON.stringify(cart));
 }
 
-function getCart() {
-  return JSON.parse(localStorage.getItem('cart')) || [];
+function handleSearch(query){
+  if(!query.trim())return;
+  const q=query.toLowerCase();
+  const matches=Object.entries(products).filter(([,p])=>p.name.toLowerCase().includes(q)||p.color.toLowerCase().includes(q));
+  if(!matches.length){showToast('No products found for "'+query+'"');}
+  else{openProduct(parseInt(matches[0][0]));}
 }
 
-function removeFromCart(itemId) {
-  let cart = getCart();
-  cart = cart.filter(item => item.id !== itemId);
-  localStorage.setItem('cart', JSON.stringify(cart));
-}
+function openProduct(id){
+  const p=products[id];
+  if(!p)return;
 
-function clearCart() {
-  localStorage.removeItem('cart');
-}
+  // Block if out of stock
+  const stock=(window._stockData||{})[String(id)];
+  if(stock===0){showToast('This item is currently out of stock 😔');return;}
 
-// ── Open overlay ─────────────────────────────────────────
-function openProduct(id) {
-  const p = products[id];
-  if (!p) return;
-  currentProduct = p;
-  qty = 1; qtyVal.textContent = 1;
-  selectedSize = ''; selectedColor = p.color;
+  currentProduct=p;currentProductId=id;qty=1;qtyVal.textContent=1;selectedSize='';selectedColor=p.color;
+  panelImg.src=p.img;panelImg.alt=p.name;
+  panelCategory.textContent=p.category;
+  panelName.textContent=p.name;
+  panelTagline.textContent=p.tagline;
+  panelRating.textContent=p.rating;
+  panelPrice.textContent=p.price;
+  panelPriceOld.textContent=p.priceOld;
+  panelDiscount.textContent=p.discount;
+  panelBadge.textContent=p.occasion||'Ethnic Wear';
 
-  panelImg.src      = p.img;
-  panelImg.alt      = p.name;
-  panelCategory.textContent = p.category;
-  panelName.textContent     = p.name;
-  panelTagline.textContent  = p.tagline;
-  panelRating.textContent   = p.rating;
-  panelPrice.textContent    = p.price;
-  panelPriceOld.textContent = p.priceOld;
-  panelDiscount.textContent = p.discount;
-  panelBadge.textContent    = p.occasion || 'Ethnic Wear';
+  // Stock pill
+  const panelStockEl=document.getElementById('panelStockStatus');
+  panelStockEl.dataset.productId=String(id);
+  if(typeof window.updatePanelStock==='function'){
+    window.updatePanelStock(String(id),stock!==undefined?stock:50);
+  }
 
-  // Color swatches
-  panelColors.innerHTML = '';
-  p.swatches.forEach((hex, i) => {
-    const sw = document.createElement('div');
-    sw.className = 'swatch' + (i === 0 ? ' selected' : '');
-    sw.style.background = hex;
-    sw.title = hex;
-    sw.addEventListener('click', () => {
-      panelColors.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
-      sw.classList.add('selected');
-    });
-    panelColors.appendChild(sw);
-  });
+  // Color swatch
+  panelColors.innerHTML='';
+  const sw=document.createElement('div');
+  sw.className='swatch selected';
+  sw.style.background=p.hex||'#B0C4DE';
+  sw.title=p.color;
+  panelColors.appendChild(sw);
 
   // Sizes
-  panelSizes.innerHTML = '';
-  p.sizes.forEach(sz => {
-    const btn = document.createElement('button');
-    btn.className = 'size-btn';
-    btn.textContent = sz;
-    btn.addEventListener('click', () => {
-      panelSizes.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-      selectedSize = sz;
+  panelSizes.innerHTML='';
+  p.sizes.forEach(sz=>{
+    const btn=document.createElement('button');
+    btn.className='size-btn';btn.textContent=sz;
+    btn.addEventListener('click',()=>{
+      panelSizes.querySelectorAll('.size-btn').forEach(b=>b.classList.remove('selected'));
+      btn.classList.add('selected');selectedSize=sz;
     });
     panelSizes.appendChild(btn);
   });
 
-  // Details table
-  panelDetails.innerHTML = `
-    <div class="detail-row"><span class="detail-key">Color</span><span class="detail-val">${p.color}</span></div>
-    <div class="detail-row"><span class="detail-key">Fabric</span><span class="detail-val">${p.fabric}</span></div>
-    <div class="detail-row"><span class="detail-key">Occasion</span><span class="detail-val">${p.occasion}</span></div>
-    <div class="detail-row"><span class="detail-key">Work</span><span class="detail-val">${p.work}</span></div>
-    <div class="detail-row"><span class="detail-key">Set Includes</span><span class="detail-val">Top + Bottom + Dupatta</span></div>
-  `;
+  panelDetails.innerHTML=
+    `<div class="detail-row"><span class="detail-key">Colour</span><span class="detail-val">${p.color}</span></div>`+
+    `<div class="detail-row"><span class="detail-key">Fabric</span><span class="detail-val">${p.fabric}</span></div>`+
+    `<div class="detail-row"><span class="detail-key">Occasion</span><span class="detail-val">${p.occasion}</span></div>`+
+    `<div class="detail-row"><span class="detail-key">Work</span><span class="detail-val">${p.work}</span></div>`+
+    `<div class="detail-row"><span class="detail-key">Set Includes</span><span class="detail-val">Top + Bottom + Dupatta</span></div>`;
 
-  // Wishlist button state
-  const inWishlist = wishlist.has(id);
-  btnWishlist.innerHTML = inWishlist
-    ? '<i class="fa-solid fa-heart"></i>'
-    : '<i class="fa-regular fa-heart"></i>';
-  btnWishlist.classList.toggle('loved', inWishlist);
-  btnWishlist.dataset.id = id;
+  const inWishlist=wishlist.has(id);
+  btnWishlist.innerHTML=inWishlist?'<i class="fa-solid fa-heart"></i>':'<i class="fa-regular fa-heart"></i>';
+  btnWishlist.classList.toggle('loved',inWishlist);
+  btnWishlist.dataset.id=id;
 
   overlay.classList.add('active');
-  document.body.style.overflow = 'hidden';
+  document.body.style.overflow='hidden';
 }
 
-function closeOverlay() {
-  overlay.classList.remove('active');
-  document.body.style.overflow = '';
-}
+function closeOverlay(){overlay.classList.remove('active');document.body.style.overflow='';}
 
-// ── Event: card clicks ─────────────────────────────────+
-document.querySelectorAll('.latim, .im').forEach(card => {
-  card.addEventListener('click', () => {
-    const id = parseInt(card.dataset.id);
-    if (id) openProduct(id);
-  });
+document.querySelectorAll('.latim,.im').forEach(card=>{
+  card.addEventListener('click',()=>{const id=parseInt(card.dataset.id);if(id)openProduct(id);});
 });
 
-// ── Event: close ─────────────────────────────────────────
-backdrop.addEventListener('click', closeOverlay);
-panelClose.addEventListener('click', closeOverlay);
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeOverlay(); });
+backdrop.addEventListener('click',closeOverlay);
+panelClose.addEventListener('click',closeOverlay);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeOverlay();});
 
-// ── Event: qty ───────────────────────────────────────────
-qtyMinus.addEventListener('click', () => { if (qty > 1) { qty--; qtyVal.textContent = qty; } });
-qtyPlus.addEventListener('click',  () => { if (qty < 10) { qty++; qtyVal.textContent = qty; } });
+qtyMinus.addEventListener('click',()=>{if(qty>1){qty--;qtyVal.textContent=qty;}});
+qtyPlus.addEventListener('click', ()=>{if(qty<10){qty++;qtyVal.textContent=qty;}});
 
-// ── Event: buy ───────────────────────────────────────────
-btnBuy.addEventListener('click', (e) => {
-  e.preventDefault(); // Prevent the link from navigating
-  
-  if (!selectedSize) {
-    showToast('Please select a size first ✂️');
-    return;
-  }
-  
-  // Add item to cart
-  addToCart(currentProduct, qty, selectedSize, selectedColor);
-  
+btnBuy.addEventListener('click',()=>{
+  if(!selectedSize){showToast('Please select a size first ✂️');return;}
+  addToCartLS(currentProduct,currentProductId,qty,selectedSize,selectedColor);
   showToast(`Added ${qty} × ${currentProduct.name} (${selectedSize}) to bag 🛍️`);
   closeOverlay();
-  
-  // Optional: redirect to cart after a short delay
-  setTimeout(() => {
-    window.location.href = 'mycart.html';
-  }, 1000);
+  setTimeout(()=>{window.location.href='mycart.html';},1200);
 });
 
-// ── Event: wishlist ──────────────────────────────────────
-btnWishlist.addEventListener('click', () => {
-  const id = parseInt(btnWishlist.dataset.id);
-  if (wishlist.has(id)) {
-    wishlist.delete(id);
-    btnWishlist.innerHTML = '<i class="fa-regular fa-heart"></i>';
-    btnWishlist.classList.remove('loved');
-    showToast('Removed from wishlist');
-  } else {
-    wishlist.add(id);
-    btnWishlist.innerHTML = '<i class="fa-solid fa-heart"></i>';
-    btnWishlist.classList.add('loved');
-    showToast('Added to wishlist ❤️');
-  }
+btnWishlist.addEventListener('click',()=>{
+  const id=parseInt(btnWishlist.dataset.id);
+  if(wishlist.has(id)){wishlist.delete(id);btnWishlist.innerHTML='<i class="fa-regular fa-heart"></i>';btnWishlist.classList.remove('loved');showToast('Removed from wishlist');}
+  else{wishlist.add(id);btnWishlist.innerHTML='<i class="fa-solid fa-heart"></i>';btnWishlist.classList.add('loved');showToast('Added to wishlist ❤️');}
+  saveWishlist(wishlist);
 });
 
-// ── Toast helper ─────────────────────────────────────────
 let toastTimer;
-function showToast(msg) {
-  toast.textContent = msg;
-  toast.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
-}
+function showToast(msg){toast.textContent=msg;toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),2800);}
 
-// ── Mobile nav ───────────────────────────────────────────
-const hamburger = document.getElementById('hamburger');
-const mobileNav = document.getElementById('mobileNav');
-hamburger.addEventListener('click', () => {
-  hamburger.classList.toggle('open');
-  mobileNav.classList.toggle('open');
-});
+const hamburger=document.getElementById('hamburger');
+const mobileNav=document.getElementById('mobileNav');
+hamburger.addEventListener('click',()=>{hamburger.classList.toggle('open');mobileNav.classList.toggle('open');});
+
+document.getElementById('desktopSearchBtn').addEventListener('click',()=>handleSearch(document.getElementById('desktopSearchInput').value));
+document.getElementById('desktopSearchInput').addEventListener('keydown',e=>{if(e.key==='Enter')handleSearch(e.target.value);});
+document.getElementById('mobileSearchBtn').addEventListener('click',()=>{handleSearch(document.getElementById('mobileSearchInput').value);mobileNav.classList.remove('open');hamburger.classList.remove('open');});
+document.getElementById('mobileSearchInput').addEventListener('keydown',e=>{if(e.key==='Enter'){handleSearch(e.target.value);mobileNav.classList.remove('open');hamburger.classList.remove('open');}});
+
 </script>
 </body>
 </html>
