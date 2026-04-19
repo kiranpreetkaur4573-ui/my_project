@@ -223,6 +223,42 @@ nav{position:sticky;top:0;z-index:300;background:rgba(255,255,255,.97);backdrop-
 .btn-wishlist:hover{background:var(--soft);border-color:var(--rose);transform:scale(1.1);}
 .btn-wishlist.loved{color:#e04060;}
 
+
+/* ── ✅ PANEL STOCK STATUS ── */
+.stock-tag{display:inline-block;font-size:9px;font-weight:700;letter-spacing:1.2px;padding:3px 8px;border-radius:20px;margin-top:5px;text-transform:uppercase;transition:all .3s ease;}
+.stock-tag.loading{background:rgba(158,107,128,.1);color:#9e6b80;}
+.stock-tag.in     {background:rgba(46,125,79,.12); color:#2e7d4f;}
+.stock-tag.low    {background:rgba(240,165,0,.15);  color:#a06800;}
+.stock-tag.out    {background:rgba(192,57,43,.12);  color:#c0392b;}
+
+/* Out of stock card dimming + ribbon */
+.latim.out-of-stock,.im.out-of-stock{opacity:.65;cursor:not-allowed;}
+.latim.out-of-stock:hover,.im.out-of-stock:hover{transform:none;border-color:transparent;box-shadow:0 4px 20px rgba(122,45,82,.08);}
+.latim.out-of-stock::after,.im.out-of-stock::after{content:"Out of Stock";position:absolute;top:14px;right:-28px;background:#c0392b;color:white;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 36px;transform:rotate(45deg);pointer-events:none;}
+
+.panel-stock-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+}
+.panel-stock-status.in  { background: rgba(46,125,79,.1);  color: #2e7d4f; }
+.panel-stock-status.low { background: rgba(240,165,0,.15);  color: #a06800; }
+.panel-stock-status.out { background: rgba(192,57,43,.1);   color: #c0392b; }
+.panel-stock-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  flex-shrink: 0;
+}
+.in  .panel-stock-dot { background: #2e7d4f; }
+.low .panel-stock-dot { background: #f0a500; }
+.out .panel-stock-dot { background: #c0392b; }
+
 /* Toast */
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--plum);color:white;padding:12px 28px;border-radius:30px;font-size:13px;font-weight:600;letter-spacing:.5px;z-index:10000;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;white-space:nowrap;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
@@ -348,6 +384,113 @@ footer strong{color:var(--rose);}
 }
 
 </style>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDpnSVwV3QP9MP4tuU5SCtXiwpdAUD0vlc",
+  authDomain: "trendlilly-boutique.firebaseapp.com",
+  projectId: "trendlilly-boutique",
+  storageBucket: "trendlilly-boutique.firebasestorage.app",
+  messagingSenderId: "929563690255",
+  appId: "1:929563690255:web:b535b31e9cb2f6158b6a7a"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+// ── NAME → CARD NUMBER MAP ──
+// Key   = normalized name from Firestore (lowercase, trimmed)
+// Value = card number (matches data-id on .latim / .im and id="stock-N")
+const NAME_TO_NUM = {
+  
+  "peach/blush pink pazami suit":"1","black chikan pazami suit":"2",
+  "off white/cream suit":"3","black pazami suit":"4","teal blue cut suit":"5",
+  "white woven pazami suit":"6","olive green pazami suit":"7","red printed pazami suit":"8",
+  "off white pazami suit":"9","sea green pazami suit":"10","black pazami suit":"11",
+  "grey pazami suit":"12","navy blue pazami suit":"13","magenta pazami suit":"14",
+  "light blue pazami suit":"15","white pazami suit":"16","cream pazami suit":"17", "white pazami suit":"18"
+};
+
+// Store live stock by card number so overlay can read instantly
+window._stockData = {};
+
+function applyStock(num, stock) {
+  // Save globally
+  window._stockData[String(num)] = stock;
+
+  // ── Update badge on card ──
+  const badge = document.getElementById("stock-" + num);
+  if (badge) {
+    if (stock === 0) {
+      badge.textContent = "Out of Stock";
+      badge.className   = "stock-tag out";
+    } else if (stock <= 5) {
+      badge.textContent = `Only ${stock} left!`;
+      badge.className   = "stock-tag low";
+    } else {
+      badge.textContent = "In Stock";
+      badge.className   = "stock-tag in";
+    }
+  }
+
+  // ── Dim/ribbon the card if out of stock ──
+  const card = document.querySelector(`.latim[data-id="${num}"], .im[data-id="${num}"]`);
+  if (card) {
+    card.classList.toggle("out-of-stock", stock === 0);
+  }
+
+  // ── If overlay is open for this product, update the pill live ──
+  const panelStockEl = document.getElementById("panelStockStatus");
+  if (panelStockEl && panelStockEl.dataset.productId === String(num)) {
+    window.updatePanelStock(String(num), stock);
+  }
+}
+
+onSnapshot(collection(db, "products"), (snapshot) => {
+  snapshot.forEach((docSnap) => {
+    const data  = docSnap.data();
+
+    // Read stock — handles both "stock" (lowercase) and "Stock" (uppercase)
+    const stock = parseInt(data.stock !== undefined ? data.stock : data.Stock) || 0;
+
+    // ── Only match by EXACT name (lowercase) — no partial matching ──
+    // Partial matching caused wrong products to get each other's stock values
+    const rawName = (data.name || "").toLowerCase().trim();
+    const num = NAME_TO_NUM[rawName];
+
+    if (num) {
+      applyStock(num, stock);
+    }
+    // Non-saree products (salwar suits, lehengas etc.) are silently ignored
+  });
+});
+
+// ── Update the stock pill inside the product overlay ──
+window.updatePanelStock = function(num, stock) {
+  const el = document.getElementById("panelStockStatus");
+  if (!el) return;
+  el.dataset.productId = String(num);
+  const buyBtn = document.getElementById("btnBuy");
+
+  if (stock === 0) {
+    el.className = "panel-stock-status out";
+    el.innerHTML = `<span class="panel-stock-dot"></span> Out of Stock`;
+    if (buyBtn) { buyBtn.disabled = true; buyBtn.innerHTML = `<i class="fa-solid fa-ban" style="margin-right:8px;"></i>Out of Stock`; }
+  } else if (stock <= 5) {
+    el.className = "panel-stock-status low";
+    el.innerHTML = `<span class="panel-stock-dot"></span> Only ${stock} left!`;
+    if (buyBtn) { buyBtn.disabled = false; buyBtn.innerHTML = `<i class="fa-solid fa-bag-shopping" style="margin-right:8px;"></i>Add to Bag`; }
+  } else {
+    el.className = "panel-stock-status in";
+    el.innerHTML = `<span class="panel-stock-dot"></span> In Stock`;
+    if (buyBtn) { buyBtn.disabled = false; buyBtn.innerHTML = `<i class="fa-solid fa-bag-shopping" style="margin-right:8px;"></i>Add to Bag`; }
+  }
+};
+</script>
+
 </head>
 <body>
 
@@ -403,12 +546,12 @@ footer strong{color:var(--rose);}
 <div class="section-heading"><h2>Featured Picks</h2><p>Handpicked for you</p></div>
 
 <div class="lat">
-  <div class="latim" data-id="1"><img src="img/paz1.png" alt="Pazami suit"><div class="latim-body"><p>Peach/Blush pazami suit</p><h3>&#8377;3500</h3></div></div>
-  <div class="latim" data-id="2"><img src="img/paz2.png" alt="Pazami suit"><div class="latim-body"><p>Black pazami suit</p><h3>&#8377;4000</h3></div></div>
-  <div class="latim" data-id="3"><img src="img/paz3.png" alt="Pazami suit"><div class="latim-body"><p>Off White/Cream pazami suit</p><h3>&#8377;4899</h3></div></div>
-  <div class="latim" data-id="4"><img src="img/paz4.png" alt="Pazami suit"><div class="latim-body"><p>Black pazami suit</p><h3>&#8377;4077</h3></div></div>
-  <div class="latim" data-id="5"><img src="img/paz5.png" alt="Pazami suit"><div class="latim-body"><p>Teal Blue pazami suit</p><h3>&#8377;4266</h3></div></div>
-  <div class="latim" data-id="6"><img src="img/paz6.png" alt="Pazami suit"><div class="latim-body"><p>White pazami suit</p><h3>&#8377;5589</h3></div></div>
+  <div class="latim" data-id="1"><img src="img/paz1.png" alt="Pazami suit"><div class="latim-body"><p>Peach/Blush pazami suit</p><h3>&#8377;3500</h3><span id="stock-1" class="stock-tag loading">Loading...</span></div></div>
+  <div class="latim" data-id="2"><img src="img/paz2.png" alt="Pazami suit"><div class="latim-body"><p>Black pazami suit</p><h3>&#8377;4000</h3><span id="stock-2" class="stock-tag loading">Loading...</span></div></div>
+  <div class="latim" data-id="3"><img src="img/paz3.png" alt="Pazami suit"><div class="latim-body"><p>Off White/Cream pazami suit</p><h3>&#8377;4899</h3><span id="stock-3" class="stock-tag loading">Loading...</span></div></div>
+  <div class="latim" data-id="4"><img src="img/paz4.png" alt="Pazami suit"><div class="latim-body"><p>Black pazami suit</p><h3>&#8377;4077</h3><span id="stock-4" class="stock-tag loading">Loading...</span></div></div>
+  <div class="latim" data-id="5"><img src="img/paz5.png" alt="Pazami suit"><div class="latim-body"><p>Teal Blue pazami suit</p><h3>&#8377;4266</h3><span id="stock-5" class="stock-tag loading">Loading...</span></div></div>
+  <div class="latim" data-id="6"><img src="img/paz6.png" alt="Pazami suit"><div class="latim-body"><p>White pazami suit</p><h3>&#8377;5589</h3><span id="stock-6" class="stock-tag loading">Loading...</span></div></div>
 </div>
 
 <!-- BANNER -->
@@ -419,20 +562,20 @@ footer strong{color:var(--rose);}
 <div class="section-heading"><h2>Collection</h2><p>Browse our full collection</p></div>
 
 <div class="col">
-  <div class="im" data-id="7"><img src="img/paz7.png" alt="Pazami suit"><div class="im-body"><h3>Olive Green pazami suit</h3><div class="tag">&#8377;1999</div></div></div>
-  <div class="im" data-id="8"><img src="img/paz8.png" alt="Pazami suit"><div class="im-body"><h3>Red pazami suit</h3><div class="tag">&#8377;3896</div></div></div>
-  <div class="im" data-id="9"><img src="img/paz9.png" alt="Pazami suit"><div class="im-body"><h3>Cream pazami suit</h3><div class="tag">&#8377;4787</div></div></div>
-  <div class="im" data-id="10"><img src="img/paz10.png" alt="Pazami suit"><div class="im-body"><h3>Sea Green pazami suit</h3><div class="tag">&#8377;4077</div></div></div>
+  <div class="im" data-id="7"><img src="img/paz7.png" alt="Pazami suit"><div class="im-body"><h3>Olive Green pazami suit</h3><div class="tag">&#8377;1999</div><span id="stock-7" class="stock-tag loading">Loading...</span></div></div>
+  <div class="im" data-id="8"><img src="img/paz8.png" alt="Pazami suit"><div class="im-body"><h3>Red pazami suit</h3><div class="tag">&#8377;3896</div><span id="stock-8" class="stock-tag loading">Loading...</span></div></div>
+  <div class="im" data-id="9"><img src="img/paz9.png" alt="Pazami suit"><div class="im-body"><h3>Cream pazami suit</h3><div class="tag">&#8377;4787</div><span id="stock-9" class="stock-tag loading">Loading...</span></div></div>
+  <div class="im" data-id="10"><img src="img/paz10.png" alt="Pazami suit"><div class="im-body"><h3>Sea Green pazami suit</h3><div class="tag">&#8377;4077</div><span id="stock-10" class="stock-tag loading">Loading...</span></div></div>
 </div>
 <div class="col">
-  <div class="im" data-id="11"><img src="img/paz11.png" alt="Pazami suit"><div class="im-body"><h3>Black pazami suit</h3><div class="tag">₹2734</div></div></div>
-  <div class="im" data-id="12"><img src="img/paz12.png" alt="Pazami suit"><div class="im-body"><h3>Grey pazami suit</h3><div class="tag">₹1199</div></div></div>
-  <div class="im" data-id="13"><img src="img/paz13.png" alt="Pazami suit"><div class="im-body"><h3>Navy pazami suit</h3><div class="tag">₹1399</div></div></div>
-  <div class="im" data-id="14"><img src="img/paz14.png" alt="Pazami suit"><div class="im-body"><h3>Magenta salwar suit</h3><div class="tag">₹1099</div></div></div>
-  <div class="im" data-id="15"><img src="img/paz15.png" alt="Pazami suit"><div class="im-body"><h3>Light blue salwar suit</h3><div class="tag">₹1699</div></div></div>
-  <div class="im" data-id="16"><img src="img/paz16.png" alt="Pazami suit"><div class="im-body"><h3>White salwar suit</h3><div class="tag">₹1599</div></div></div>
-  <div class="im" data-id="17"><img src="img/paz17.png" alt="Pazami suit"><div class="im-body"><h3>Cream salwar suit</h3><div class="tag">₹1700</div></div></div>
-  <div class="im" data-id="18"><img src="img/paz18.png" alt="Pazami suit"><div class="im-body"><h3>White salwar suit</h3><div class="tag">₹1999</div></div></div>
+  <div class="im" data-id="11"><img src="img/paz11.png" alt="Pazami suit"><div class="im-body"><h3>Black pazami suit</h3><div class="tag">₹2734</div><span id="stock-11" class="stock-tag loading">Loading...</span></div></div>
+  <div class="im" data-id="12"><img src="img/paz12.png" alt="Pazami suit"><div class="im-body"><h3>Grey pazami suit</h3><div class="tag">₹1199</div><span id="stock-12" class="stock-tag loading">Loading...</span></div></div>
+  <div class="im" data-id="13"><img src="img/paz13.png" alt="Pazami suit"><div class="im-body"><h3>Navy pazami suit</h3><div class="tag">₹1399</div><span id="stock-13" class="stock-tag loading">Loading...</span></div></div>
+  <div class="im" data-id="14"><img src="img/paz14.png" alt="Pazami suit"><div class="im-body"><h3>Magenta pazami suit</h3><div class="tag">₹1099</div><span id="stock-14" class="stock-tag loading">Loading...</span></div></div>
+  <div class="im" data-id="15"><img src="img/paz15.png" alt="Pazami suit"><div class="im-body"><h3>Light blue pazami suit</h3><div class="tag">₹1699</div><span id="stock-15" class="stock-tag loading">Loading...</span></div></div>
+  <div class="im" data-id="16"><img src="img/paz16.png" alt="Pazami suit"><div class="im-body"><h3>White pazami suit</h3><div class="tag">₹1599</div><span id="stock-16" class="stock-tag loading">Loading...</span></div></div>
+  <div class="im" data-id="17"><img src="img/paz17.png" alt="Pazami suit"><div class="im-body"><h3>Cream pazami suit</h3><div class="tag">₹1700</div><span id="stock-17" class="stock-tag loading">Loading...</span></div></div>
+  <div class="im" data-id="18"><img src="img/paz18.png" alt="Pazami suit"><div class="im-body"><h3>White pazami suit</h3><div class="tag">₹1999</div><span id="stock-18" class="stock-tag loading">Loading...</span></div></div>
 </div>
 
 <footer>
@@ -468,6 +611,9 @@ footer strong{color:var(--rose);}
         <span class="panel-discount" id="panelDiscount"></span>
       </div>
 
+        
+      <div id="panelStockStatus" class="panel-stock-status in"><span class="panel-stock-dot"></span> In Stock</div>
+    
       <!-- Color -->
       <div class="panel-section-label">Select Colour</div>
       <div class="color-swatches" id="panelColors"></div>
@@ -525,180 +671,141 @@ footer strong{color:var(--rose);}
     18: { name:"White Pazami Suit",                 category:"Collection",    img:"img/paz18.png", color:"White",              price:"₹1999", priceOld:"₹2699", discount:"26% OFF", tagline:"Pure white serenity — modern meets traditional in perfect balance.", fabric:"Georgette",  occasion:"Party / Festive",   work:"Embroidery",    swatches:["#ffffff"], sizes:["S","M","L","XL","XXL"],     rating:"(84 reviews)" }
   };
 
-  const overlay       = document.getElementById('overlay');
-  const backdrop      = document.getElementById('overlayBackdrop');
-  const panelClose    = document.getElementById('panelClose');
-  const panelImg      = document.getElementById('panelImg');
-  const panelBadge    = document.getElementById('panelBadge');
-  const panelCategory = document.getElementById('panelCategory');
-  const panelName     = document.getElementById('panelName');
-  const panelTagline  = document.getElementById('panelTagline');
-  const panelRating   = document.getElementById('panelRating');
-  const panelPrice    = document.getElementById('panelPrice');
-  const panelPriceOld = document.getElementById('panelPriceOld');
-  const panelDiscount = document.getElementById('panelDiscount');
-  const panelColors   = document.getElementById('panelColors');
-  const panelSizes    = document.getElementById('panelSizes');
-  const panelDetails  = document.getElementById('panelDetails');
-  const qtyVal        = document.getElementById('qtyVal');
-  const qtyMinus      = document.getElementById('qtyMinus');
-  const qtyPlus       = document.getElementById('qtyPlus');
-  const btnBuy        = document.getElementById('btnBuy');
-  const btnWishlist   = document.getElementById('btnWishlist');
-  const toast         = document.getElementById('toast');
+// ── DOM refs ──────────────────────────────────────────────
 
-  let currentProduct   = null;
-  let currentProductId = null;
-  let qty              = 1;
-  let selectedSize     = '';
-  let selectedColor    = '';
+const overlay=document.getElementById('overlay'),backdrop=document.getElementById('overlayBackdrop'),panelClose=document.getElementById('panelClose');
+const panelImg=document.getElementById('panelImg'),panelBadge=document.getElementById('panelBadge'),panelCategory=document.getElementById('panelCategory');
+const panelName=document.getElementById('panelName'),panelTagline=document.getElementById('panelTagline'),panelRating=document.getElementById('panelRating');
+const panelPrice=document.getElementById('panelPrice'),panelPriceOld=document.getElementById('panelPriceOld'),panelDiscount=document.getElementById('panelDiscount');
+const panelColors=document.getElementById('panelColors'),panelSizes=document.getElementById('panelSizes'),panelDetails=document.getElementById('panelDetails');
+const qtyVal=document.getElementById('qtyVal'),qtyMinus=document.getElementById('qtyMinus'),qtyPlus=document.getElementById('qtyPlus');
+const btnBuy=document.getElementById('btnBuy'),btnWishlist=document.getElementById('btnWishlist'),toast=document.getElementById('toast');
 
-  const WISH_KEY = 'wishlist_ids';
-  function getWishlist() {
-    try { return new Set(JSON.parse(localStorage.getItem(WISH_KEY)) || []); }
-    catch { return new Set(); }
+
+let currentProduct=null,currentProductId=null,qty=1,selectedSize='',selectedColor='';
+
+const WISH_KEY='wishlist_ids';
+function getWishlist(){try{return new Set(JSON.parse(localStorage.getItem(WISH_KEY))||[]);}catch{return new Set();}}
+function saveWishlist(s){localStorage.setItem(WISH_KEY,JSON.stringify([...s]));}
+let wishlist=getWishlist();
+
+function getCart(){try{return JSON.parse(localStorage.getItem('cart'))||[];}catch{return[];}}
+function addToCartLS(product,productId,quantity,size,color){
+  const cart=getCart();
+  cart.push({id:Date.now(),productId,name:product.name,price:product.price,image:product.img,quantity,size,color,addedAt:new Date().toISOString()});
+  localStorage.setItem('cart',JSON.stringify(cart));
+}
+
+function handleSearch(query){
+  if(!query.trim())return;
+  const q=query.toLowerCase();
+  const matches=Object.entries(products).filter(([,p])=>p.name.toLowerCase().includes(q)||p.color.toLowerCase().includes(q));
+  if(!matches.length){showToast('No products found for "'+query+'"');}
+  else{openProduct(parseInt(matches[0][0]));}
+}
+
+function openProduct(id){
+  const p=products[id];
+  if(!p)return;
+
+  // Block if out of stock
+  const stock=(window._stockData||{})[String(id)];
+  if(stock===0){showToast('This item is currently out of stock 😔');return;}
+
+  currentProduct=p;currentProductId=id;qty=1;qtyVal.textContent=1;selectedSize='';selectedColor=p.color;
+  panelImg.src=p.img;panelImg.alt=p.name;
+  panelCategory.textContent=p.category;
+  panelName.textContent=p.name;
+  panelTagline.textContent=p.tagline;
+  panelRating.textContent=p.rating;
+  panelPrice.textContent=p.price;
+  panelPriceOld.textContent=p.priceOld;
+  panelDiscount.textContent=p.discount;
+  panelBadge.textContent=p.occasion||'Ethnic Wear';
+
+  // Stock pill
+  const panelStockEl=document.getElementById('panelStockStatus');
+  panelStockEl.dataset.productId=String(id);
+  if(typeof window.updatePanelStock==='function'){
+    window.updatePanelStock(String(id),stock!==undefined?stock:50);
   }
-  function saveWishlist(s) { localStorage.setItem(WISH_KEY, JSON.stringify([...s])); }
-  let wishlist = getWishlist();
 
-  function getCart() {
-    try { return JSON.parse(localStorage.getItem('cart')) || []; }
-    catch { return []; }
-  }
-  function addToCart(product, productId, quantity, size, color) {
-    const cart = getCart();
-    cart.push({ id:Date.now(), productId, name:product.name, price:product.price, image:product.img, quantity, size, color, addedAt:new Date().toISOString() });
-    localStorage.setItem('cart', JSON.stringify(cart));
-  }
+  // Color swatch
+  panelColors.innerHTML='';
+  const sw=document.createElement('div');
+  sw.className='swatch selected';
+  sw.style.background=p.hex||'#B0C4DE';
+  sw.title=p.color;
+  panelColors.appendChild(sw);
 
-  function handleSearch(query) {
-    if (!query.trim()) return;
-    const q = query.toLowerCase();
-    const matches = Object.entries(products).filter(([,p]) => p.name.toLowerCase().includes(q) || p.color.toLowerCase().includes(q));
-    if (matches.length === 0) { showToast('No products found for "' + query + '"'); }
-    else { openProduct(parseInt(matches[0][0])); }
-  }
-
-  function openProduct(id) {
-    const p = products[id];
-    if (!p) return;
-    currentProduct = p; currentProductId = id;
-    qty = 1; qtyVal.textContent = 1;
-    selectedSize = ''; selectedColor = p.color;
-
-    panelImg.src              = p.img;
-    panelImg.alt              = p.name;
-    panelCategory.textContent = p.category;
-    panelName.textContent     = p.name;
-    panelTagline.textContent  = p.tagline;
-    panelRating.textContent   = p.rating;
-    panelPrice.textContent    = p.price;
-    panelPriceOld.textContent = p.priceOld;
-    panelDiscount.textContent = p.discount;
-    panelBadge.textContent    = p.occasion || 'Ethnic Wear';
-
-    panelColors.innerHTML = '';
-    p.swatches.forEach((hex, i) => {
-      const sw = document.createElement('div');
-      sw.className = 'swatch' + (i === 0 ? ' selected' : '');
-      sw.style.background = hex; sw.title = hex;
-      sw.addEventListener('click', () => {
-        panelColors.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
-        sw.classList.add('selected'); selectedColor = hex;
-      });
-      panelColors.appendChild(sw);
+  // Sizes
+  panelSizes.innerHTML='';
+  p.sizes.forEach(sz=>{
+    const btn=document.createElement('button');
+    btn.className='size-btn';btn.textContent=sz;
+    btn.addEventListener('click',()=>{
+      panelSizes.querySelectorAll('.size-btn').forEach(b=>b.classList.remove('selected'));
+      btn.classList.add('selected');selectedSize=sz;
     });
-
-    panelSizes.innerHTML = '';
-    p.sizes.forEach(sz => {
-      const btn = document.createElement('button');
-      btn.className = 'size-btn'; btn.textContent = sz;
-      btn.addEventListener('click', () => {
-        panelSizes.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected'); selectedSize = sz;
-      });
-      panelSizes.appendChild(btn);
-    });
-
-    panelDetails.innerHTML = `
-      <div class="detail-row"><span class="detail-key">Color</span><span class="detail-val">${p.color}</span></div>
-      <div class="detail-row"><span class="detail-key">Fabric</span><span class="detail-val">${p.fabric}</span></div>
-      <div class="detail-row"><span class="detail-key">Occasion</span><span class="detail-val">${p.occasion}</span></div>
-      <div class="detail-row"><span class="detail-key">Work</span><span class="detail-val">${p.work}</span></div>
-      <div class="detail-row"><span class="detail-key">Set Includes</span><span class="detail-val">Top + Bottom + Dupatta</span></div>
-    `;
-
-    const inWishlist = wishlist.has(id);
-    btnWishlist.innerHTML = inWishlist ? '<i class="fa-solid fa-heart"></i>' : '<i class="fa-regular fa-heart"></i>';
-    btnWishlist.classList.toggle('loved', inWishlist);
-    btnWishlist.dataset.id = id;
-
-    overlay.classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeOverlay() {
-    overlay.classList.remove('active');
-    document.body.style.overflow = '';
-  }
-
-  document.querySelectorAll('.latim, .im').forEach(card => {
-    card.addEventListener('click', () => {
-      const id = parseInt(card.dataset.id);
-      if (id) openProduct(id);
-    });
+    panelSizes.appendChild(btn);
   });
 
-  backdrop.addEventListener('click', closeOverlay);
-  panelClose.addEventListener('click', closeOverlay);
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeOverlay(); });
+  panelDetails.innerHTML=
+    `<div class="detail-row"><span class="detail-key">Colour</span><span class="detail-val">${p.color}</span></div>`+
+    `<div class="detail-row"><span class="detail-key">Fabric</span><span class="detail-val">${p.fabric}</span></div>`+
+    `<div class="detail-row"><span class="detail-key">Occasion</span><span class="detail-val">${p.occasion}</span></div>`+
+    `<div class="detail-row"><span class="detail-key">Work</span><span class="detail-val">${p.work}</span></div>`+
+    `<div class="detail-row"><span class="detail-key">Set Includes</span><span class="detail-val">Top + Bottom + Dupatta</span></div>`;
 
-  qtyMinus.addEventListener('click', () => { if (qty > 1)  { qty--; qtyVal.textContent = qty; } });
-  qtyPlus.addEventListener('click',  () => { if (qty < 10) { qty++; qtyVal.textContent = qty; } });
+  const inWishlist=wishlist.has(id);
+  btnWishlist.innerHTML=inWishlist?'<i class="fa-solid fa-heart"></i>':'<i class="fa-regular fa-heart"></i>';
+  btnWishlist.classList.toggle('loved',inWishlist);
+  btnWishlist.dataset.id=id;
 
-  btnBuy.addEventListener('click', () => {
-    if (!selectedSize) { showToast('Please select a size first ✂️'); return; }
-    addToCart(currentProduct, currentProductId, qty, selectedSize, selectedColor);
-    showToast(`Added ${qty} × ${currentProduct.name} (${selectedSize}) to bag 🛍️`);
-    closeOverlay();
-    setTimeout(() => { window.location.href = 'mycart.html'; }, 1200);
-  });
+  overlay.classList.add('active');
+  document.body.style.overflow='hidden';
+}
 
-  btnWishlist.addEventListener('click', () => {
-    const id = parseInt(btnWishlist.dataset.id);
-    if (wishlist.has(id)) {
-      wishlist.delete(id);
-      btnWishlist.innerHTML = '<i class="fa-regular fa-heart"></i>';
-      btnWishlist.classList.remove('loved');
-      showToast('Removed from wishlist');
-    } else {
-      wishlist.add(id);
-      btnWishlist.innerHTML = '<i class="fa-solid fa-heart"></i>';
-      btnWishlist.classList.add('loved');
-      showToast('Added to wishlist ❤️');
-    }
-    saveWishlist(wishlist);
-  });
+function closeOverlay(){overlay.classList.remove('active');document.body.style.overflow='';}
 
-  let toastTimer;
-  function showToast(msg) {
-    toast.textContent = msg;
-    toast.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
-  }
+document.querySelectorAll('.latim,.im').forEach(card=>{
+  card.addEventListener('click',()=>{const id=parseInt(card.dataset.id);if(id)openProduct(id);});
+});
 
-  const hamburger = document.getElementById('hamburger');
-  const mobileNav = document.getElementById('mobileNav');
-  hamburger.addEventListener('click', () => {
-    hamburger.classList.toggle('open');
-    mobileNav.classList.toggle('open');
-  });
+backdrop.addEventListener('click',closeOverlay);
+panelClose.addEventListener('click',closeOverlay);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeOverlay();});
 
-  document.getElementById('desktopSearchBtn').addEventListener('click', () => { handleSearch(document.getElementById('desktopSearchInput').value); });
-  document.getElementById('desktopSearchInput').addEventListener('keydown', e => { if (e.key === 'Enter') handleSearch(e.target.value); });
-  document.getElementById('mobileSearchBtn').addEventListener('click', () => { handleSearch(document.getElementById('mobileSearchInput').value); mobileNav.classList.remove('open'); hamburger.classList.remove('open'); });
-  document.getElementById('mobileSearchInput').addEventListener('keydown', e => { if (e.key === 'Enter') { handleSearch(e.target.value); mobileNav.classList.remove('open'); hamburger.classList.remove('open'); } });
+qtyMinus.addEventListener('click',()=>{if(qty>1){qty--;qtyVal.textContent=qty;}});
+qtyPlus.addEventListener('click', ()=>{if(qty<10){qty++;qtyVal.textContent=qty;}});
+
+btnBuy.addEventListener('click',()=>{
+  if(!selectedSize){showToast('Please select a size first ✂️');return;}
+  addToCartLS(currentProduct,currentProductId,qty,selectedSize,selectedColor);
+  showToast(`Added ${qty} × ${currentProduct.name} (${selectedSize}) to bag 🛍️`);
+  closeOverlay();
+  setTimeout(()=>{window.location.href='mycart.html';},1200);
+});
+
+btnWishlist.addEventListener('click',()=>{
+  const id=parseInt(btnWishlist.dataset.id);
+  if(wishlist.has(id)){wishlist.delete(id);btnWishlist.innerHTML='<i class="fa-regular fa-heart"></i>';btnWishlist.classList.remove('loved');showToast('Removed from wishlist');}
+  else{wishlist.add(id);btnWishlist.innerHTML='<i class="fa-solid fa-heart"></i>';btnWishlist.classList.add('loved');showToast('Added to wishlist ❤️');}
+  saveWishlist(wishlist);
+});
+
+let toastTimer;
+function showToast(msg){toast.textContent=msg;toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),2800);}
+
+const hamburger=document.getElementById('hamburger');
+const mobileNav=document.getElementById('mobileNav');
+hamburger.addEventListener('click',()=>{hamburger.classList.toggle('open');mobileNav.classList.toggle('open');});
+
+document.getElementById('desktopSearchBtn').addEventListener('click',()=>handleSearch(document.getElementById('desktopSearchInput').value));
+document.getElementById('desktopSearchInput').addEventListener('keydown',e=>{if(e.key==='Enter')handleSearch(e.target.value);});
+document.getElementById('mobileSearchBtn').addEventListener('click',()=>{handleSearch(document.getElementById('mobileSearchInput').value);mobileNav.classList.remove('open');hamburger.classList.remove('open');});
+document.getElementById('mobileSearchInput').addEventListener('keydown',e=>{if(e.key==='Enter'){handleSearch(e.target.value);mobileNav.classList.remove('open');hamburger.classList.remove('open');}});
+
 </script>
 </body>
 </html>
