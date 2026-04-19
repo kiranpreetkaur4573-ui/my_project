@@ -222,6 +222,79 @@ nav{position:sticky;top:0;z-index:300;background:rgba(255,255,255,.97);backdrop-
 .btn-wishlist:hover{background:var(--soft);border-color:var(--rose);transform:scale(1.1);}
 .btn-wishlist.loved{color:#e04060;}
 
+
+/* ── ✅ STOCK BADGE ── */
+.stock-tag{display:inline-block;font-size:9px;font-weight:700;letter-spacing:1.2px;padding:3px 8px;border-radius:20px;margin-top:5px;text-transform:uppercase;transition:all .3s ease;}
+.stock-tag.loading{background:rgba(158,107,128,.1);color:#9e6b80;}
+.stock-tag.in     {background:rgba(46,125,79,.12); color:#2e7d4f;}
+.stock-tag.low    {background:rgba(240,165,0,.15);  color:#a06800;}
+.stock-tag.out    {background:rgba(192,57,43,.12);  color:#c0392b;}
+
+/* Out of stock card dimming + ribbon */
+.latim.out-of-stock,.im.out-of-stock{opacity:.65;cursor:not-allowed;}
+.latim.out-of-stock:hover,.im.out-of-stock:hover{transform:none;border-color:transparent;box-shadow:0 4px 20px rgba(122,45,82,.08);}
+.latim.out-of-stock::after,.im.out-of-stock::after{content:"Out of Stock";position:absolute;top:14px;right:-28px;background:#c0392b;color:white;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 36px;transform:rotate(45deg);pointer-events:none;}
+
+.overlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .35s ease;}
+.overlay.active{opacity:1;pointer-events:all;}
+.overlay-backdrop{position:absolute;inset:0;background:rgba(74,26,50,.55);backdrop-filter:blur(6px);cursor:pointer;}
+.product-panel{position:relative;z-index:2;background:#fff;border-radius:20px;width:min(960px,96vw);max-height:92vh;overflow:hidden;display:flex;flex-direction:row;box-shadow:0 30px 80px rgba(74,26,50,.35);transform:translateY(40px) scale(.97);transition:transform .38s cubic-bezier(.22,1,.36,1);}
+.overlay.active .product-panel{transform:translateY(0) scale(1);}
+.panel-img{width:48%;flex-shrink:0;position:relative;background:#f9eef4;border-radius:20px 0 0 20px;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+.panel-img img{width:100%;height:100%;object-fit:cover;display:block;background:#f9eef4;}
+.panel-badge{position:absolute;top:14px;left:14px;background:var(--deep);color:white;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:5px 12px;border-radius:20px;pointer-events:none;}
+.panel-info{flex:1;padding:32px 32px 28px;display:flex;flex-direction:column;gap:0;overflow-y:auto;max-height:92vh;}
+.panel-close{position:absolute;top:14px;right:16px;z-index:3;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.95);border:1.5px solid #e8c8d8;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--plum);font-size:16px;transition:background .2s,transform .2s;box-shadow:0 2px 8px rgba(122,45,82,.12);}
+.panel-close:hover{background:var(--soft);transform:rotate(90deg);}
+.panel-category{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--rose);margin-bottom:8px;}
+.panel-name{font-family:'Cormorant Garamond',serif;font-size:clamp(20px,3.5vw,30px);font-style:italic;color:var(--plum);line-height:1.2;margin-bottom:6px;}
+.panel-tagline{font-size:12px;color:#8a5a6a;margin-bottom:16px;font-weight:400;line-height:1.5;}
+.panel-stars{display:flex;align-items:center;gap:6px;margin-bottom:16px;}
+.stars{color:#e0a84e;font-size:13px;letter-spacing:1px;}
+.rating-count{font-size:11px;color:#9a7080;font-weight:500;}
+.panel-price-row{display:flex;align-items:baseline;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+.panel-price{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;color:var(--deep);}
+.panel-price-old{font-size:15px;color:#b09098;text-decoration:line-through;}
+.panel-discount{font-size:11px;font-weight:700;letter-spacing:1px;color:white;background:linear-gradient(135deg,#e07090,var(--deep));padding:3px 10px;border-radius:20px;}
+.panel-section-label{font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:#7a4060;margin-bottom:10px;}
+.color-swatches{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+.swatch{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .2s,border-color .2s;box-shadow:0 2px 6px rgba(0,0,0,.15);}
+.swatch:hover{transform:scale(1.15);}
+.swatch.selected{border-color:var(--deep);transform:scale(1.1);}
+.size-grid{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+.size-btn{min-width:42px;padding:6px 10px;border-radius:8px;border:1.5px solid #ddb8cc;background:white;font-size:12px;font-weight:600;color:var(--text);cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;letter-spacing:.5px;}
+.size-btn:hover{border-color:var(--rose);color:var(--deep);}
+.size-btn.selected{background:var(--deep);color:white;border-color:var(--deep);}
+.panel-details{margin-bottom:20px;}
+.detail-row{display:flex;gap:10px;padding:7px 0;border-bottom:1px solid #f0e0ea;font-size:12px;}
+.detail-row:last-child{border-bottom:none;}
+.detail-key{color:#9a7080;font-weight:600;letter-spacing:.5px;min-width:90px;}
+.detail-val{color:var(--text);font-weight:500;}
+.qty-row{display:flex;align-items:center;gap:16px;margin-bottom:20px;}
+.qty-label{font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:#7a4060;}
+.qty-control{display:flex;align-items:center;border:1.5px solid #ddb8cc;border-radius:30px;overflow:hidden;}
+.qty-control button{width:32px;height:32px;border:none;background:transparent;font-size:18px;color:var(--deep);cursor:pointer;transition:background .2s;font-weight:700;}
+.qty-control button:hover{background:var(--soft);}
+.qty-control span{width:36px;text-align:center;font-size:14px;font-weight:700;color:var(--text);}
+.panel-actions{display:flex;gap:10px;margin-top:auto;padding-top:6px;}
+.btn-buy{flex:1;padding:14px;border:none;background:linear-gradient(135deg,var(--rose),var(--deep));color:white;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border-radius:30px;cursor:pointer;transition:opacity .2s,transform .2s;box-shadow:0 6px 20px rgba(122,45,82,.3);}
+.btn-buy:hover{opacity:.88;transform:translateY(-2px);}
+.btn-buy:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.btn-wishlist{width:50px;height:50px;border:1.5px solid #ddb8cc;border-radius:50%;background:white;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--rose);transition:background .2s,border-color .2s,transform .2s;flex-shrink:0;}
+.btn-wishlist:hover{background:var(--soft);border-color:var(--rose);transform:scale(1.1);}
+.btn-wishlist.loved{color:#e04060;}
+
+/* ── PANEL STOCK STATUS ── */
+.panel-stock-status{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:5px 12px;border-radius:20px;margin-bottom:16px;}
+.panel-stock-status.in {background:rgba(46,125,79,.1); color:#2e7d4f;}
+.panel-stock-status.low{background:rgba(240,165,0,.15); color:#a06800;}
+.panel-stock-status.out{background:rgba(192,57,43,.1);  color:#c0392b;}
+.panel-stock-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.in  .panel-stock-dot{background:#2e7d4f;}
+.low .panel-stock-dot{background:#f0a500;}
+.out .panel-stock-dot{background:#c0392b;}
+
+
 /* Toast */
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--plum);color:white;padding:12px 28px;border-radius:30px;font-size:13px;font-weight:600;letter-spacing:.5px;z-index:10000;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;white-space:nowrap;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
@@ -342,6 +415,115 @@ footer strong{color:var(--rose);}
 </style>
 
 </head>
+<!-- ✅ FIREBASE STOCK LISTENER — placed in <head> BEFORE <body> -->
+<script type="module">
+import { initializeApp }   from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+import { getFirestore, collection, onSnapshot }
+                           from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey:            "AIzaSyDpnSVwV3QP9MP4tuU5SCtXiwpdAUD0vlc",
+  authDomain:        "trendlilly-boutique.firebaseapp.com",
+  projectId:         "trendlilly-boutique",
+  storageBucket:     "trendlilly-boutique.firebasestorage.app",
+  messagingSenderId: "929563690255",
+  appId:             "1:929563690255:web:b535b31e9cb2f6158b6a7a"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+// ✅ FIX 1: Variable name is consistently NAME_TO_NUM (all caps)
+// ✅ FIX 2: ALL keys are LOWERCASE — because we do .toLowerCase() before matching
+const NAME_TO_NUM = {
+  "black flared gown": "1",
+  "deep wine purple gown": "2",
+  "steel blue gown": "3",
+  "maroon red gown": "4",
+  "champagne beige gown": "5",
+  "sage green gown": "6",
+  "royal blue gown": "7",
+  "dusty pink embroidered gown": "8",
+  "mauve pink gown": "9",
+  "teal green gown": "10",
+  "jet black gown": "11",
+  "coffee brown gown": "12",
+  "lavender purple gown": "13",
+  "dark plum gown": "14",
+  "ice blue gown": "15",
+  "navy blue gown": "16",
+  "mocha brown gown": "17",
+  "soft baby pink gown": "18",
+};
+window._stockData = {};
+
+function applyStock(num, stock) {
+  window._stockData[String(num)] = stock;
+
+  // Update badge on card
+  const badge = document.getElementById("stock-" + num);
+  if (badge) {
+    if (stock === 0) {
+      badge.textContent = "Out of Stock";
+      badge.className   = "stock-tag out";
+    } else if (stock <= 5) {
+      badge.textContent = `Only ${stock} left!`;
+      badge.className   = "stock-tag low";
+    } else {
+      badge.textContent = "In Stock";
+      badge.className   = "stock-tag in";
+    }
+  }
+
+  // Dim card if out of stock
+  const card = document.querySelector(`.latim[data-id="${num}"], .im[data-id="${num}"]`);
+  if (card) card.classList.toggle("out-of-stock", stock === 0);
+
+  // Update overlay pill if open for this product
+  const panelStockEl = document.getElementById("panelStockStatus");
+  if (panelStockEl && panelStockEl.dataset.productId === String(num)) {
+    window.updatePanelStock(String(num), stock);
+  }
+}
+
+onSnapshot(collection(db, "products"), (snapshot) => {
+  snapshot.forEach((docSnap) => {
+    const data  = docSnap.data();
+    const stock = parseInt(data.stock !== undefined ? data.stock : data.Stock) || 0;
+
+    // ✅ FIX 3: rawName is lowercase, NAME_TO_NUM keys are also lowercase — they match!
+    const rawName = (data.name || "").toLowerCase().trim();
+    const num     = NAME_TO_NUM[rawName];
+
+    if (num) {
+      applyStock(num, stock);
+    }
+    // Products from other pages (sarees, lehengas) are silently ignored
+  });
+});
+
+window.updatePanelStock = function(num, stock) {
+  const el     = document.getElementById("panelStockStatus");
+  if (!el) return;
+  el.dataset.productId = String(num);
+  const buyBtn = document.getElementById("btnBuy");
+
+  if (stock === 0) {
+    el.className = "panel-stock-status out";
+    el.innerHTML = `<span class="panel-stock-dot"></span> Out of Stock`;
+    if (buyBtn) { buyBtn.disabled = true; buyBtn.innerHTML = `<i class="fa-solid fa-ban" style="margin-right:8px;"></i>Out of Stock`; }
+  } else if (stock <= 5) {
+    el.className = "panel-stock-status low";
+    el.innerHTML = `<span class="panel-stock-dot"></span> Only ${stock} left!`;
+    if (buyBtn) { buyBtn.disabled = false; buyBtn.innerHTML = `<i class="fa-solid fa-bag-shopping" style="margin-right:8px;"></i>Add to Bag`; }
+  } else {
+    el.className = "panel-stock-status in";
+    el.innerHTML = `<span class="panel-stock-dot"></span> In Stock`;
+    if (buyBtn) { buyBtn.disabled = false; buyBtn.innerHTML = `<i class="fa-solid fa-bag-shopping" style="margin-right:8px;"></i>Add to Bag`; }
+  }
+};
+</script>
+
 <body>
 
 <div class="top-bar">
@@ -399,27 +581,27 @@ footer strong{color:var(--rose);}
 <div class="lat">
   <div class="latim" data-id="1">
     <img src="img/gown1.png" alt="Black Flared Gown">
-    <div class="latim-body"><p>Black Flared Gown</p><h3>₹1,300</h3></div>
+    <div class="latim-body"><p>Black Flared Gown</p><h3>₹1,300</h3><span id="stock-1" class="stock-tag loading">Loading...</span></div>
   </div>
   <div class="latim" data-id="2">
     <img src="img/gown2.png" alt="Deep Wine Purple Gown">
-    <div class="latim-body"><p>Deep Wine Purple Gown</p><h3>₹1,300</h3></div>
+    <div class="latim-body"><p>Deep Wine Purple Gown</p><h3>₹1,300</h3><span id="stock-2" class="stock-tag loading">Loading...</span></div>
   </div>
   <div class="latim" data-id="3">
     <img src="img/gown3.png" alt="Steel Blue Gown">
-    <div class="latim-body"><p>Steel Blue Gown</p><h3>₹1,300</h3></div>
+    <div class="latim-body"><p>Steel Blue Gown</p><h3>₹1,300</h3><span id="stock-3" class="stock-tag loading">Loading...</span></div>
   </div>
   <div class="latim" data-id="4">
     <img src="img/gown4.png" alt="Maroon Red Gown">
-    <div class="latim-body"><p>Maroon Red Gown</p><h3>₹1,300</h3></div>
+    <div class="latim-body"><p>Maroon Red Gown</p><h3>₹1,300</h3><span id="stock-4" class="stock-tag loading">Loading...</span></div>
   </div>
   <div class="latim" data-id="5">
     <img src="img/gown5.png" alt="Champagne Beige Gown">
-    <div class="latim-body"><p>Champagne Beige Gown</p><h3>₹1,300</h3></div>
+    <div class="latim-body"><p>Champagne Beige Gown</p><h3>₹1,300</h3><span id="stock-5" class="stock-tag loading">Loading...</span></div>
   </div>
   <div class="latim" data-id="6">
     <img src="img/gown6.png" alt="Sage Green Gown">
-    <div class="latim-body"><p>Sage Green Gown</p><h3>₹1,300</h3></div>
+    <div class="latim-body"><p>Sage Green Gown</p><h3>₹1,300</h3><span id="stock-6" class="stock-tag loading">Loading...</span></div>
   </div>
 </div>
 
@@ -434,19 +616,19 @@ footer strong{color:var(--rose);}
 <div class="col">
   <div class="im" data-id="7">
     <img src="img/gown7.png" alt="Royal Blue Gown">
-    <div class="im-body"><h3>Royal Blue Gown</h3><div class="tag">₹1,300</div></div>
+    <div class="im-body"><h3>Royal Blue Gown</h3><div class="tag">₹1,300<span id="stock-7" class="stock-tag loading">Loading...</span></div></div>
   </div>
   <div class="im" data-id="8">
     <img src="img/gown8.png" alt="Dusty Pink Embroidered Gown">
-    <div class="im-body"><h3>Dusty Pink Embroidered Gown</h3><div class="tag">₹1,300</div></div>
+    <div class="im-body"><h3>Dusty Pink Embroidered Gown</h3><div class="tag">₹1,300<span id="stock-8" class="stock-tag loading">Loading...</span></div></div>
   </div>
   <div class="im" data-id="9">
     <img src="img/gown19.png" alt="Mauve Pink Gown">
-    <div class="im-body"><h3>Mauve Pink Gown</h3><div class="tag">₹1,300</div></div>
+    <div class="im-body"><h3>Mauve Pink Gown</h3><div class="tag">₹1,300<span id="stock-9" class="stock-tag loading">Loading...</span></div></div>
   </div>
   <div class="im" data-id="10">
     <img src="img/gown21.png" alt="Teal Green Gown">
-    <div class="im-body"><h3>Teal Green Gown</h3><div class="tag">₹1,300</div></div>
+    <div class="im-body"><h3>Teal Green Gown</h3><div class="tag">₹1,300<span id="stock-10" class="stock-tag loading">Loading...</span></div></div>
   </div>
 </div>
 
@@ -454,35 +636,35 @@ footer strong{color:var(--rose);}
 <div class="col">
   <div class="im" data-id="11">
     <img src="img/gown11.png" alt="Jet Black Gown">
-    <div class="im-body"><h3>Jet Black Gown</h3><div class="tag">₹1,300</div></div>
+    <div class="im-body"><h3>Jet Black Gown</h3><div class="tag">₹1,300<span id="stock-11" class="stock-tag loading">Loading...</span></div></div>
   </div>
   <div class="im" data-id="12">
     <img src="img/gown12.png" alt="Coffee Brown Gown">
-    <div class="im-body"><h3>Coffee Brown Gown</h3><div class="tag">₹1,300</div></div>
+    <div class="im-body"><h3>Coffee Brown Gown</h3><div class="tag">₹1,300<span id="stock-12" class="stock-tag loading">Loading...</span></div></div>
   </div>
   <div class="im" data-id="13">
     <img src="img/gown13.png" alt="Lavender Purple Gown">
-    <div class="im-body"><h3>Lavender Purple Gown</h3><div class="tag">₹1,300</div></div>
+    <div class="im-body"><h3>Lavender Purple Gown</h3><div class="tag">₹1,300<span id="stock-13" class="stock-tag loading">Loading...</span></div></div>
   </div>
   <div class="im" data-id="14">
     <img src="img/gown14.png" alt="Dark Plum Gown">
-    <div class="im-body"><h3>Dark Plum Gown</h3><div class="tag">₹1,300</div></div>
+    <div class="im-body"><h3>Dark Plum Gown</h3><div class="tag">₹1,300<span id="stock-14" class="stock-tag loading">Loading...</span></div></div>
   </div>
   <div class="im" data-id="15">
     <img src="img/gown15.png" alt="Ice Blue Gown">
-    <div class="im-body"><h3>Ice Blue Gown</h3><div class="tag">₹1,300</div></div>
+    <div class="im-body"><h3>Ice Blue Gown</h3><div class="tag">₹1,300<span id="stock-15" class="stock-tag loading">Loading...</span></div></div>
   </div>
   <div class="im" data-id="16">
     <img src="img/gown16.png" alt="Navy Blue Gown">
-    <div class="im-body"><h3>Navy Blue Gown</h3><div class="tag">₹1,300</div></div>
+    <div class="im-body"><h3>Navy Blue Gown</h3><div class="tag">₹1,300<span id="stock-16" class="stock-tag loading">Loading...</span></div></div>
   </div>
   <div class="im" data-id="17">
     <img src="img/gown17.png" alt="Mocha Brown Gown">
-    <div class="im-body"><h3>Mocha Brown Gown</h3><div class="tag">₹1,300</div></div>
+    <div class="im-body"><h3>Mocha Brown Gown</h3><div class="tag">₹1,300<span id="stock-17" class="stock-tag loading">Loading...</span></div></div>
   </div>
   <div class="im" data-id="18">
     <img src="img/gown20.png" alt="Soft Baby Pink Gown">
-    <div class="im-body"><h3>Soft Baby Pink Gown</h3><div class="tag">₹1,300</div></div>
+    <div class="im-body"><h3>Soft Baby Pink Gown</h3><div class="tag">₹1,300<span id="stock-18" class="stock-tag loading">Loading...</span></div></div>
   </div>
 </div>
 
@@ -522,7 +704,12 @@ footer strong{color:var(--rose);}
       <!-- Colour Available -->
       <div class="panel-section-label">Colour Available</div>
       <div class="color-swatches" id="panelColors"></div>
-
+       
+       <!-- Live stock pill -->
+      <div class="panel-stock-status loading" id="panelStockStatus" data-product-id="">
+        <span class="panel-stock-dot"></span> Checking stock…
+      </div>
+     
       <!-- Size -->
       <div class="panel-section-label">Select Size</div>
       <div class="size-grid" id="panelSizes"></div>
@@ -685,209 +872,152 @@ footer strong{color:var(--rose);}
     }
   };
 
-  // ── DOM refs ──────────────────────────────────────────────
-  const overlay       = document.getElementById('overlay');
-  const backdrop      = document.getElementById('overlayBackdrop');
-  const panelClose    = document.getElementById('panelClose');
-  const panelImg      = document.getElementById('panelImg');
-  const panelBadge    = document.getElementById('panelBadge');
-  const panelCategory = document.getElementById('panelCategory');
-  const panelName     = document.getElementById('panelName');
-  const panelTagline  = document.getElementById('panelTagline');
-  const panelRating   = document.getElementById('panelRating');
-  const panelPrice    = document.getElementById('panelPrice');
-  const panelPriceOld = document.getElementById('panelPriceOld');
-  const panelDiscount = document.getElementById('panelDiscount');
-  const panelColors   = document.getElementById('panelColors');
-  const panelSizes    = document.getElementById('panelSizes');
-  const panelDetails  = document.getElementById('panelDetails');
-  const qtyVal        = document.getElementById('qtyVal');
-  const qtyMinus      = document.getElementById('qtyMinus');
-  const qtyPlus       = document.getElementById('qtyPlus');
-  const btnBuy        = document.getElementById('btnBuy');
-  const btnWishlist   = document.getElementById('btnWishlist');
-  const toast         = document.getElementById('toast');
 
-  let currentProduct   = null;
-  let currentProductId = null;
-  let qty              = 1;
-  let selectedSize     = '';
-  let selectedColor    = '';
+const overlay    = document.getElementById('overlay');
+const backdrop   = document.getElementById('overlayBackdrop');
+const panelClose = document.getElementById('panelClose');
+const panelImg   = document.getElementById('panelImg');
+const panelBadge = document.getElementById('panelBadge');
+const panelCategory = document.getElementById('panelCategory');
+const panelName  = document.getElementById('panelName');
+const panelTagline  = document.getElementById('panelTagline');
+const panelRating   = document.getElementById('panelRating');
+const panelPrice    = document.getElementById('panelPrice');
+const panelPriceOld = document.getElementById('panelPriceOld');
+const panelDiscount = document.getElementById('panelDiscount');
+const panelColors   = document.getElementById('panelColors');
+const panelSizes    = document.getElementById('panelSizes');
+const panelDetails  = document.getElementById('panelDetails');
+const qtyVal     = document.getElementById('qtyVal');
+const qtyMinus   = document.getElementById('qtyMinus');
+const qtyPlus    = document.getElementById('qtyPlus');
+const btnBuy     = document.getElementById('btnBuy');
+const btnWishlist= document.getElementById('btnWishlist');
+const toast      = document.getElementById('toast');
 
-  const WISH_KEY = 'wishlist_ids';
-  function getWishlist() {
-    try { return new Set(JSON.parse(localStorage.getItem(WISH_KEY)) || []); }
-    catch { return new Set(); }
+let currentProduct=null,currentProductId=null,qty=1,selectedSize='',selectedColor='';
+
+const WISH_KEY='wishlist_ids';
+function getWishlist(){try{return new Set(JSON.parse(localStorage.getItem(WISH_KEY))||[]);}catch{return new Set();}}
+function saveWishlist(s){localStorage.setItem(WISH_KEY,JSON.stringify([...s]));}
+let wishlist=getWishlist();
+
+function getCart(){try{return JSON.parse(localStorage.getItem('cart'))||[];}catch{return[];}}
+function addToCartLS(product,productId,quantity,size,color){
+  const cart=getCart();
+  cart.push({id:Date.now(),productId,name:product.name,price:product.price,image:product.img,quantity,size,color,addedAt:new Date().toISOString()});
+  localStorage.setItem('cart',JSON.stringify(cart));
+}
+
+function handleSearch(query){
+  if(!query.trim())return;
+  const q=query.toLowerCase();
+  const matches=Object.entries(products).filter(([,p])=>p.name.toLowerCase().includes(q)||p.color.toLowerCase().includes(q));
+  if(!matches.length){showToast('No products found for "'+query+'"');}
+  else{openProduct(parseInt(matches[0][0]));}
+}
+
+function openProduct(id){
+  const p=products[id];
+  if(!p)return;
+
+  // Block if out of stock
+  const stock=(window._stockData||{})[String(id)];
+  if(stock===0){showToast('This item is currently out of stock 😔');return;}
+
+  currentProduct=p;currentProductId=id;qty=1;qtyVal.textContent=1;selectedSize='';selectedColor=p.color;
+  panelImg.src=p.img;panelImg.alt=p.name;
+  panelCategory.textContent=p.category;
+  panelName.textContent=p.name;
+  panelTagline.textContent=p.tagline;
+  panelRating.textContent=p.rating;
+  panelPrice.textContent=p.price;
+  panelPriceOld.textContent=p.priceOld;
+  panelDiscount.textContent=p.discount;
+  panelBadge.textContent=p.occasion||'Ethnic Wear';
+
+  // Stock pill
+  const panelStockEl=document.getElementById('panelStockStatus');
+  panelStockEl.dataset.productId=String(id);
+  if(typeof window.updatePanelStock==='function'){
+    window.updatePanelStock(String(id),stock!==undefined?stock:50);
   }
-  function saveWishlist(s) { localStorage.setItem(WISH_KEY, JSON.stringify([...s])); }
-  let wishlist = getWishlist();
 
-  // ── Cart functions ────────────────────────────────────────
-  function getCart() {
-    try { return JSON.parse(localStorage.getItem('cart')) || []; }
-    catch { return []; }
-  }
-  function addToCart(product, productId, quantity, size, color) {
-    const cart = getCart();
-    cart.push({
-      id: Date.now(), productId,
-      name: product.name, price: product.price,
-      image: product.img, quantity, size, color,
-      addedAt: new Date().toISOString()
+  // Color swatch
+  panelColors.innerHTML='';
+  const sw=document.createElement('div');
+  sw.className='swatch selected';
+  sw.style.background=p.hex||'#B0C4DE';
+  sw.title=p.color;
+  panelColors.appendChild(sw);
+
+  // Sizes
+  panelSizes.innerHTML='';
+  p.sizes.forEach(sz=>{
+    const btn=document.createElement('button');
+    btn.className='size-btn';btn.textContent=sz;
+    btn.addEventListener('click',()=>{
+      panelSizes.querySelectorAll('.size-btn').forEach(b=>b.classList.remove('selected'));
+      btn.classList.add('selected');selectedSize=sz;
     });
-    localStorage.setItem('cart', JSON.stringify(cart));
-  }
-
-  // ── Search function ───────────────────────────────────────
-  function handleSearch(query) {
-    if (!query.trim()) return;
-    const q = query.toLowerCase();
-    const matches = Object.entries(products).filter(([, p]) =>
-      p.name.toLowerCase().includes(q) || p.color.toLowerCase().includes(q)
-    );
-    if (matches.length === 0) { showToast('No products found for "' + query + '"'); }
-    else { openProduct(parseInt(matches[0][0])); }
-  }
-
-  // ── Open overlay ──────────────────────────────────────────
-  function openProduct(id) {
-    const p = products[id];
-    if (!p) return;
-    currentProduct = p; currentProductId = id;
-    qty = 1; qtyVal.textContent = 1;
-    selectedSize = ''; selectedColor = p.color;
-
-    panelImg.src              = p.img;
-    panelImg.alt              = p.name;
-    panelCategory.textContent = p.category;
-    panelName.textContent     = p.name;
-    panelTagline.textContent  = p.tagline;
-    panelRating.textContent   = p.rating;
-    panelPrice.textContent    = p.price;
-    panelPriceOld.textContent = p.priceOld;
-    panelDiscount.textContent = p.discount;
-    panelBadge.textContent    = p.occasion || 'Gown';
-
-    panelColors.innerHTML = '';
-    p.swatches.forEach((hex, i) => {
-      const sw = document.createElement('div');
-      sw.className = 'swatch' + (i === 0 ? ' selected' : '');
-      sw.style.background = hex; sw.title = hex;
-      sw.addEventListener('click', () => {
-        panelColors.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
-        sw.classList.add('selected'); selectedColor = hex;
-      });
-      panelColors.appendChild(sw);
-    });
-
-    panelSizes.innerHTML = '';
-    p.sizes.forEach(sz => {
-      const btn = document.createElement('button');
-      btn.className = 'size-btn'; btn.textContent = sz;
-      btn.addEventListener('click', () => {
-        panelSizes.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected'); selectedSize = sz;
-      });
-      panelSizes.appendChild(btn);
-    });
-
-    panelDetails.innerHTML = `
-      <div class="detail-row"><span class="detail-key">Colour</span><span class="detail-val">${p.color}</span></div>
-      <div class="detail-row"><span class="detail-key">Fabric</span><span class="detail-val">${p.fabric}</span></div>
-      <div class="detail-row"><span class="detail-key">Style</span><span class="detail-val">${p.style}</span></div>
-      <div class="detail-row"><span class="detail-key">Occasion</span><span class="detail-val">${p.occasion}</span></div>
-      <div class="detail-row"><span class="detail-key">Work</span><span class="detail-val">${p.work}</span></div>
-      <div class="detail-row"><span class="detail-key">Type</span><span class="detail-val">Ready to Wear Gown</span></div>
-    `;
-
-    const inWishlist = wishlist.has(id);
-    btnWishlist.innerHTML = inWishlist ? '<i class="fa-solid fa-heart"></i>' : '<i class="fa-regular fa-heart"></i>';
-    btnWishlist.classList.toggle('loved', inWishlist);
-    btnWishlist.dataset.id = id;
-
-    overlay.classList.add('active');
-    document.body.style.overflow = 'hidden';
-  }
-
-  function closeOverlay() {
-    overlay.classList.remove('active');
-    document.body.style.overflow = '';
-  }
-
-  // ── Card click events ─────────────────────────────────────
-  document.querySelectorAll('.latim, .im').forEach(card => {
-    card.addEventListener('click', () => {
-      const id = parseInt(card.dataset.id);
-      if (id) openProduct(id);
-    });
+    panelSizes.appendChild(btn);
   });
 
-  backdrop.addEventListener('click', closeOverlay);
-  panelClose.addEventListener('click', closeOverlay);
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeOverlay(); });
+  panelDetails.innerHTML=
+    `<div class="detail-row"><span class="detail-key">Colour</span><span class="detail-val">${p.color}</span></div>`+
+    `<div class="detail-row"><span class="detail-key">Fabric</span><span class="detail-val">${p.fabric}</span></div>`+
+    `<div class="detail-row"><span class="detail-key">Occasion</span><span class="detail-val">${p.occasion}</span></div>`+
+    `<div class="detail-row"><span class="detail-key">Work</span><span class="detail-val">${p.work}</span></div>`+
+    `<div class="detail-row"><span class="detail-key">Set Includes</span><span class="detail-val">Top + Bottom + Dupatta</span></div>`;
 
-  qtyMinus.addEventListener('click', () => { if (qty > 1)  { qty--; qtyVal.textContent = qty; } });
-  qtyPlus.addEventListener('click',  () => { if (qty < 10) { qty++; qtyVal.textContent = qty; } });
+  const inWishlist=wishlist.has(id);
+  btnWishlist.innerHTML=inWishlist?'<i class="fa-solid fa-heart"></i>':'<i class="fa-regular fa-heart"></i>';
+  btnWishlist.classList.toggle('loved',inWishlist);
+  btnWishlist.dataset.id=id;
 
-  btnBuy.addEventListener('click', () => {
-    if (!selectedSize) { showToast('Please select a size first ✂️'); return; }
-    addToCart(currentProduct, currentProductId, qty, selectedSize, selectedColor);
-    showToast(`Added ${qty} × ${currentProduct.name} (${selectedSize}) to bag 🛍️`);
-    closeOverlay();
-    setTimeout(() => { window.location.href = 'mycart.html'; }, 1200);
-  });
+  overlay.classList.add('active');
+  document.body.style.overflow='hidden';
+}
 
-  btnWishlist.addEventListener('click', () => {
-    const id = parseInt(btnWishlist.dataset.id);
-    if (wishlist.has(id)) {
-      wishlist.delete(id);
-      btnWishlist.innerHTML = '<i class="fa-regular fa-heart"></i>';
-      btnWishlist.classList.remove('loved');
-      showToast('Removed from wishlist');
-    } else {
-      wishlist.add(id);
-      btnWishlist.innerHTML = '<i class="fa-solid fa-heart"></i>';
-      btnWishlist.classList.add('loved');
-      showToast('Added to wishlist ❤️');
-    }
-    saveWishlist(wishlist);
-  });
+function closeOverlay(){overlay.classList.remove('active');document.body.style.overflow='';}
 
-  let toastTimer;
-  function showToast(msg) {
-    toast.textContent = msg;
-    toast.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
-  }
+document.querySelectorAll('.latim,.im').forEach(card=>{
+  card.addEventListener('click',()=>{const id=parseInt(card.dataset.id);if(id)openProduct(id);});
+});
 
-  // ── Hamburger ─────────────────────────────────────────────
-  const hamburger = document.getElementById('hamburger');
-  const mobileNav = document.getElementById('mobileNav');
-  hamburger.addEventListener('click', () => {
-    hamburger.classList.toggle('open');
-    mobileNav.classList.toggle('open');
-  });
+backdrop.addEventListener('click',closeOverlay);
+panelClose.addEventListener('click',closeOverlay);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeOverlay();});
 
-  // ── Search event bindings ─────────────────────────────────
-  document.getElementById('desktopSearchBtn').addEventListener('click', () => {
-    handleSearch(document.getElementById('desktopSearchInput').value);
-  });
-  document.getElementById('desktopSearchInput').addEventListener('keydown', e => {
-    if (e.key === 'Enter') handleSearch(e.target.value);
-  });
-  document.getElementById('mobileSearchBtn').addEventListener('click', () => {
-    handleSearch(document.getElementById('mobileSearchInput').value);
-    mobileNav.classList.remove('open');
-    hamburger.classList.remove('open');
-  });
-  document.getElementById('mobileSearchInput').addEventListener('keydown', e => {
-    if (e.key === 'Enter') {
-      handleSearch(e.target.value);
-      mobileNav.classList.remove('open');
-      hamburger.classList.remove('open');
-    }
-  });
+qtyMinus.addEventListener('click',()=>{if(qty>1){qty--;qtyVal.textContent=qty;}});
+qtyPlus.addEventListener('click', ()=>{if(qty<10){qty++;qtyVal.textContent=qty;}});
+
+btnBuy.addEventListener('click',()=>{
+  if(!selectedSize){showToast('Please select a size first ✂️');return;}
+  addToCartLS(currentProduct,currentProductId,qty,selectedSize,selectedColor);
+  showToast(`Added ${qty} × ${currentProduct.name} (${selectedSize}) to bag 🛍️`);
+  closeOverlay();
+  setTimeout(()=>{window.location.href='mycart.html';},1200);
+});
+
+btnWishlist.addEventListener('click',()=>{
+  const id=parseInt(btnWishlist.dataset.id);
+  if(wishlist.has(id)){wishlist.delete(id);btnWishlist.innerHTML='<i class="fa-regular fa-heart"></i>';btnWishlist.classList.remove('loved');showToast('Removed from wishlist');}
+  else{wishlist.add(id);btnWishlist.innerHTML='<i class="fa-solid fa-heart"></i>';btnWishlist.classList.add('loved');showToast('Added to wishlist ❤️');}
+  saveWishlist(wishlist);
+});
+
+let toastTimer;
+function showToast(msg){toast.textContent=msg;toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),2800);}
+
+const hamburger=document.getElementById('hamburger');
+const mobileNav=document.getElementById('mobileNav');
+hamburger.addEventListener('click',()=>{hamburger.classList.toggle('open');mobileNav.classList.toggle('open');});
+
+document.getElementById('desktopSearchBtn').addEventListener('click',()=>handleSearch(document.getElementById('desktopSearchInput').value));
+document.getElementById('desktopSearchInput').addEventListener('keydown',e=>{if(e.key==='Enter')handleSearch(e.target.value);});
+document.getElementById('mobileSearchBtn').addEventListener('click',()=>{handleSearch(document.getElementById('mobileSearchInput').value);mobileNav.classList.remove('open');hamburger.classList.remove('open');});
+document.getElementById('mobileSearchInput').addEventListener('keydown',e=>{if(e.key==='Enter'){handleSearch(e.target.value);mobileNav.classList.remove('open');hamburger.classList.remove('open');}});
 </script>
 </body>
 </html>
