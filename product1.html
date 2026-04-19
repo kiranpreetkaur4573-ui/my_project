@@ -73,7 +73,7 @@ nav{position:sticky;top:0;z-index:300;background:rgba(255,255,255,.97);backdrop-
 
 /* ── GRIDS ── */
 .lat{display:grid;grid-template-columns:repeat(6,1fr);gap:18px;padding:0 20px;margin-bottom:40px;}
-.latim{background:white;overflow:hidden;box-shadow:0 4px 20px rgba(122,45,82,.08);transition:.35s;cursor:pointer;border-radius:8px;border:2px solid transparent;}
+.latim{background:white;overflow:hidden;box-shadow:0 4px 20px rgba(122,45,82,.08);transition:.35s;cursor:pointer;border-radius:8px;border:2px solid transparent;position:relative;}
 .latim:hover{transform:translateY(-6px);box-shadow:0 12px 40px rgba(122,45,82,.18);border-color:var(--rose);}
 .latim img{width:100%;height:280px;object-fit:cover;transition:.45s;display:block;pointer-events:none;}
 .latim:hover img{transform:scale(1.05);}
@@ -86,13 +86,61 @@ nav{position:sticky;top:0;z-index:300;background:rgba(255,255,255,.97);backdrop-
 .banner img{max-width:100%;height:auto;display:block;margin:0 auto;}
 
 .col{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;padding:0 20px;margin-bottom:50px;}
-.im{background:white;overflow:hidden;box-shadow:0 4px 20px rgba(122,45,82,.08);transition:.35s;cursor:pointer;border-radius:8px;border:2px solid transparent;}
+.im{background:white;overflow:hidden;box-shadow:0 4px 20px rgba(122,45,82,.08);transition:.35s;cursor:pointer;border-radius:8px;border:2px solid transparent;position:relative;}
 .im:hover{transform:translateY(-8px);box-shadow:0 12px 40px rgba(122,45,82,.18);border-color:var(--rose);}
 .im img{width:100%;height:360px;object-fit:cover;transition:.45s;display:block;pointer-events:none;}
 .im:hover img{transform:scale(1.05);}
 .im-body{padding:12px 14px 16px;}
 .im-body h3{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text);margin-bottom:4px;}
 .tag{font-size:13px;color:var(--rose);font-weight:600;}
+
+/* ── ✅ STOCK BADGE ── */
+.stock-tag {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  padding: 3px 8px;
+  border-radius: 20px;
+  margin-top: 5px;
+  text-transform: uppercase;
+  transition: all .3s ease;
+}
+.stock-tag.loading { background: rgba(158,107,128,.1); color: #9e6b80; }
+.stock-tag.in      { background: rgba(46,125,79,.12);  color: #2e7d4f; }
+.stock-tag.low     { background: rgba(240,165,0,.15);   color: #a06800; }
+.stock-tag.out     { background: rgba(192,57,43,.12);   color: #c0392b; }
+
+/* Out of stock card dimming */
+.latim.out-of-stock,
+.im.out-of-stock {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+.latim.out-of-stock:hover,
+.im.out-of-stock:hover {
+  transform: none;
+  border-color: transparent;
+  box-shadow: 0 4px 20px rgba(122,45,82,.08);
+}
+
+/* Out of stock overlay ribbon */
+.latim.out-of-stock::after,
+.im.out-of-stock::after {
+  content: "Out of Stock";
+  position: absolute;
+  top: 14px;
+  right: -28px;
+  background: #c0392b;
+  color: white;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 4px 36px;
+  transform: rotate(45deg);
+  pointer-events: none;
+}
 
 /* ── PRODUCT DETAIL OVERLAY ── */
 .overlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .35s ease;}
@@ -139,9 +187,34 @@ nav{position:sticky;top:0;z-index:300;background:rgba(255,255,255,.97);backdrop-
 .panel-actions{display:flex;gap:10px;margin-top:auto;padding-top:6px;}
 .btn-buy{flex:1;padding:14px;border:none;background:linear-gradient(135deg,var(--rose),var(--deep));color:white;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border-radius:30px;cursor:pointer;transition:opacity .2s,transform .2s;box-shadow:0 6px 20px rgba(122,45,82,.3);}
 .btn-buy:hover{opacity:.88;transform:translateY(-2px);}
+.btn-buy:disabled{opacity:.4;cursor:not-allowed;transform:none;}
 .btn-wishlist{width:50px;height:50px;border:1.5px solid #ddb8cc;border-radius:50%;background:white;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--rose);transition:background .2s,border-color .2s,transform .2s;flex-shrink:0;}
 .btn-wishlist:hover{background:var(--soft);border-color:var(--rose);transform:scale(1.1);}
 .btn-wishlist.loved{color:#e04060;}
+
+/* ── ✅ PANEL STOCK STATUS ── */
+.panel-stock-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+}
+.panel-stock-status.in  { background: rgba(46,125,79,.1);  color: #2e7d4f; }
+.panel-stock-status.low { background: rgba(240,165,0,.15);  color: #a06800; }
+.panel-stock-status.out { background: rgba(192,57,43,.1);   color: #c0392b; }
+.panel-stock-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  flex-shrink: 0;
+}
+.in  .panel-stock-dot { background: #2e7d4f; }
+.low .panel-stock-dot { background: #f0a500; }
+.out .panel-stock-dot { background: #c0392b; }
 
 /* Toast */
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--plum);color:white;padding:12px 28px;border-radius:30px;font-size:13px;font-weight:600;letter-spacing:.5px;z-index:10000;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;white-space:nowrap;}
@@ -213,6 +286,125 @@ footer strong{color:var(--rose);}
 }
 </style>
 </head>
+
+<!-- ✅ FIREBASE: Real-time stock listener — matches by product NAME -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDpnSVwV3QP9MP4tuU5SCtXiwpdAUD0vlc",
+  authDomain: "trendlilly-boutique.firebaseapp.com",
+  projectId: "trendlilly-boutique",
+  storageBucket: "trendlilly-boutique.firebasestorage.app",
+  messagingSenderId: "929563690255",
+  appId: "1:929563690255:web:b535b31e9cb2f6158b6a7a"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+// ── NAME → CARD NUMBER MAP ──
+// Key   = normalized name from Firestore (lowercase, trimmed)
+// Value = card number (matches data-id on .latim / .im and id="stock-N")
+const NAME_TO_NUM = {
+  "powder blue saree":        "1",
+  "ivory cream floral saree": "2",
+  "pastel multicolor saree":  "3",
+  "dusty rose pink saree":    "4",
+  "navy blue saree":          "5",
+  "peach apricot saree":      "6",
+  "beige printed saree":      "7",
+  "soft blush pink saree":    "8",
+  "bright yellow saree":      "9",
+  "rose pink saree":          "10",
+  "seafoam green saree":      "11",
+  "mauve brown saree":        "12",
+  "muted purple saree":       "13",
+  "aqua green saree":         "14",
+  "taupe grey saree":         "15",
+  "deep purple saree":        "16",
+  "teal blue saree":          "17",
+  "maroon red saree":         "18"
+};
+
+// Store live stock by card number so overlay can read instantly
+window._stockData = {};
+
+function applyStock(num, stock) {
+  // Save globally
+  window._stockData[String(num)] = stock;
+
+  // ── Update badge on card ──
+  const badge = document.getElementById("stock-" + num);
+  if (badge) {
+    if (stock === 0) {
+      badge.textContent = "Out of Stock";
+      badge.className   = "stock-tag out";
+    } else if (stock <= 5) {
+      badge.textContent = `Only ${stock} left!`;
+      badge.className   = "stock-tag low";
+    } else {
+      badge.textContent = "In Stock";
+      badge.className   = "stock-tag in";
+    }
+  }
+
+  // ── Dim/ribbon the card if out of stock ──
+  const card = document.querySelector(`.latim[data-id="${num}"], .im[data-id="${num}"]`);
+  if (card) {
+    card.classList.toggle("out-of-stock", stock === 0);
+  }
+
+  // ── If overlay is open for this product, update the pill live ──
+  const panelStockEl = document.getElementById("panelStockStatus");
+  if (panelStockEl && panelStockEl.dataset.productId === String(num)) {
+    window.updatePanelStock(String(num), stock);
+  }
+}
+
+onSnapshot(collection(db, "products"), (snapshot) => {
+  snapshot.forEach((docSnap) => {
+    const data  = docSnap.data();
+
+    // Read stock — handles both "stock" (lowercase) and "Stock" (uppercase)
+    const stock = parseInt(data.stock !== undefined ? data.stock : data.Stock) || 0;
+
+    // ── Only match by EXACT name (lowercase) — no partial matching ──
+    // Partial matching caused wrong products to get each other's stock values
+    const rawName = (data.name || "").toLowerCase().trim();
+    const num = NAME_TO_NUM[rawName];
+
+    if (num) {
+      applyStock(num, stock);
+    }
+    // Non-saree products (salwar suits, lehengas etc.) are silently ignored
+  });
+});
+
+// ── Update the stock pill inside the product overlay ──
+window.updatePanelStock = function(num, stock) {
+  const el = document.getElementById("panelStockStatus");
+  if (!el) return;
+  el.dataset.productId = String(num);
+  const buyBtn = document.getElementById("btnBuy");
+
+  if (stock === 0) {
+    el.className = "panel-stock-status out";
+    el.innerHTML = `<span class="panel-stock-dot"></span> Out of Stock`;
+    if (buyBtn) { buyBtn.disabled = true; buyBtn.innerHTML = `<i class="fa-solid fa-ban" style="margin-right:8px;"></i>Out of Stock`; }
+  } else if (stock <= 5) {
+    el.className = "panel-stock-status low";
+    el.innerHTML = `<span class="panel-stock-dot"></span> Only ${stock} left!`;
+    if (buyBtn) { buyBtn.disabled = false; buyBtn.innerHTML = `<i class="fa-solid fa-bag-shopping" style="margin-right:8px;"></i>Add to Bag`; }
+  } else {
+    el.className = "panel-stock-status in";
+    el.innerHTML = `<span class="panel-stock-dot"></span> In Stock`;
+    if (buyBtn) { buyBtn.disabled = false; buyBtn.innerHTML = `<i class="fa-solid fa-bag-shopping" style="margin-right:8px;"></i>Add to Bag`; }
+  }
+};
+</script>
+
 <body>
 
 <div class="top-bar">
@@ -267,29 +459,54 @@ footer strong{color:var(--rose);}
 <div class="section-heading"><h2>Featured Picks</h2><p>Handpicked for you</p></div>
 
 <div class="lat">
+  <!-- ✅ Each card now has a stock-N span that Firebase updates live -->
   <div class="latim" data-id="1">
     <img src="img/sar1.png" alt="Powder Blue Saree">
-    <div class="latim-body"><p>Powder Blue Saree</p><h3>&#8377;1,300</h3></div>
+    <div class="latim-body">
+      <p>Powder Blue Saree</p>
+      <h3>&#8377;1,300</h3>
+      <span id="stock-1" class="stock-tag loading">Loading…</span>
+    </div>
   </div>
   <div class="latim" data-id="2">
     <img src="img/sar2.png" alt="Ivory Cream Floral Saree">
-    <div class="latim-body"><p>Ivory Cream Floral Saree</p><h3>&#8377;1,300</h3></div>
+    <div class="latim-body">
+      <p>Ivory Cream Floral Saree</p>
+      <h3>&#8377;1,300</h3>
+      <span id="stock-2" class="stock-tag loading">Loading…</span>
+    </div>
   </div>
   <div class="latim" data-id="3">
     <img src="img/sar3.png" alt="Pastel Multicolor Saree">
-    <div class="latim-body"><p>Pastel Multicolor Saree</p><h3>&#8377;1,300</h3></div>
+    <div class="latim-body">
+      <p>Pastel Multicolor Saree</p>
+      <h3>&#8377;1,300</h3>
+      <span id="stock-3" class="stock-tag loading">Loading…</span>
+    </div>
   </div>
   <div class="latim" data-id="4">
     <img src="img/sar4.png" alt="Dusty Rose Pink Saree">
-    <div class="latim-body"><p>Dusty Rose Pink Saree</p><h3>&#8377;1,300</h3></div>
+    <div class="latim-body">
+      <p>Dusty Rose Pink Saree</p>
+      <h3>&#8377;1,300</h3>
+      <span id="stock-4" class="stock-tag loading">Loading…</span>
+    </div>
   </div>
   <div class="latim" data-id="5">
     <img src="img/sar5.png" alt="Navy Blue Saree">
-    <div class="latim-body"><p>Navy Blue Saree</p><h3>&#8377;1,300</h3></div>
+    <div class="latim-body">
+      <p>Navy Blue Saree</p>
+      <h3>&#8377;1,300</h3>
+      <span id="stock-5" class="stock-tag loading">Loading…</span>
+    </div>
   </div>
   <div class="latim" data-id="6">
     <img src="img/sar6.png" alt="Peach Apricot Saree">
-    <div class="latim-body"><p>Peach Apricot Saree</p><h3>&#8377;1,300</h3></div>
+    <div class="latim-body">
+      <p>Peach Apricot Saree</p>
+      <h3>&#8377;1,300</h3>
+      <span id="stock-6" class="stock-tag loading">Loading…</span>
+    </div>
   </div>
 </div>
 
@@ -303,54 +520,102 @@ footer strong{color:var(--rose);}
 <div class="col">
   <div class="im" data-id="7">
     <img src="img/sar7.png" alt="Beige Printed Saree">
-    <div class="im-body"><h3>Beige Printed Saree</h3><div class="tag">&#8377;1,300</div></div>
+    <div class="im-body">
+      <h3>Beige Printed Saree</h3>
+      <div class="tag">&#8377;1,300</div>
+      <span id="stock-7" class="stock-tag loading">Loading…</span>
+    </div>
   </div>
   <div class="im" data-id="8">
     <img src="img/sar8.png" alt="Soft Blush Pink Saree">
-    <div class="im-body"><h3>Soft Blush Pink Saree</h3><div class="tag">&#8377;1,300</div></div>
+    <div class="im-body">
+      <h3>Soft Blush Pink Saree</h3>
+      <div class="tag">&#8377;1,300</div>
+      <span id="stock-8" class="stock-tag loading">Loading…</span>
+    </div>
   </div>
   <div class="im" data-id="9">
     <img src="img/sar9.png" alt="Bright Yellow Saree">
-    <div class="im-body"><h3>Bright Yellow Saree</h3><div class="tag">&#8377;1,300</div></div>
+    <div class="im-body">
+      <h3>Bright Yellow Saree</h3>
+      <div class="tag">&#8377;1,300</div>
+      <span id="stock-9" class="stock-tag loading">Loading…</span>
+    </div>
   </div>
   <div class="im" data-id="10">
     <img src="img/sar10.png" alt="Rose Pink Saree">
-    <div class="im-body"><h3>Rose Pink Saree</h3><div class="tag">&#8377;1,300</div></div>
+    <div class="im-body">
+      <h3>Rose Pink Saree</h3>
+      <div class="tag">&#8377;1,300</div>
+      <span id="stock-10" class="stock-tag loading">Loading…</span>
+    </div>
   </div>
 </div>
 
 <div class="col">
   <div class="im" data-id="11">
     <img src="img/sar11.png" alt="Seafoam Green Saree">
-    <div class="im-body"><h3>Seafoam Green Saree</h3><div class="tag">&#8377;1,300</div></div>
+    <div class="im-body">
+      <h3>Seafoam Green Saree</h3>
+      <div class="tag">&#8377;1,300</div>
+      <span id="stock-11" class="stock-tag loading">Loading…</span>
+    </div>
   </div>
   <div class="im" data-id="12">
     <img src="img/sar12.png" alt="Mauve Brown Saree">
-    <div class="im-body"><h3>Mauve Brown Saree</h3><div class="tag">&#8377;1,300</div></div>
+    <div class="im-body">
+      <h3>Mauve Brown Saree</h3>
+      <div class="tag">&#8377;1,300</div>
+      <span id="stock-12" class="stock-tag loading">Loading…</span>
+    </div>
   </div>
   <div class="im" data-id="13">
     <img src="img/sar13.png" alt="Muted Purple Saree">
-    <div class="im-body"><h3>Muted Purple Saree</h3><div class="tag">&#8377;1,300</div></div>
+    <div class="im-body">
+      <h3>Muted Purple Saree</h3>
+      <div class="tag">&#8377;1,300</div>
+      <span id="stock-13" class="stock-tag loading">Loading…</span>
+    </div>
   </div>
   <div class="im" data-id="14">
     <img src="img/sar14.png" alt="Aqua Green Saree">
-    <div class="im-body"><h3>Aqua Green Saree</h3><div class="tag">&#8377;1,300</div></div>
+    <div class="im-body">
+      <h3>Aqua Green Saree</h3>
+      <div class="tag">&#8377;1,300</div>
+      <span id="stock-14" class="stock-tag loading">Loading…</span>
+    </div>
   </div>
   <div class="im" data-id="15">
     <img src="img/sar15.png" alt="Taupe Grey Saree">
-    <div class="im-body"><h3>Taupe Grey Saree</h3><div class="tag">&#8377;1,300</div></div>
+    <div class="im-body">
+      <h3>Taupe Grey Saree</h3>
+      <div class="tag">&#8377;1,300</div>
+      <span id="stock-15" class="stock-tag loading">Loading…</span>
+    </div>
   </div>
   <div class="im" data-id="16">
     <img src="img/sar16.png" alt="Deep Purple Saree">
-    <div class="im-body"><h3>Deep Purple Saree</h3><div class="tag">&#8377;1,300</div></div>
+    <div class="im-body">
+      <h3>Deep Purple Saree</h3>
+      <div class="tag">&#8377;1,300</div>
+      <span id="stock-16" class="stock-tag loading">Loading…</span>
+    </div>
   </div>
   <div class="im" data-id="17">
     <img src="img/sar17.png" alt="Teal Blue Saree">
-    <div class="im-body"><h3>Teal Blue Saree</h3><div class="tag">&#8377;1,300</div></div>
+    <div class="im-body">
+      <h3>Teal Blue Saree</h3>
+      <div class="tag">&#8377;1,300</div>
+      <span id="stock-17" class="stock-tag loading">Loading…</span>
+    </div>
   </div>
   <div class="im" data-id="18">
     <img src="img/sar18.png" alt="Maroon Red Saree">
-    <div class="im-body"><h3>Maroon Red Saree</h3><div class="tag">&#8377;1,300</div></div>
+    <div class="im-body">
+      <h3>Maroon Red Saree</h3>
+      <div class="tag">&#8377;1,300</div>
+      <span id="stock-18" class="stock-tag loading">Loading…</span>
+    </div>
   </div>
 </div>
 
@@ -381,6 +646,10 @@ footer strong{color:var(--rose);}
         <span class="panel-price" id="panelPrice">&#8377;1,300</span>
         <span class="panel-price-old" id="panelPriceOld"></span>
         <span class="panel-discount" id="panelDiscount"></span>
+      </div>
+      <!-- ✅ Live stock status pill inside the overlay -->
+      <div class="panel-stock-status loading" id="panelStockStatus" data-product-id="">
+        <span class="panel-stock-dot"></span> Checking stock…
       </div>
       <div class="panel-section-label">Colour Available</div>
       <div class="color-swatches" id="panelColors"></div>
@@ -476,6 +745,14 @@ function handleSearch(query){
 function openProduct(id){
   const p=products[id];
   if(!p)return;
+
+  // ✅ Block opening if out of stock
+  const stock = (window._stockData || {})[String(id)];
+  if (stock === 0) {
+    showToast('This saree is currently out of stock 😔');
+    return;
+  }
+
   currentProduct=p;currentProductId=id;qty=1;qtyVal.textContent=1;selectedSize='';selectedColor=p.color;
   panelImg.src=p.img;panelImg.alt=p.name;
   panelCategory.textContent=p.category;
@@ -486,6 +763,13 @@ function openProduct(id){
   panelPriceOld.innerHTML=p.priceOld;
   panelDiscount.textContent=p.discount;
   panelBadge.textContent=p.occasion||'Saree';
+
+  // ✅ Update the stock pill in the panel using live Firebase data
+  const panelStockEl = document.getElementById('panelStockStatus');
+  panelStockEl.dataset.productId = String(id);
+  if (typeof window.updatePanelStock === 'function') {
+    window.updatePanelStock(String(id), stock !== undefined ? stock : 50);
+  }
 
   panelColors.innerHTML='';
   p.swatches.forEach((hex,i)=>{
