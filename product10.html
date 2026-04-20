@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Suit Salwar — Product Detail</title>
+<title>Indo-Western — Product Detail</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -16,16 +16,12 @@
   --white:#fff;
   --text:#3d1a28;
 }
-
 *{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:100%;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;zoom:1;}
 body{background:#faedeb;font-family:'DM Sans',Arial,sans-serif;}
-
-/* ── TOP BAR ── */
 .top-bar{background:var(--plum);color:rgba(255,255,255,.88);text-align:center;font-size:11px;letter-spacing:2.5px;padding:8px 16px;text-transform:uppercase;overflow:hidden;}
 .top-bar-inner{display:inline-block;white-space:nowrap;animation:marquee 22s linear infinite;}
 @keyframes marquee{0%{transform:translateX(40vw);}100%{transform:translateX(-100%);}}
-
-/* ── NAVBAR ── */
 nav{position:sticky;top:0;z-index:300;background:rgba(255,255,255,.97);backdrop-filter:blur(12px);border-bottom:1px solid rgba(197,149,176,.2);box-shadow:0 2px 20px rgba(122,45,82,.08);}
 .navbar{max-width:1400px;margin:0 auto;height:60px;display:flex;align-items:center;padding:0 24px;gap:12px;}
 .nav-left{display:flex;align-items:center;gap:14px;flex-shrink:0;}
@@ -56,338 +52,114 @@ nav{position:sticky;top:0;z-index:300;background:rgba(255,255,255,.97);backdrop-
 .mobile-nav .search-row{display:flex;padding:14px 20px;gap:0;}
 .mobile-nav .search-row input{flex:1;padding:9px 14px;border:1.5px solid #ddb8cc;border-radius:24px 0 0 24px;font-size:13px;color:var(--text);outline:none;background:#fdf6f9;font-family:'DM Sans',sans-serif;}
 .mobile-nav .search-row button{padding:9px 16px;background:linear-gradient(135deg,var(--rose),var(--deep));color:white;border:none;border-radius:0 24px 24px 0;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;font-family:'DM Sans',sans-serif;}
-
-/* ── HERO ── */
 .pic img{width:100%;height:auto;display:block;max-height:520px;object-fit:cover;}
-
-/* ── DIVIDER ── */
 .divider{display:flex;align-items:center;gap:16px;margin:40px 20px 0;}
 .divider-line{flex:1;height:1px;background:linear-gradient(to right,transparent,var(--rose),transparent);}
 .divider-diamond{width:8px;height:8px;background:var(--rose);transform:rotate(45deg);flex-shrink:0;}
-
-/* ── SECTION HEADING ── */
 .section-heading{text-align:center;margin:16px 20px 30px;}
 .section-heading h2{font-family:'Cormorant Garamond',serif;font-size:clamp(24px,5vw,38px);font-style:italic;color:var(--plum);letter-spacing:2px;}
 .section-heading p{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--rose);margin-top:6px;}
-
-/* ── GRIDS ── */
 .lat{display:grid;grid-template-columns:repeat(6,1fr);gap:18px;padding:0 20px;margin-bottom:40px;}
-.latim{background:white;overflow:hidden;box-shadow:0 4px 20px rgba(122,45,82,.08);transition:.35s;cursor:pointer;border-radius:8px;border:2px solid transparent;}
+.latim{background:white;overflow:hidden;box-shadow:0 4px 20px rgba(122,45,82,.08);transition:.35s;cursor:pointer;border-radius:8px;border:2px solid transparent;position:relative;}
 .latim:hover{transform:translateY(-6px);box-shadow:0 12px 40px rgba(122,45,82,.18);border-color:var(--rose);}
 .latim img{width:100%;height:280px;object-fit:cover;transition:.45s;display:block;pointer-events:none;}
 .latim:hover img{transform:scale(1.05);}
 .latim-body{padding:10px 12px 14px;}
 .latim-body p{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text);margin-bottom:4px;}
 .latim-body h3{font-size:13px;color:var(--rose);font-weight:600;}
-
 .banner{width:100%;margin-top:20px;overflow:hidden;text-align:center;}
 .banner img{max-width:100%;height:auto;display:block;margin:0 auto;}
-
 .col{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;padding:0 20px;margin-bottom:50px;}
-.im{background:white;overflow:hidden;box-shadow:0 4px 20px rgba(122,45,82,.08);transition:.35s;cursor:pointer;border-radius:8px;border:2px solid transparent;}
+.im{background:white;overflow:hidden;box-shadow:0 4px 20px rgba(122,45,82,.08);transition:.35s;cursor:pointer;border-radius:8px;border:2px solid transparent;position:relative;}
 .im:hover{transform:translateY(-8px);box-shadow:0 12px 40px rgba(122,45,82,.18);border-color:var(--rose);}
 .im img{width:100%;height:360px;object-fit:cover;transition:.45s;display:block;pointer-events:none;}
 .im:hover img{transform:scale(1.05);}
 .im-body{padding:12px 14px 16px;}
 .im-body h3{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text);margin-bottom:4px;}
 .tag{font-size:13px;color:var(--rose);font-weight:600;}
-
-
-/* ══════════════════════════════════════════
-   PRODUCT DETAIL OVERLAY — FULL IMAGE FIX
-══════════════════════════════════════════ */
-.overlay{
-  position:fixed;inset:0;z-index:9999;
-  display:flex;align-items:center;justify-content:center;
-  opacity:0;pointer-events:none;
-  transition:opacity .35s ease;
-}
+.stock-tag{display:inline-block;font-size:9px;font-weight:700;letter-spacing:1.2px;padding:3px 8px;border-radius:20px;margin-top:5px;text-transform:uppercase;transition:all .3s;}
+.stock-tag.in{background:rgba(46,125,79,.12);color:#2e7d4f;}
+.stock-tag.low{background:rgba(240,165,0,.15);color:#a06800;}
+.stock-tag.out{background:rgba(192,57,43,.12);color:#c0392b;}
+.latim.out-of-stock,.im.out-of-stock{opacity:.65;cursor:not-allowed;}
+.latim.out-of-stock:hover,.im.out-of-stock:hover{transform:none!important;border-color:transparent!important;}
+.latim.out-of-stock::after,.im.out-of-stock::after{content:"Out of Stock";position:absolute;top:14px;right:-28px;background:#c0392b;color:white;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 36px;transform:rotate(45deg);pointer-events:none;}
+.overlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .35s ease;}
 .overlay.active{opacity:1;pointer-events:all;}
-
-.overlay-backdrop{
-  position:absolute;inset:0;
-  background:rgba(74,26,50,.55);
-  backdrop-filter:blur(6px);
-  cursor:pointer;
-}
-
-/* ── Panel wrapper ── */
-.product-panel{
-  position:relative;z-index:2;
-  background:#fff;
-  border-radius:20px;
-  width:min(960px,96vw);
-  max-height:92vh;
-  overflow:hidden;           /* panel itself doesn't scroll */
-  display:flex;
-  flex-direction:row;
-  box-shadow:0 30px 80px rgba(74,26,50,.35);
-  transform:translateY(40px) scale(.97);
-  transition:transform .38s cubic-bezier(.22,1,.36,1);
-}
+.overlay-backdrop{position:absolute;inset:0;background:rgba(74,26,50,.55);backdrop-filter:blur(6px);cursor:pointer;}
+.product-panel{position:relative;z-index:2;background:#fff;border-radius:20px;width:min(960px,96vw);max-height:92vh;overflow:hidden;display:flex;flex-direction:row;box-shadow:0 30px 80px rgba(74,26,50,.35);transform:translateY(40px) scale(.97);transition:transform .38s cubic-bezier(.22,1,.36,1);}
 .overlay.active .product-panel{transform:translateY(0) scale(1);}
-
-/* ── LEFT: image pane — FULL SIZE ── */
-.panel-img{
-  width:48%;
-  flex-shrink:0;
-  position:relative;
-  background:#f9eef4;
-  border-radius:20px 0 0 20px;
-  overflow:hidden;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-/* 
-  KEY FIX: object-fit:contain shows the full image without any cropping.
-  The image fills the pane height and is centred; no part is cut off.
-*/
-.panel-img img{
-  width:100%;
-  height:100%;
-  object-fit:cover;        /* ← was "cover" — now shows full picture */
-  display:block;
-  background:#f9eef4;
-}
-
-.panel-badge{
-  position:absolute;top:14px;left:14px;
-  background:var(--deep);color:white;
-  font-size:9px;font-weight:700;letter-spacing:2px;
-  text-transform:uppercase;padding:5px 12px;border-radius:20px;
-  pointer-events:none;
-}
-
-/* ── RIGHT: info pane ── */
-.panel-info{
-  flex:1;
-  padding:32px 32px 28px;
-  display:flex;flex-direction:column;gap:0;
-  overflow-y:auto;           /* only info scrolls if it overflows */
-  max-height:92vh;
-}
-
-.panel-close{
-  position:absolute;top:14px;right:16px;z-index:3;
-  width:36px;height:36px;border-radius:50%;
-  background:rgba(255,255,255,.95);border:1.5px solid #e8c8d8;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;
-  color:var(--plum);font-size:16px;transition:background .2s,transform .2s;
-  box-shadow:0 2px 8px rgba(122,45,82,.12);
-}
+.panel-img{width:48%;flex-shrink:0;position:relative;background:#f9eef4;border-radius:20px 0 0 20px;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+.panel-img img{width:100%;height:100%;object-fit:cover;display:block;background:#f9eef4;}
+.panel-badge{position:absolute;top:14px;left:14px;background:var(--deep);color:white;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:5px 12px;border-radius:20px;pointer-events:none;}
+.panel-info{flex:1;padding:32px 32px 28px;display:flex;flex-direction:column;gap:0;overflow-y:auto;max-height:92vh;}
+.panel-close{position:absolute;top:14px;right:16px;z-index:3;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.95);border:1.5px solid #e8c8d8;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--plum);font-size:16px;transition:background .2s,transform .2s;box-shadow:0 2px 8px rgba(122,45,82,.12);}
 .panel-close:hover{background:var(--soft);transform:rotate(90deg);}
-
 .panel-category{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--rose);margin-bottom:8px;}
 .panel-name{font-family:'Cormorant Garamond',serif;font-size:clamp(20px,3.5vw,30px);font-style:italic;color:var(--plum);line-height:1.2;margin-bottom:6px;}
 .panel-tagline{font-size:12px;color:#8a5a6a;margin-bottom:16px;font-weight:400;line-height:1.5;}
-
 .panel-stars{display:flex;align-items:center;gap:6px;margin-bottom:16px;}
 .stars{color:#e0a84e;font-size:13px;letter-spacing:1px;}
 .rating-count{font-size:11px;color:#9a7080;font-weight:500;}
-
 .panel-price-row{display:flex;align-items:baseline;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
 .panel-price{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;color:var(--deep);}
 .panel-price-old{font-size:15px;color:#b09098;text-decoration:line-through;}
 .panel-discount{font-size:11px;font-weight:700;letter-spacing:1px;color:white;background:linear-gradient(135deg,#e07090,var(--deep));padding:3px 10px;border-radius:20px;}
-
 .panel-section-label{font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:#7a4060;margin-bottom:10px;}
 .color-swatches{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
 .swatch{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .2s,border-color .2s;box-shadow:0 2px 6px rgba(0,0,0,.15);}
 .swatch:hover{transform:scale(1.15);}
 .swatch.selected{border-color:var(--deep);transform:scale(1.1);}
-
 .size-grid{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
 .size-btn{min-width:42px;padding:6px 10px;border-radius:8px;border:1.5px solid #ddb8cc;background:white;font-size:12px;font-weight:600;color:var(--text);cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;letter-spacing:.5px;}
 .size-btn:hover{border-color:var(--rose);color:var(--deep);}
 .size-btn.selected{background:var(--deep);color:white;border-color:var(--deep);}
-
 .panel-details{margin-bottom:20px;}
 .detail-row{display:flex;gap:10px;padding:7px 0;border-bottom:1px solid #f0e0ea;font-size:12px;}
 .detail-row:last-child{border-bottom:none;}
 .detail-key{color:#9a7080;font-weight:600;letter-spacing:.5px;min-width:90px;}
 .detail-val{color:var(--text);font-weight:500;}
-
 .qty-row{display:flex;align-items:center;gap:16px;margin-bottom:20px;}
 .qty-label{font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:#7a4060;}
 .qty-control{display:flex;align-items:center;border:1.5px solid #ddb8cc;border-radius:30px;overflow:hidden;}
 .qty-control button{width:32px;height:32px;border:none;background:transparent;font-size:18px;color:var(--deep);cursor:pointer;transition:background .2s;font-weight:700;}
 .qty-control button:hover{background:var(--soft);}
 .qty-control span{width:36px;text-align:center;font-size:14px;font-weight:700;color:var(--text);}
-
 .panel-actions{display:flex;gap:10px;margin-top:auto;padding-top:6px;}
 .btn-buy{flex:1;padding:14px;border:none;background:linear-gradient(135deg,var(--rose),var(--deep));color:white;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border-radius:30px;cursor:pointer;transition:opacity .2s,transform .2s;box-shadow:0 6px 20px rgba(122,45,82,.3);}
 .btn-buy:hover{opacity:.88;transform:translateY(-2px);}
+.btn-buy:disabled{opacity:.4;cursor:not-allowed;transform:none;}
 .btn-wishlist{width:50px;height:50px;border:1.5px solid #ddb8cc;border-radius:50%;background:white;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--rose);transition:background .2s,border-color .2s,transform .2s;flex-shrink:0;}
 .btn-wishlist:hover{background:var(--soft);border-color:var(--rose);transform:scale(1.1);}
 .btn-wishlist.loved{color:#e04060;}
-
-/* ── ✅ PANEL STOCK STATUS ── */
-.stock-tag{display:inline-block;font-size:9px;font-weight:700;letter-spacing:1.2px;padding:3px 8px;border-radius:20px;margin-top:5px;text-transform:uppercase;transition:all .3s ease;}
-.stock-tag.loading{background:rgba(158,107,128,.1);color:#9e6b80;}
-.stock-tag.in     {background:rgba(46,125,79,.12); color:#2e7d4f;}
-.stock-tag.low    {background:rgba(240,165,0,.15);  color:#a06800;}
-.stock-tag.out    {background:rgba(192,57,43,.12);  color:#c0392b;}
-
-/* Out of stock card dimming + ribbon */
-.latim.out-of-stock,.im.out-of-stock{opacity:.65;cursor:not-allowed;}
-.latim.out-of-stock:hover,.im.out-of-stock:hover{transform:none;border-color:transparent;box-shadow:0 4px 20px rgba(122,45,82,.08);}
-.latim.out-of-stock::after,.im.out-of-stock::after{content:"Out of Stock";position:absolute;top:14px;right:-28px;background:#c0392b;color:white;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 36px;transform:rotate(45deg);pointer-events:none;}
-
-.panel-stock-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  padding: 5px 12px;
-  border-radius: 20px;
-  margin-bottom: 16px;
-}
-.panel-stock-status.in  { background: rgba(46,125,79,.1);  color: #2e7d4f; }
-.panel-stock-status.low { background: rgba(240,165,0,.15);  color: #a06800; }
-.panel-stock-status.out { background: rgba(192,57,43,.1);   color: #c0392b; }
-.panel-stock-dot {
-  width: 7px; height: 7px; border-radius: 50%;
-  flex-shrink: 0;
-}
-.in  .panel-stock-dot { background: #2e7d4f; }
-.low .panel-stock-dot { background: #f0a500; }
-.out .panel-stock-dot { background: #c0392b; }
-
-
-/* Toast */
+.panel-stock-status{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:5px 12px;border-radius:20px;margin-bottom:16px;}
+.panel-stock-status.in{background:rgba(46,125,79,.1);color:#2e7d4f;}
+.panel-stock-status.low{background:rgba(240,165,0,.15);color:#a06800;}
+.panel-stock-status.out{background:rgba(192,57,43,.1);color:#c0392b;}
+.panel-stock-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.in .panel-stock-dot{background:#2e7d4f;}
+.low .panel-stock-dot{background:#f0a500;}
+.out .panel-stock-dot{background:#c0392b;}
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--plum);color:white;padding:12px 28px;border-radius:30px;font-size:13px;font-weight:600;letter-spacing:.5px;z-index:10000;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;white-space:nowrap;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-
-/* ── FOOTER ── */
 footer{background:var(--plum);padding:32px 20px;color:rgba(255,255,255,0.8);text-align:center;font-size:13px;}
 .footer-brand{font-family:'Cormorant Garamond',serif;font-size:28px;font-style:italic;color:white;letter-spacing:3px;margin-bottom:10px;}
 footer p{margin:5px 0;opacity:.75;font-size:12px;letter-spacing:1px;}
 footer strong{color:var(--rose);}
-
-/* ══════════════════════
-   RESPONSIVE BREAKPOINTS
-══════════════════════ */
-@media(max-width:1200px){
-  .banner img{max-width:90%;}
-  .lat{grid-template-columns:repeat(4,1fr);}
-}
-@media(max-width:1100px){
-  .lat{grid-template-columns:repeat(3,1fr);}
-  .latim img{height:240px;}
-  .col{grid-template-columns:repeat(3,1fr);}
-  .im img{height:320px;}
-  .nav-links{display:none;}
-}
-@media(max-width:900px){
-  .col{grid-template-columns:repeat(2,1fr);}
-  .im img{height:280px;}
-}
-
-/* ── TABLET (768–900px): side-by-side but taller image ── */
-@media(max-width:900px) and (min-width:601px){
-  .product-panel{
-    width:98vw;
-    max-height:94vh;
-  }
-  .panel-img{
-    width:44%;
-    min-height:360px;
-  }
-}
-
-/* ── MOBILE (≤768px): stacked layout with FULL image ── */
-@media(max-width:768px){
-  .navbar{height:56px;padding:0 16px;}
-  .nav-search{display:none;}
-  .nav-cart span{display:none;}
-  .hamburger{display:flex;}
-  .lat{grid-template-columns:repeat(3,1fr);gap:12px;padding:0 14px;}
-  .latim img{height:200px;}
-  .col{grid-template-columns:repeat(2,1fr);gap:14px;padding:0 14px;}
-  .im img{height:240px;}
-  .banner{padding:10px 14px 0;}
-
-  /* 
-    MOBILE OVERLAY: stack vertically.
-    Image sits on top, full-width, auto height — shows complete picture.
-  */
-  .product-panel{
-    flex-direction:column;
-    max-height:96vh;
-    border-radius:20px 20px 0 0;
-    align-self:flex-end;
-    width:100%;
-    margin-top:auto;
-    overflow-y:auto;           /* whole panel scrolls on mobile */
-  }
-
-  .panel-img{
-    width:auto;
-    height:350px;               /* ← auto height = image is never cropped */
-    min-height:unset;
-    border-radius:20px 20px 0 0;
-    flex-shrink:0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:#f9eef4;
-  }
-
-  /* On mobile: use natural aspect ratio, full width, nothing hidden */
-  .panel-img img{
-    width:100%;
-    height:350px;               /* ← natural height, no crop */
-    object-fit:contain;        /* ← full image visible */
-    max-height:75vw;           /* cap so very tall images don't dominate */
-    display:block;
-  }
-
-  .panel-info{
-    padding:20px 18px 24px;
-    overflow-y:unset;          /* panel itself scrolls on mobile */
-    max-height:unset;
-  }
-}
-
-@media(max-width:600px){
-  .top-bar{font-size:10px;padding:6px 10px;}
-  .lat{grid-template-columns:repeat(2,1fr);gap:10px;padding:0 10px;}
-  .latim img{height:160px;}
-  .latim-body p{font-size:10px;}
-  .latim-body h3{font-size:11px;}
-  .col{grid-template-columns:repeat(2,1fr);gap:10px;padding:0 10px;margin-bottom:30px;}
-  .im img{height:190px;}
-  .im-body h3{font-size:10px;letter-spacing:1px;}
-  .panel-info{padding:16px 14px 20px;}
-  .panel-actions{flex-wrap:wrap;}
-  .btn-wishlist{width:100%;border-radius:30px;height:44px;}
-  .panel-price{font-size:24px;}
-
-  /* Very small screens: give image even more room */
-  .panel-img img{
-    max-height:130vw;
-  }
-}
-
-@media(max-width:400px){
-  .lat{grid-template-columns:repeat(2,1fr);gap:8px;}
-  .latim img{height:140px;}
-  .col{grid-template-columns:1fr 1fr;gap:10px;}
-  .im img{height:200px;}
-  .logo{font-size:18px;}
-  .section-heading h2{font-size:20px;}
-}
-
+@media(max-width:1200px){.banner img{max-width:90%;}.lat{grid-template-columns:repeat(4,1fr);}}
+@media(max-width:1100px){.lat{grid-template-columns:repeat(3,1fr);}.latim img{height:240px;}.col{grid-template-columns:repeat(3,1fr);}.im img{height:320px;}.nav-links{display:none;}}
+@media(max-width:900px){.col{grid-template-columns:repeat(2,1fr);}.im img{height:280px;}}
+@media(max-width:900px) and (min-width:601px){.product-panel{width:98vw;max-height:94vh;}.panel-img{width:44%;min-height:360px;}}
+@media(max-width:768px){.navbar{height:56px;padding:0 16px;}.nav-search{display:none;}.nav-cart span{display:none;}.hamburger{display:flex;}.lat{grid-template-columns:repeat(3,1fr);gap:12px;padding:0 14px;}.latim img{height:200px;}.col{grid-template-columns:repeat(2,1fr);gap:14px;padding:0 14px;}.im img{height:240px;}.banner{padding:10px 14px 0;}.product-panel{flex-direction:column;max-height:96vh;border-radius:20px 20px 0 0;align-self:flex-end;width:100%;margin-top:auto;overflow-y:auto;}.panel-img{width:auto;height:350px;min-height:unset;border-radius:20px 20px 0 0;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:#f9eef4;}.panel-img img{width:100%;height:350px;object-fit:contain;max-height:75vw;display:block;}.panel-info{padding:20px 18px 24px;overflow-y:unset;max-height:unset;}}
+@media(max-width:600px){.top-bar{font-size:10px;padding:6px 10px;}.lat{grid-template-columns:repeat(2,1fr);gap:10px;padding:0 10px;}.latim img{height:160px;}.latim-body p{font-size:10px;}.latim-body h3{font-size:11px;}.col{grid-template-columns:repeat(2,1fr);gap:10px;padding:0 10px;margin-bottom:30px;}.im img{height:190px;}.im-body h3{font-size:10px;letter-spacing:1px;}.panel-info{padding:16px 14px 20px;}.panel-actions{flex-wrap:wrap;}.btn-wishlist{width:100%;border-radius:30px;height:44px;}.panel-price{font-size:24px;}.panel-img img{max-height:130vw;}}
+@media(max-width:400px){.lat{grid-template-columns:repeat(2,1fr);gap:8px;}.latim img{height:140px;}.col{grid-template-columns:1fr 1fr;gap:10px;}.im img{height:200px;}.logo{font-size:18px;}.section-heading h2{font-size:20px;}}
 </style>
+</head>
 
+<!-- ✅ Firebase v10 (correct version) — hash guard REMOVED so all products always load -->
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDpnSVwV3QP9MP4tuU5SCtXiwpdAUD0vlc",
@@ -401,98 +173,138 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
 
-// ── NAME → CARD NUMBER MAP ──
-// Key   = normalized name from Firestore (lowercase, trimmed)
-// Value = card number (matches data-id on .latim / .im and id="stock-N")
-const NAME_TO_NUM = {
-  "white with blue embroidery dress":"1","pink top with white trouser":"2",
-  "off-white pakistani suit":"3","crop top with flared plazo set":"4",
-  "cape style top with wide leg sharara pent":"5",
-  "embroidered kurti with ruffle bell bottom pent":"6",
-  "light blue indo-western gown":"7","party embellished bodycon suit":"8",
-  "blush pink saree style dress":"9","cream colored indo-western dress":"10",
-  "brown/off white gown":"11","mint blue peplum":"12",
-  "powder blue indo-western dress":"13","sage green gown":"14",
-  "floral pink skirt/top suit":"15","mint green embroided indo-western":"16",
-  "rani pink indo-western lehenga":"17","champagne suit":"18"
-};
+window._productsData = {};
+window._stockData    = {};
 
-// Store live stock by card number so overlay can read instantly
-window._stockData = {};
+function renderProducts(products) {
+  const latContainer = document.querySelector('.lat');
+  const colContainer = document.querySelector('.col');
+  if (!latContainer || !colContainer) return;
 
-function applyStock(num, stock) {
-  // Save globally
-  window._stockData[String(num)] = stock;
+  latContainer.innerHTML = '';
+  colContainer.innerHTML = '';
 
-  // ── Update badge on card ──
-  const badge = document.getElementById("stock-" + num);
-  if (badge) {
-    if (stock === 0) {
-      badge.textContent = "Out of Stock";
-      badge.className   = "stock-tag out";
-    } else if (stock <= 5) {
-      badge.textContent = `Only ${stock} left!`;
-      badge.className   = "stock-tag low";
-    } else {
-      badge.textContent = "In Stock";
-      badge.className   = "stock-tag in";
+  if (!products || products.length === 0) {
+    colContainer.innerHTML = '<p style="grid-column:1/-1;text-align:center;padding:40px;color:#999;">No products available.</p>';
+    return;
+  }
+
+  // Deduplicate FIRST so index numbers are always correct
+  const uniqueProducts = [];
+  const seen = new Set();
+  products.forEach(product => {
+    if (!seen.has(product.id)) {
+      seen.add(product.id);
+      uniqueProducts.push(product);
     }
-  }
+  });
 
-  // ── Dim/ribbon the card if out of stock ──
-  const card = document.querySelector(`.latim[data-id="${num}"], .im[data-id="${num}"]`);
-  if (card) {
-    card.classList.toggle("out-of-stock", stock === 0);
-  }
+  uniqueProducts.forEach((product, index) => {
+    const productId  = product.id;
+    const stock      = product.stock || 0;
+    const stockClass = stock === 0 ? 'out' : (stock <= 5 ? 'low' : 'in');
+    const stockText  = stock === 0 ? 'Out of Stock' : (stock <= 5 ? `Only ${stock} left!` : 'In Stock');
 
-  // ── If overlay is open for this product, update the pill live ──
-  const panelStockEl = document.getElementById("panelStockStatus");
-  if (panelStockEl && panelStockEl.dataset.productId === String(num)) {
-    window.updatePanelStock(String(num), stock);
-  }
+    window._productsData[productId] = product;
+    window._stockData[productId]    = stock;
+
+    if (index < 6) {
+      const card = document.createElement('div');
+      card.className  = `latim${stock === 0 ? ' out-of-stock' : ''}`;
+      card.dataset.id = productId;
+      card.innerHTML  = `
+        <img src="${product.img || 'img/placeholder.jpg'}" alt="${product.name}" onerror="this.src='img/placeholder.jpg'">
+        <div class="latim-body">
+          <p>${product.cat || 'Indo-Western'}</p>
+          <h3>₹${product.price || 999}</h3>
+          <div class="stock-tag ${stockClass}" id="stock-lat-${productId}">${stockText}</div>
+        </div>`;
+      card.addEventListener('click', () => window.openProduct(productId));
+      latContainer.appendChild(card);
+    } else {
+      const card = document.createElement('div');
+      card.className  = `im${stock === 0 ? ' out-of-stock' : ''}`;
+      card.dataset.id = productId;
+      card.innerHTML  = `
+        <img src="${product.img || 'img/placeholder.jpg'}" alt="${product.name}" onerror="this.src='img/placeholder.jpg'">
+        <div class="im-body">
+          <h3>${product.name}</h3>
+          <div class="tag">₹${product.price || 999}</div>
+          <div class="stock-tag ${stockClass}" id="stock-col-${productId}">${stockText}</div>
+        </div>`;
+      card.addEventListener('click', () => window.openProduct(productId));
+      colContainer.appendChild(card);
+    }
+  });
+
+  console.log(`✅ Rendered ${uniqueProducts.length} unique Indo-Western products`);
 }
 
+// ✅ No hash guard — always renders the full product list
 onSnapshot(collection(db, "products"), (snapshot) => {
-  snapshot.forEach((docSnap) => {
-    const data  = docSnap.data();
+  const products = [];
 
-    // Read stock — handles both "stock" (lowercase) and "Stock" (uppercase)
-    const stock = parseInt(data.stock !== undefined ? data.stock : data.Stock) || 0;
+  snapshot.forEach((doc) => {
+    const data = doc.data();
+    const cat  = (data.cat || '').toLowerCase().trim();
 
-    // ── Only match by EXACT name (lowercase) — no partial matching ──
-    // Partial matching caused wrong products to get each other's stock values
-    const rawName = (data.name || "").toLowerCase().trim();
-    const num = NAME_TO_NUM[rawName];
+    // Debug: uncomment the line below if products still don't show
+    // console.log(`📦 ${doc.id} | cat: "${data.cat}" | passes: ${cat.includes('indowestern')}`);
 
-    if (num) {
-      applyStock(num, stock);
-    }
-    // Non-saree products (salwar suits, lehengas etc.) are silently ignored
+    if (!cat.includes('indo-western')) return;
+
+    const stock     = parseInt(data.stock || 0);
+    const productId = doc.id;
+
+    window._stockData[productId] = stock;
+
+    products.push({ id: productId, ...data, stock, price: parseInt(data.price || 0) });
+
+    // Live-update badges on already-rendered cards
+    ['lat', 'col'].forEach(prefix => {
+      const badge = document.getElementById(`stock-${prefix}-${productId}`);
+      if (badge) {
+        badge.textContent = stock === 0 ? 'Out of Stock' : (stock <= 5 ? `Only ${stock} left!` : 'In Stock');
+        badge.className   = `stock-tag ${stock === 0 ? 'out' : (stock <= 5 ? 'low' : 'in')}`;
+      }
+    });
+
+    document.querySelectorAll(`[data-id="${productId}"]`).forEach(card => {
+      card.classList.toggle('out-of-stock', stock === 0);
+    });
+
+    if (window.updatePanelStock) window.updatePanelStock(productId, stock);
   });
+
+  products.sort((a, b) => {
+    const dateA = a.createdAt?.toDate?.() || new Date(0);
+    const dateB = b.createdAt?.toDate?.() || new Date(0);
+    return dateB - dateA;
+  });
+
+  renderProducts(products);
 });
 
-// ── Update the stock pill inside the product overlay ──
-window.updatePanelStock = function(num, stock) {
-  const el = document.getElementById("panelStockStatus");
-  if (!el) return;
-  el.dataset.productId = String(num);
-  const buyBtn = document.getElementById("btnBuy");
-
+window.updatePanelStock = function(productId, stock) {
+  const el = document.getElementById('panelStockStatus');
+  if (!el || el.dataset.productId !== productId) return;
+  const buyBtn = document.getElementById('btnBuy');
   if (stock === 0) {
-    el.className = "panel-stock-status out";
+    el.className = 'panel-stock-status out';
     el.innerHTML = `<span class="panel-stock-dot"></span> Out of Stock`;
     if (buyBtn) { buyBtn.disabled = true; buyBtn.innerHTML = `<i class="fa-solid fa-ban" style="margin-right:8px;"></i>Out of Stock`; }
   } else if (stock <= 5) {
-    el.className = "panel-stock-status low";
+    el.className = 'panel-stock-status low';
     el.innerHTML = `<span class="panel-stock-dot"></span> Only ${stock} left!`;
     if (buyBtn) { buyBtn.disabled = false; buyBtn.innerHTML = `<i class="fa-solid fa-bag-shopping" style="margin-right:8px;"></i>Add to Bag`; }
   } else {
-    el.className = "panel-stock-status in";
+    el.className = 'panel-stock-status in';
     el.innerHTML = `<span class="panel-stock-dot"></span> In Stock`;
     if (buyBtn) { buyBtn.disabled = false; buyBtn.innerHTML = `<i class="fa-solid fa-bag-shopping" style="margin-right:8px;"></i>Add to Bag`; }
   }
 };
 </script>
+
 </head>
 <body>
 
@@ -552,14 +364,7 @@ window.updatePanelStock = function(num, stock) {
 <div class="divider"><div class="divider-line"></div><div class="divider-diamond"></div><div class="divider-line"></div></div>
 <div class="section-heading"><h2>Featured Picks</h2><p>Handpicked for you</p></div>
 
-<div class="lat"> 
-  <div class="latim" data-id="1"><img src="img/ind1.png" alt="White with Blue embroidery dress"><div class="latim-body"><p>White with Blue embroidery dress</p><h3>&#8377;5087</h3><span id="stock-1" class="stock-tag loading">Loading...</span></div></div>
-  <div class="latim" data-id="2"><img src="img/ind2.png" alt="pink top with white trouser"><div class="latim-body"><p>pink top with white trouser</p><h3>&#8377;6004</h3><span id="stock-2" class="stock-tag loading">Loading...</span></div></div>
-  <div class="latim" data-id="3"><img src="img/ind3.png" alt="Off-white pakistani suit"><div class="latim-body"><p>Off-white pakistani suit</p><h3>&#8377;4899</h3><span id="stock-3" class="stock-tag loading">Loading...</span></div></div>
-  <div class="latim" data-id="4"><img src="img/ind4.png" alt="Crop top with flared plazo set"><div class="latim-body"><p>Crop top with flared plazo set</p><h3>&#8377;4077</h3><span id="stock-4" class="stock-tag loading">Loading...</span></div></div>
-  <div class="latim" data-id="5"><img src="img/ind5.png" alt="Cape style top with wide leg Sharara pent"><div class="latim-body"><p>Cape style top with wide leg Sharara pent</p><h3>&#8377;4266</h3><span id="stock-5" class="stock-tag loading">Loading...</span></div></div>
-  <div class="latim" data-id="6"><img src="img/ind6.png" alt="Embroidered Kurti with Ruffle Bell Bottom Pent"><div class="latim-body"><p>Embroidered Kurti with Ruffle Bell Bottom Pent</p><h3>&#8377;5589</h3><span id="stock-6" class="stock-tag loading">Loading...</span></div></div>
-</div>
+<div class="lat"> </div>
 
 <!-- BANNER -->
 <div class="banner"><img src="img/ban.png" alt="Banner"></div>
@@ -568,22 +373,7 @@ window.updatePanelStock = function(num, stock) {
 <div class="divider"><div class="divider-line"></div><div class="divider-diamond"></div><div class="divider-line"></div></div>
 <div class="section-heading"><h2>Collection</h2><p>Browse our full collection</p></div>
 
-<div class="col">
-  <div class="im" data-id="7"><img src="img/ind7.png" alt="Lavender salwar suit"><div class="im-body"><h3>Light Blue Indo-Western Gown</h3><div class="tag">&#8377;1999</div><span id="stock-7" class="stock-tag loading">Loading...</span></div></div>
-  <div class="im" data-id="8"><img src="img/ind8.png" alt="Navy salwar suit"><div class="im-body"><h3>Red Embellished Style Dress</h3><div class="tag">&#8377;3896</div><span id="stock-8" class="stock-tag loading">Loading...</span></div></div>
-  <div class="im" data-id="9"><img src="img/ind9.png" alt="Pink salwar suit"><div class="im-body"><h3>Blush Pink Saree Style Dress</h3><div class="tag">&#8377;6787</div><span id="stock-9" class="stock-tag loading">Loading...</span></div></div>
-  <div class="im" data-id="10"><img src="img/ind10.png" alt="Red salwar suit"><div class="im-body"><h3>Cream colored Indo-Western Dress</h3><div class="tag">&#8377;9534</div><span id="stock-10" class="stock-tag loading">Loading...</span></div></div>
-</div>
-<div class="col">
-  <div class="im" data-id="11"><img src="img/ind11.png" alt="Salwar suit"><div class="im-body"><h3>Brown/Off White Gown </h3><div class="tag">&#8377;1199</div><span id="stock-11" class="stock-tag loading">Loading...</span></div></div>
-  <div class="im" data-id="12"><img src="img/ind12.png" alt="Salwar suit"><div class="im-body"><h3>Mint-Blue Peplum</h3><div class="tag">&#8377;1399</div><span id="stock-12" class="stock-tag loading">Loading...</span></div></div>
-  <div class="im" data-id="13"><img src="img/ind13.png" alt="Salwar suit"><div class="im-body"><h3>powder-Blue Indo-western</h3><div class="tag">&#8377;1099</div><span id="stock-13" class="stock-tag loading">Loading...</span></div></div>
-  <div class="im" data-id="14"><img src="img/ind14.png" alt="Salwar suit"><div class="im-body"><h3>Sage Green Gown Indo-Western</h3><div class="tag">&#8377;1249</div><span id="stock-14" class="stock-tag loading">Loading...</span></div></div>
-  <div class="im" data-id="15"><img src="img/ind15.png" alt="Salwar suit"><div class="im-body"><h3>Floral pink Long skirt/top</h3><div class="tag">&#8377;1949</div><span id="stock-15" class="stock-tag loading">Loading...</span></div></div>
-  <div class="im" data-id="16"><img src="img/ind16.png" alt="Salwar suit"><div class="im-body"><h3>Mint Green Indo-Western Dress</h3><div class="tag">&#8377;1149</div><span id="stock-16" class="stock-tag loading">Loading...</span></div></div>
-  <div class="im" data-id="17"><img src="img/ind17.png" alt="Salwar suit"><div class="im-body"><h3>Rani Pink Indo-Western Lehenga</h3><div class="tag">&#8377;1299</div><span id="stock-17" class="stock-tag loading">Loading...</span></div></div>
-  <div class="im" data-id="18"><img src="img/ind18.png" alt="Salwar suit"><div class="im-body"><h3>Champagne suit</h3><div class="tag">&#8377;1999</div><span id="stock-18" class="stock-tag loading">Loading...</span></div></div>
-</div>
+<div class="col"></div>
 
 <footer>
     <div class="footer-brand">Trendlilly</div>
@@ -596,42 +386,26 @@ window.updatePanelStock = function(num, stock) {
   <div class="overlay-backdrop" id="overlayBackdrop"></div>
   <div class="product-panel" id="productPanel">
     <button class="panel-close" id="panelClose"><i class="fa-solid fa-xmark"></i></button>
-
     <div class="panel-img">
       <img id="panelImg" src="" alt="">
       <span class="panel-badge" id="panelBadge">New Arrival</span>
     </div>
-
     <div class="panel-info">
-      <div class="panel-category" id="panelCategory">Salwar Suit</div>
+      <div class="panel-category" id="panelCategory"> Suit</div>
       <div class="panel-name" id="panelName">Product Name</div>
       <div class="panel-tagline" id="panelTagline">Crafted with premium fabric for all-day elegance</div>
-
-      <div class="panel-stars">
-        <span class="stars">★★★★☆</span>
-        <span class="rating-count" id="panelRating">(124 reviews)</span>
-      </div>
-
+      <div class="panel-stars"><span class="stars">★★★★☆</span><span class="rating-count" id="panelRating">(124 reviews)</span></div>
       <div class="panel-price-row">
         <span class="panel-price" id="panelPrice">₹999</span>
         <span class="panel-price-old" id="panelPriceOld"></span>
         <span class="panel-discount" id="panelDiscount"></span>
       </div>
-        <div id="panelStockStatus" class="panel-stock-status in"><span class="panel-stock-dot"></span> In Stock</div>
-    
-
-      <!-- Color -->
-      <div class="panel-section-label">Select Colour</div>
-      <div class="color-swatches" id="panelColors"></div>
-
-      <!-- Size -->
+      <div class="panel-stock-status in" id="panelStockStatus" data-product-id="">
+        <span class="panel-stock-dot"></span> Checking stock…
+      </div>
       <div class="panel-section-label">Select Size</div>
       <div class="size-grid" id="panelSizes"></div>
-
-      <!-- Product Details -->
       <div class="panel-details" id="panelDetails"></div>
-
-      <!-- Quantity -->
       <div class="qty-row">
         <span class="qty-label">Qty</span>
         <div class="qty-control">
@@ -640,180 +414,133 @@ window.updatePanelStock = function(num, stock) {
           <button id="qtyPlus">+</button>
         </div>
       </div>
-
-      <!-- Actions -->
       <div class="panel-actions">
-       <button class="btn-buy" id="btnBuy"><i class="fa-solid fa-bag-shopping" style="margin-right:8px;"></i>Add to Bag</button>
-        <button class="btn-wishlist" id="btnWishlist" title="Wishlist"><i class="fa-regular fa-heart"></i></button>
+        <button class="btn-buy" id="btnBuy"><i class="fa-solid fa-bag-shopping" style="margin-right:8px;"></i>Add to Bag</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Toast -->
-<div class="toast" id="toast">Added to bag! 🛍️</div>
+<div class="toast" id="toast"></div>
 
 <script>
+const overlay       = document.getElementById('overlay');
+const backdrop      = document.getElementById('overlayBackdrop');
+const panelClose    = document.getElementById('panelClose');
+const panelImg      = document.getElementById('panelImg');
+const panelBadge    = document.getElementById('panelBadge');
+const panelCategory = document.getElementById('panelCategory');
+const panelName     = document.getElementById('panelName');
+const panelTagline  = document.getElementById('panelTagline');
+const panelRating   = document.getElementById('panelRating');
+const panelPrice    = document.getElementById('panelPrice');
+const panelPriceOld = document.getElementById('panelPriceOld');
+const panelDiscount = document.getElementById('panelDiscount');
+const panelSizes    = document.getElementById('panelSizes');
+const panelDetails  = document.getElementById('panelDetails');
+const qtyVal        = document.getElementById('qtyVal');
+const qtyMinus      = document.getElementById('qtyMinus');
+const qtyPlus       = document.getElementById('qtyPlus');
+const btnBuy        = document.getElementById('btnBuy');
+const toast         = document.getElementById('toast');
 
-  localStorage.setItem("lastPage", window.location.href);
-// ── Product Data ──────────────────────────────────────────
-const products = {
-  1:  { name:"White with Blue embroidery dress", category:"Featured Pick", img:"img/ind1.png",  color:"Off white",   price:"₹5087", priceOld:"₹7000", discount:"27% OFF", tagline:"Rich with delicate embroidery — timeless festive charm.", fabric:"Georgette", occasion:"Festive / Party", work:"Embroidery", swatches:["#faf9f6"], sizes:["XS","S","M","L","XL","XXL"], rating:"(98 reviews)" },
-  2:  { name:"pink top with white trouser",     category:"Featured Pick", img:"img/ind2.png",  color:"White",       price:"₹6004", priceOld:"₹8000", discount:"25% OFF", tagline:"Elegant white chikankari — grace in every thread.",            fabric:"Cotton",    occasion:"Casual / Day",   work:"Chikankari",  swatches:["#e8a0a6"], sizes:["XS","S","M","L","XL","XXL"], rating:"(74 reviews)" },
-  3:  { name:"Off-white pakistani suit",        category:"Featured Pick", img:"img/ind3.png",  color:"Magenta",     price:"₹4899", priceOld:"₹6500", discount:"25% OFF", tagline:"Bold magenta that commands every room you enter.",            fabric:"Silk Blend", occasion:"Wedding / Party", work:"Zari Work",   swatches:["#f8f4e3"], sizes:["XS","S","M","L","XL","XXL"], rating:"(115 reviews)" },
-  4:  { name:"Crop top with flared plazo set",        category:"Featured Pick", img:"img/ind4.png",  color:"Baby Pink",   price:"₹4077", priceOld:"₹5500", discount:"26% OFF", tagline:"Soft and dreamy — a wardrobe must-have for every occasion.", fabric:"Crepe",      occasion:"Casual / Puja",  work:"Digital Print",swatches:["#0047ab"],    sizes:["XS","S","M","L","XL","XXL"], rating:"(62 reviews)" },
-  5:  { name:"Cape style top with wide leg Sharara pent",       category:"Featured Pick", img:"img/ind5.png",  color:"Charcoal Grey",price:"₹4266",priceOld:"₹5800", discount:"26% OFF", tagline:"Contemporary grey with subtle finesse — modern ethnic.",      fabric:"Art Silk",   occasion:"Office / Casual", work:"Embroidery",  swatches:["#c9a0a0"], sizes:["XS","S","M","L","XL","XXL"], rating:"(88 reviews)" },
-  6:  { name:"Embroidered Kurti with Ruffle Bell Bottom Pent",      category:"Featured Pick", img:"img/ind6.png",  color:"Earthy Brown", price:"₹5589",priceOld:"₹7400", discount:"24% OFF", tagline:"Earthy warmth meets ethnic artistry — effortlessly chic.",    fabric:"Banarasi",   occasion:"Festive",        work:"Woven",       swatches:["#8fbc8f"], sizes:["XS","S","M","L","XL","XXL"], rating:"(51 reviews)" },
-  7:  { name:"Light BlueIndo-Western Gown",         category:"Collection",    img:"img/ind7.png",color:"pastel Sky Blue",    price:"₹1999",   priceOld:"₹2499",  discount:"33% OFF", tagline:"Pastel Sky Blue serenity — light, fresh and festival-ready.",       fabric:"Cotton Silk", occasion:"Puja / Casual",  work:"Block Print", swatches:["#bfd7ed"], sizes:["S","M","L","XL","XXL"], rating:"(203 reviews)" },
-  8:  { name:"Party Embellished Bodycon Suit",     category:"Collection",    img:"img/ind8.png",color:"Red",        price:"₹3896", priceOld:"₹5200", discount:"25% OFF", tagline:"Bright Red with vibrant prints — versatile and vivid.",     fabric:"Poly Crepe", occasion:"Daily Wear",     work:"Digital Print",swatches:["#e63946"], sizes:["S","M","L","XL","XXL"], rating:"(141 reviews)" },
-  9:  { name:"Blush Pink saree style dress",      category:"Collection",    img:"img/ind9.png",color:"Pink",        price:"₹6787", priceOld:"₹9000", discount:"25% OFF", tagline:"Blush pink — the bloom of ethnic fashion.",         fabric:"Organza",    occasion:"Wedding / Party", work:"Embroidery",  swatches:["#e8a0a6"],    sizes:["XS","S","M","L","XL","XXL"], rating:"(176 reviews)" },
-  10: { name:"Cream colored Indo-Western Dress",       category:"Collection",    img:"img/ind10.png",color:"Beige",         price:"₹9534", priceOld:"₹13000",discount:"27% OFF", tagline:"Ivory Beige— for every celebration worth remembering.",   fabric:"Heavy Silk", occasion:"Wedding / Bridal",work:"Heavy Zari",  swatches:["#f5e6d3"], sizes:["XS","S","M","L","XL","XXL"], rating:"(89 reviews)" },
-  11: { name:"Brown/Off White Gown",           category:"Collection",    img:"img/ind11.png",color:"Brown/Off White",      price:"₹1,199", priceOld:"₹1,699", discount:"29% OFF", tagline:"Brown&Off-White — radiant ethnic wear for every festivity.", fabric:"Cotton",     occasion:"Casual / Puja",  work:"Block Print", swatches:["#f8f4e3"], sizes:["S","M","L","XL","XXL"], rating:"(67 reviews)" },
-  12: { name:"Mint Blue peplum",          category:"Collection",    img:"img/ind12.png",color:"Mint Blue",price:"₹1,399", priceOld:"₹1,899", discount:"26% OFF", tagline:"Mint Blue — grace, flow and a timeless presence.",  fabric:"Silk Blend", occasion:"Party / Festive", work:"Embroidery",  swatches:["#c7ede6"], sizes:["S","M","L","XL","XXL"], rating:"(93 reviews)" },
-  13: { name:"Powder Blue indo-western dress",             category:"Collection",    img:"img/ind13.png",color:"Powder Blue",  price:"₹1,099", priceOld:"₹1,499", discount:"27% OFF", tagline:"Powder Blue, regal aura — confidence in every stitch.",       fabric:"Georgette",  occasion:"Casual / Office", work:"Printed",     swatches:["#afcbff"], sizes:["S","M","L","XL","XXL"], rating:"(112 reviews)" },
-  14: { name:"Sage Green Gown",           category:"Collection",    img:"img/ind14.png",color:"Sage Green",price:"₹1,249", priceOld:"₹1,699", discount:"26% OFF", tagline:"Sage Green — the energy of tradition in every wear.",    fabric:"Crepe",      occasion:"Festive",        work:"Embroidery",  swatches:["#b7d3c1"], sizes:["S","M","L","XL","XXL"], rating:"(58 reviews)" },
-  15: { name:"Floral Pink Skirt/Top Suit",   category:"Collection",    img:"img/ind15.png",color:"Floral pink ",       price:"₹1949",   priceOld:"₹2,299", discount:"27% OFF", tagline:"Floral Pink Skirt/Pink Top Suit — gentle charm for everyday elegance.",     fabric:"Cotton Silk", occasion:"Casual / Daily", work:"Thread Work", swatches:["#f8c8dc"], sizes:["S","M","L","XL","XXL"], rating:"(47 reviews)" },
-  16: { name:"Mint Green Embroided Indo-Western",          category:"Collection",    img:"img/ind16.png",color:"Mint Green",    price:"₹1,149", priceOld:"₹1,599", discount:"28% OFF", tagline:"Mint Green — earthy and effortlessly stylish.",       fabric:"Art Silk",   occasion:"Festive / Puja",  work:"Block Print", swatches:["#cde7d8"], sizes:["S","M","L","XL","XXL"], rating:"(71 reviews)" },
-  17: { name:"Rani Pink Indo-Western Lehenga",             category:"Collection",    img:"img/ind17.png",color:"Rani pink",       price:"₹1,299", priceOld:"₹1,799", discount:"28% OFF", tagline:"Rani Pink serenity — modern meets traditional in perfect balance.", fabric:"Georgette", occasion:"Party / Festive", work:"Embroidery",  swatches:["#e0115f"], sizes:["S","M","L","XL","XXL"], rating:"(84 reviews)" },
-  18: { name:"champagne Suit",           category:"Collection",    img:"img/ind18.png",color:"silver",     price:"₹1,999", priceOld:"₹2,999", discount:"25% OFF", tagline:"Champagne suit — timeless richness for every grand occasion.",  fabric:"Banarasi",   occasion:"Wedding / Party", work:"Woven Zari",  swatches:["#e6cba8"], sizes:["XS","S","M","L","XL","XXL"], rating:"(129 reviews)" },
-};
+let currentProduct = null, currentProductId = null, qty = 1, selectedSize = '';
 
-
-// ── DOM refs ──────────────────────────────────────────────
-
-const overlay=document.getElementById('overlay'),backdrop=document.getElementById('overlayBackdrop'),panelClose=document.getElementById('panelClose');
-const panelImg=document.getElementById('panelImg'),panelBadge=document.getElementById('panelBadge'),panelCategory=document.getElementById('panelCategory');
-const panelName=document.getElementById('panelName'),panelTagline=document.getElementById('panelTagline'),panelRating=document.getElementById('panelRating');
-const panelPrice=document.getElementById('panelPrice'),panelPriceOld=document.getElementById('panelPriceOld'),panelDiscount=document.getElementById('panelDiscount');
-const panelColors=document.getElementById('panelColors'),panelSizes=document.getElementById('panelSizes'),panelDetails=document.getElementById('panelDetails');
-const qtyVal=document.getElementById('qtyVal'),qtyMinus=document.getElementById('qtyMinus'),qtyPlus=document.getElementById('qtyPlus');
-const btnBuy=document.getElementById('btnBuy'),btnWishlist=document.getElementById('btnWishlist'),toast=document.getElementById('toast');
-
-
-let currentProduct=null,currentProductId=null,qty=1,selectedSize='',selectedColor='';
-
-const WISH_KEY='wishlist_ids';
-function getWishlist(){try{return new Set(JSON.parse(localStorage.getItem(WISH_KEY))||[]);}catch{return new Set();}}
-function saveWishlist(s){localStorage.setItem(WISH_KEY,JSON.stringify([...s]));}
-let wishlist=getWishlist();
-
-function getCart(){try{return JSON.parse(localStorage.getItem('cart'))||[];}catch{return[];}}
-function addToCartLS(product,productId,quantity,size,color){
-  const cart=getCart();
-  cart.push({id:Date.now(),productId,name:product.name,price:product.price,image:product.img,quantity,size,color,addedAt:new Date().toISOString()});
-  localStorage.setItem('cart',JSON.stringify(cart));
+function getCart(){ try{ return JSON.parse(localStorage.getItem('cart'))||[]; }catch{ return []; } }
+function addToCartLS(product, productId, quantity, size){
+  const cart = getCart();
+  cart.push({ id: Date.now(), productId, name: product.name, price: product.price, image: product.img, quantity, size, category: product.cat, addedAt: new Date().toISOString() });
+  localStorage.setItem('cart', JSON.stringify(cart));
 }
 
 function handleSearch(query){
-  if(!query.trim())return;
-  const q=query.toLowerCase();
-  const matches=Object.entries(products).filter(([,p])=>p.name.toLowerCase().includes(q)||p.color.toLowerCase().includes(q));
-  if(!matches.length){showToast('No products found for "'+query+'"');}
-  else{openProduct(parseInt(matches[0][0]));}
+  if (!query.trim()) return;
+  const q = query.toLowerCase();
+  const matches = Object.entries(window._productsData || {}).filter(([, p]) =>
+    (p.name || '').toLowerCase().includes(q) || (p.cat || '').toLowerCase().includes(q)
+  );
+  if (!matches.length){ showToast('No products found for "' + query + '"'); }
+  else { window.openProduct(matches[0][0]); }
 }
 
-function openProduct(id){
-  const p=products[id];
-  if(!p)return;
+window.openProduct = function(productId){
+  const p = window._productsData[productId];
+  if (!p) return;
+  const stock = (window._stockData || {})[productId] ?? p.stock ?? 0;
+  if (stock === 0){ showToast('This item is currently out of stock 😔'); return; }
 
-  // Block if out of stock
-  const stock=(window._stockData||{})[String(id)];
-  if(stock===0){showToast('This item is currently out of stock 😔');return;}
+  currentProduct   = p;
+  currentProductId = productId;
+  qty = 1;
+  qtyVal.textContent = 1;
+  selectedSize  = '';
 
-  currentProduct=p;currentProductId=id;qty=1;qtyVal.textContent=1;selectedSize='';selectedColor=p.color;
-  panelImg.src=p.img;panelImg.alt=p.name;
-  panelCategory.textContent=p.category;
-  panelName.textContent=p.name;
-  panelTagline.textContent=p.tagline;
-  panelRating.textContent=p.rating;
-  panelPrice.textContent=p.price;
-  panelPriceOld.textContent=p.priceOld;
-  panelDiscount.textContent=p.discount;
-  panelBadge.textContent=p.occasion||'Ethnic Wear';
+  panelImg.src              = p.img || 'img/placeholder.jpg';
+  panelImg.alt              = p.name;
+  panelCategory.textContent = p.cat      || 'Indo-Western';
+  panelName.textContent     = p.name;
+  panelTagline.textContent  = p.tagline  || 'Crafted with premium fabric for all-day elegance';
+  panelRating.textContent   = p.rating   || '(New Product)';
+  panelPrice.textContent    = '₹' + (p.price || 999);
+  panelPriceOld.textContent = '';
+  panelDiscount.textContent = '';
+  panelBadge.textContent    = p.occasion || 'New Arrival';
 
-  // Stock pill
-  const panelStockEl=document.getElementById('panelStockStatus');
-  panelStockEl.dataset.productId=String(id);
-  if(typeof window.updatePanelStock==='function'){
-    window.updatePanelStock(String(id),stock!==undefined?stock:50);
-  }
+  const panelStockEl = document.getElementById('panelStockStatus');
+  panelStockEl.dataset.productId = productId;
+  if (typeof window.updatePanelStock === 'function') window.updatePanelStock(productId, stock);
 
-  // Color swatch
-  panelColors.innerHTML='';
-  const sw=document.createElement('div');
-  sw.className='swatch selected';
-  sw.style.background=p.hex||'#B0C4DE';
-  sw.title=p.color;
-  panelColors.appendChild(sw);
-
-  // Sizes
-  panelSizes.innerHTML='';
-  p.sizes.forEach(sz=>{
-    const btn=document.createElement('button');
-    btn.className='size-btn';btn.textContent=sz;
-    btn.addEventListener('click',()=>{
-      panelSizes.querySelectorAll('.size-btn').forEach(b=>b.classList.remove('selected'));
-      btn.classList.add('selected');selectedSize=sz;
+  panelSizes.innerHTML = '';
+  ['XS','S','M','L','XL','XXL'].forEach(sz => {
+    const btn = document.createElement('button');
+    btn.className   = 'size-btn';
+    btn.textContent = sz;
+    btn.addEventListener('click', () => {
+      panelSizes.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedSize = sz;
     });
     panelSizes.appendChild(btn);
   });
 
-  panelDetails.innerHTML=
-    `<div class="detail-row"><span class="detail-key">Colour</span><span class="detail-val">${p.color}</span></div>`+
-    `<div class="detail-row"><span class="detail-key">Fabric</span><span class="detail-val">${p.fabric}</span></div>`+
-    `<div class="detail-row"><span class="detail-key">Occasion</span><span class="detail-val">${p.occasion}</span></div>`+
-    `<div class="detail-row"><span class="detail-key">Work</span><span class="detail-val">${p.work}</span></div>`+
+  panelDetails.innerHTML =
+    `<div class="detail-row"><span class="detail-key">Colour</span><span class="detail-val">${p.color || 'Multiple Colors'}</span></div>`+
+    `<div class="detail-row"><span class="detail-key">Fabric</span><span class="detail-val">${p.fabric || 'Premium Quality'}</span></div>`+
+    `<div class="detail-row"><span class="detail-key">Occasion</span><span class="detail-val">${p.occasion || 'All Occasions'}</span></div>`+
+    `<div class="detail-row"><span class="detail-key">Work</span><span class="detail-val">${p.work || 'Handcrafted'}</span></div>`+
     `<div class="detail-row"><span class="detail-key">Set Includes</span><span class="detail-val">Top + Bottom + Dupatta</span></div>`;
 
-  const inWishlist=wishlist.has(id);
-  btnWishlist.innerHTML=inWishlist?'<i class="fa-solid fa-heart"></i>':'<i class="fa-regular fa-heart"></i>';
-  btnWishlist.classList.toggle('loved',inWishlist);
-  btnWishlist.dataset.id=id;
-
   overlay.classList.add('active');
-  document.body.style.overflow='hidden';
-}
+  document.body.style.overflow = 'hidden';
+};
 
-function closeOverlay(){overlay.classList.remove('active');document.body.style.overflow='';}
+function closeOverlay(){ overlay.classList.remove('active'); document.body.style.overflow = ''; }
 
-document.querySelectorAll('.latim,.im').forEach(card=>{
-  card.addEventListener('click',()=>{const id=parseInt(card.dataset.id);if(id)openProduct(id);});
-});
+backdrop.addEventListener('click', closeOverlay);
+panelClose.addEventListener('click', closeOverlay);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeOverlay(); });
+qtyMinus.addEventListener('click', () => { if (qty > 1){ qty--; qtyVal.textContent = qty; } });
+qtyPlus.addEventListener('click',  () => { if (qty < 10){ qty++; qtyVal.textContent = qty; } });
 
-backdrop.addEventListener('click',closeOverlay);
-panelClose.addEventListener('click',closeOverlay);
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeOverlay();});
-
-qtyMinus.addEventListener('click',()=>{if(qty>1){qty--;qtyVal.textContent=qty;}});
-qtyPlus.addEventListener('click', ()=>{if(qty<10){qty++;qtyVal.textContent=qty;}});
-
-btnBuy.addEventListener('click',()=>{
-  if(!selectedSize){showToast('Please select a size first ✂️');return;}
-  addToCartLS(currentProduct,currentProductId,qty,selectedSize,selectedColor);
+btnBuy.addEventListener('click', () => {
+  if (!selectedSize){ showToast('Please select a size first ✂️'); return; }
+  addToCartLS(currentProduct, currentProductId, qty, selectedSize);
   showToast(`Added ${qty} × ${currentProduct.name} (${selectedSize}) to bag 🛍️`);
   closeOverlay();
-  setTimeout(()=>{window.location.href='mycart.html';},1200);
+  setTimeout(() => { window.location.href = 'mycart.html'; }, 1200);
 });
 
-btnWishlist.addEventListener('click',()=>{
-  const id=parseInt(btnWishlist.dataset.id);
-  if(wishlist.has(id)){wishlist.delete(id);btnWishlist.innerHTML='<i class="fa-regular fa-heart"></i>';btnWishlist.classList.remove('loved');showToast('Removed from wishlist');}
-  else{wishlist.add(id);btnWishlist.innerHTML='<i class="fa-solid fa-heart"></i>';btnWishlist.classList.add('loved');showToast('Added to wishlist ❤️');}
-  saveWishlist(wishlist);
-});
 
 let toastTimer;
-function showToast(msg){toast.textContent=msg;toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),2800);}
+function showToast(msg){ toast.textContent = msg; toast.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.classList.remove('show'), 2800); }
 
-const hamburger=document.getElementById('hamburger');
-const mobileNav=document.getElementById('mobileNav');
-hamburger.addEventListener('click',()=>{hamburger.classList.toggle('open');mobileNav.classList.toggle('open');});
-
-document.getElementById('desktopSearchBtn').addEventListener('click',()=>handleSearch(document.getElementById('desktopSearchInput').value));
-document.getElementById('desktopSearchInput').addEventListener('keydown',e=>{if(e.key==='Enter')handleSearch(e.target.value);});
-document.getElementById('mobileSearchBtn').addEventListener('click',()=>{handleSearch(document.getElementById('mobileSearchInput').value);mobileNav.classList.remove('open');hamburger.classList.remove('open');});
-document.getElementById('mobileSearchInput').addEventListener('keydown',e=>{if(e.key==='Enter'){handleSearch(e.target.value);mobileNav.classList.remove('open');hamburger.classList.remove('open');}});
-
+const hamburger = document.getElementById('hamburger');
+const mobileNav = document.getElementById('mobileNav');
+hamburger.addEventListener('click', () => { hamburger.classList.toggle('open'); mobileNav.classList.toggle('open'); });
+document.getElementById('desktopSearchBtn').addEventListener('click', () => handleSearch(document.getElementById('desktopSearchInput').value));
+document.getElementById('desktopSearchInput').addEventListener('keydown', e => { if (e.key === 'Enter') handleSearch(e.target.value); });
+document.getElementById('mobileSearchBtn').addEventListener('click', () => { handleSearch(document.getElementById('mobileSearchInput').value); mobileNav.classList.remove('open'); hamburger.classList.remove('open'); });
+document.getElementById('mobileSearchInput').addEventListener('keydown', e => { if (e.key === 'Enter'){ handleSearch(e.target.value); mobileNav.classList.remove('open'); hamburger.classList.remove('open'); } });
 </script>
 </body>
 </html>
