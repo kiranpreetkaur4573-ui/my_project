@@ -16,14 +16,12 @@
   --white:#fff;
   --text:#3d1a28;
 }
-
 *{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:100%;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;zoom:1;}
 body{background:#faedeb;font-family:'DM Sans',Arial,sans-serif;}
-
 .top-bar{background:var(--plum);color:rgba(255,255,255,.88);text-align:center;font-size:11px;letter-spacing:2.5px;padding:8px 16px;text-transform:uppercase;overflow:hidden;}
 .top-bar-inner{display:inline-block;white-space:nowrap;animation:marquee 22s linear infinite;}
 @keyframes marquee{0%{transform:translateX(40vw);}100%{transform:translateX(-100%);}}
-
 nav{position:sticky;top:0;z-index:300;background:rgba(255,255,255,.97);backdrop-filter:blur(12px);border-bottom:1px solid rgba(197,149,176,.2);box-shadow:0 2px 20px rgba(122,45,82,.08);}
 .navbar{max-width:1400px;margin:0 auto;height:60px;display:flex;align-items:center;padding:0 24px;gap:12px;}
 .nav-left{display:flex;align-items:center;gap:14px;flex-shrink:0;}
@@ -54,17 +52,13 @@ nav{position:sticky;top:0;z-index:300;background:rgba(255,255,255,.97);backdrop-
 .mobile-nav .search-row{display:flex;padding:14px 20px;gap:0;}
 .mobile-nav .search-row input{flex:1;padding:9px 14px;border:1.5px solid #ddb8cc;border-radius:24px 0 0 24px;font-size:13px;color:var(--text);outline:none;background:#fdf6f9;font-family:'DM Sans',sans-serif;}
 .mobile-nav .search-row button{padding:9px 16px;background:linear-gradient(135deg,var(--rose),var(--deep));color:white;border:none;border-radius:0 24px 24px 0;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;font-family:'DM Sans',sans-serif;}
-
 .pic img{width:100%;height:auto;display:block;max-height:520px;object-fit:cover;}
-
 .divider{display:flex;align-items:center;gap:16px;margin:40px 20px 0;}
 .divider-line{flex:1;height:1px;background:linear-gradient(to right,transparent,var(--rose),transparent);}
 .divider-diamond{width:8px;height:8px;background:var(--rose);transform:rotate(45deg);flex-shrink:0;}
-
 .section-heading{text-align:center;margin:16px 20px 30px;}
 .section-heading h2{font-family:'Cormorant Garamond',serif;font-size:clamp(24px,5vw,38px);font-style:italic;color:var(--plum);letter-spacing:2px;}
 .section-heading p{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--rose);margin-top:6px;}
-
 .lat{display:grid;grid-template-columns:repeat(6,1fr);gap:18px;padding:0 20px;margin-bottom:40px;}
 .latim{background:white;overflow:hidden;box-shadow:0 4px 20px rgba(122,45,82,.08);transition:.35s;cursor:pointer;border-radius:8px;border:2px solid transparent;position:relative;}
 .latim:hover{transform:translateY(-6px);box-shadow:0 12px 40px rgba(122,45,82,.18);border-color:var(--rose);}
@@ -73,10 +67,8 @@ nav{position:sticky;top:0;z-index:300;background:rgba(255,255,255,.97);backdrop-
 .latim-body{padding:10px 12px 14px;}
 .latim-body p{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text);margin-bottom:4px;}
 .latim-body h3{font-size:13px;color:var(--rose);font-weight:600;}
-
 .banner{width:100%;margin-top:20px;overflow:hidden;text-align:center;}
 .banner img{max-width:100%;height:auto;display:block;margin:0 auto;}
-
 .col{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;padding:0 20px;margin-bottom:50px;}
 .im{background:white;overflow:hidden;box-shadow:0 4px 20px rgba(122,45,82,.08);transition:.35s;cursor:pointer;border-radius:8px;border:2px solid transparent;position:relative;}
 .im:hover{transform:translateY(-8px);box-shadow:0 12px 40px rgba(122,45,82,.18);border-color:var(--rose);}
@@ -85,19 +77,13 @@ nav{position:sticky;top:0;z-index:300;background:rgba(255,255,255,.97);backdrop-
 .im-body{padding:12px 14px 16px;}
 .im-body h3{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text);margin-bottom:4px;}
 .tag{font-size:13px;color:var(--rose);font-weight:600;}
-
-/* ── ✅ STOCK BADGE ── */
-.stock-tag{display:inline-block;font-size:9px;font-weight:700;letter-spacing:1.2px;padding:3px 8px;border-radius:20px;margin-top:5px;text-transform:uppercase;transition:all .3s ease;}
-.stock-tag.loading{background:rgba(158,107,128,.1);color:#9e6b80;}
-.stock-tag.in     {background:rgba(46,125,79,.12); color:#2e7d4f;}
-.stock-tag.low    {background:rgba(240,165,0,.15);  color:#a06800;}
-.stock-tag.out    {background:rgba(192,57,43,.12);  color:#c0392b;}
-
-/* Out of stock card dimming + ribbon */
+.stock-tag{display:inline-block;font-size:9px;font-weight:700;letter-spacing:1.2px;padding:3px 8px;border-radius:20px;margin-top:5px;text-transform:uppercase;transition:all .3s;}
+.stock-tag.in{background:rgba(46,125,79,.12);color:#2e7d4f;}
+.stock-tag.low{background:rgba(240,165,0,.15);color:#a06800;}
+.stock-tag.out{background:rgba(192,57,43,.12);color:#c0392b;}
 .latim.out-of-stock,.im.out-of-stock{opacity:.65;cursor:not-allowed;}
-.latim.out-of-stock:hover,.im.out-of-stock:hover{transform:none;border-color:transparent;box-shadow:0 4px 20px rgba(122,45,82,.08);}
+.latim.out-of-stock:hover,.im.out-of-stock:hover{transform:none!important;border-color:transparent!important;}
 .latim.out-of-stock::after,.im.out-of-stock::after{content:"Out of Stock";position:absolute;top:14px;right:-28px;background:#c0392b;color:white;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 36px;transform:rotate(45deg);pointer-events:none;}
-
 .overlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .35s ease;}
 .overlay.active{opacity:1;pointer-events:all;}
 .overlay-backdrop{position:absolute;inset:0;background:rgba(74,26,50,.55);backdrop-filter:blur(6px);cursor:pointer;}
@@ -146,25 +132,20 @@ nav{position:sticky;top:0;z-index:300;background:rgba(255,255,255,.97);backdrop-
 .btn-wishlist{width:50px;height:50px;border:1.5px solid #ddb8cc;border-radius:50%;background:white;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--rose);transition:background .2s,border-color .2s,transform .2s;flex-shrink:0;}
 .btn-wishlist:hover{background:var(--soft);border-color:var(--rose);transform:scale(1.1);}
 .btn-wishlist.loved{color:#e04060;}
-
-/* ── PANEL STOCK STATUS ── */
 .panel-stock-status{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:5px 12px;border-radius:20px;margin-bottom:16px;}
-.panel-stock-status.in {background:rgba(46,125,79,.1); color:#2e7d4f;}
-.panel-stock-status.low{background:rgba(240,165,0,.15); color:#a06800;}
-.panel-stock-status.out{background:rgba(192,57,43,.1);  color:#c0392b;}
+.panel-stock-status.in{background:rgba(46,125,79,.1);color:#2e7d4f;}
+.panel-stock-status.low{background:rgba(240,165,0,.15);color:#a06800;}
+.panel-stock-status.out{background:rgba(192,57,43,.1);color:#c0392b;}
 .panel-stock-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-.in  .panel-stock-dot{background:#2e7d4f;}
+.in .panel-stock-dot{background:#2e7d4f;}
 .low .panel-stock-dot{background:#f0a500;}
 .out .panel-stock-dot{background:#c0392b;}
-
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--plum);color:white;padding:12px 28px;border-radius:30px;font-size:13px;font-weight:600;letter-spacing:.5px;z-index:10000;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;white-space:nowrap;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-
 footer{background:var(--plum);padding:32px 20px;color:rgba(255,255,255,0.8);text-align:center;font-size:13px;}
 .footer-brand{font-family:'Cormorant Garamond',serif;font-size:28px;font-style:italic;color:white;letter-spacing:3px;margin-bottom:10px;}
 footer p{margin:5px 0;opacity:.75;font-size:12px;letter-spacing:1px;}
 footer strong{color:var(--rose);}
-
 @media(max-width:1200px){.banner img{max-width:90%;}.lat{grid-template-columns:repeat(4,1fr);}}
 @media(max-width:1100px){.lat{grid-template-columns:repeat(3,1fr);}.latim img{height:240px;}.col{grid-template-columns:repeat(3,1fr);}.im img{height:320px;}.nav-links{display:none;}}
 @media(max-width:900px){.col{grid-template-columns:repeat(2,1fr);}.im img{height:280px;}}
@@ -175,122 +156,159 @@ footer strong{color:var(--rose);}
 </style>
 </head>
 
-<!-- ✅ FIREBASE STOCK LISTENER — placed in <head> BEFORE <body> -->
+<!-- ✅ Firebase v10 (correct version) — hash guard REMOVED so all products always load -->
 <script type="module">
-import { initializeApp }   from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-import { getFirestore, collection, onSnapshot }
-                           from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey:            "AIzaSyDpnSVwV3QP9MP4tuU5SCtXiwpdAUD0vlc",
-  authDomain:        "trendlilly-boutique.firebaseapp.com",
-  projectId:         "trendlilly-boutique",
-  storageBucket:     "trendlilly-boutique.firebasestorage.app",
+  apiKey: "AIzaSyDpnSVwV3QP9MP4tuU5SCtXiwpdAUD0vlc",
+  authDomain: "trendlilly-boutique.firebaseapp.com",
+  projectId: "trendlilly-boutique",
+  storageBucket: "trendlilly-boutique.firebasestorage.app",
   messagingSenderId: "929563690255",
-  appId:             "1:929563690255:web:b535b31e9cb2f6158b6a7a"
+  appId: "1:929563690255:web:b535b31e9cb2f6158b6a7a"
 };
 
 const app = initializeApp(firebaseConfig);
 const db  = getFirestore(app);
 
-// ✅ FIX 1: Variable name is consistently NAME_TO_NUM (all caps)
-// ✅ FIX 2: ALL keys are LOWERCASE — because we do .toLowerCase() before matching
-const NAME_TO_NUM = {
-  "light steel blue salwar suit":  "1",
-  "mint green salwar suit":        "2",
-  "soft coral salwar suit":        "3",
-  "deep pink salwar suit":         "4",
-  "mustard yellow salwar suit":    "5",
-  "cream color salwar suit":       "6",
-  "hot pink salwar suit":          "7",
-  "royal blue salwar suit":        "8",
-  "blush pink salwar suit":        "9",
-  "bright blue salwar suit":       "10",
-  "ash grey salwar suit":          "11",
-  "burnt orange salwar suit":      "12",
-  "taupe brown salwar suit":       "13",
-  "black & white salwar suit":     "14",
-  "golden yellow salwar suit":     "15",
-  "indigo blue salwar suit":       "16",
-  "crimson salwar suit":           "17",
-  "voilet blue salwar suit":       "18"
-};
+window._productsData = {};
+window._stockData    = {};
 
-window._stockData = {};
+function renderProducts(products) {
+  const latContainer = document.querySelector('.lat');
+  const colContainer = document.querySelector('.col');
+  if (!latContainer || !colContainer) return;
 
-function applyStock(num, stock) {
-  window._stockData[String(num)] = stock;
+  latContainer.innerHTML = '';
+  colContainer.innerHTML = '';
 
-  // Update badge on card
-  const badge = document.getElementById("stock-" + num);
-  if (badge) {
-    if (stock === 0) {
-      badge.textContent = "Out of Stock";
-      badge.className   = "stock-tag out";
-    } else if (stock <= 5) {
-      badge.textContent = `Only ${stock} left!`;
-      badge.className   = "stock-tag low";
-    } else {
-      badge.textContent = "In Stock";
-      badge.className   = "stock-tag in";
+  if (!products || products.length === 0) {
+    colContainer.innerHTML = '<p style="grid-column:1/-1;text-align:center;padding:40px;color:#999;">No products available.</p>';
+    return;
+  }
+
+  // Deduplicate FIRST so index numbers are always correct
+  const uniqueProducts = [];
+  const seen = new Set();
+  products.forEach(product => {
+    if (!seen.has(product.id)) {
+      seen.add(product.id);
+      uniqueProducts.push(product);
     }
-  }
+  });
 
-  // Dim card if out of stock
-  const card = document.querySelector(`.latim[data-id="${num}"], .im[data-id="${num}"]`);
-  if (card) card.classList.toggle("out-of-stock", stock === 0);
+  uniqueProducts.forEach((product, index) => {
+    const productId  = product.id;
+    const stock      = product.stock || 0;
+    const stockClass = stock === 0 ? 'out' : (stock <= 5 ? 'low' : 'in');
+    const stockText  = stock === 0 ? 'Out of Stock' : (stock <= 5 ? `Only ${stock} left!` : 'In Stock');
 
-  // Update overlay pill if open for this product
-  const panelStockEl = document.getElementById("panelStockStatus");
-  if (panelStockEl && panelStockEl.dataset.productId === String(num)) {
-    window.updatePanelStock(String(num), stock);
-  }
+    window._productsData[productId] = product;
+    window._stockData[productId]    = stock;
+
+    if (index < 6) {
+      const card = document.createElement('div');
+      card.className  = `latim${stock === 0 ? ' out-of-stock' : ''}`;
+      card.dataset.id = productId;
+      card.innerHTML  = `
+        <img src="${product.img || 'img/placeholder.jpg'}" alt="${product.name}" onerror="this.src='img/placeholder.jpg'">
+        <div class="latim-body">
+          <p>${product.cat || 'Salwar Suit'}</p>
+          <h3>₹${product.price || 999}</h3>
+          <div class="stock-tag ${stockClass}" id="stock-lat-${productId}">${stockText}</div>
+        </div>`;
+      card.addEventListener('click', () => window.openProduct(productId));
+      latContainer.appendChild(card);
+    } else {
+      const card = document.createElement('div');
+      card.className  = `im${stock === 0 ? ' out-of-stock' : ''}`;
+      card.dataset.id = productId;
+      card.innerHTML  = `
+        <img src="${product.img || 'img/placeholder.jpg'}" alt="${product.name}" onerror="this.src='img/placeholder.jpg'">
+        <div class="im-body">
+          <h3>${product.name}</h3>
+          <div class="tag">₹${product.price || 999}</div>
+          <div class="stock-tag ${stockClass}" id="stock-col-${productId}">${stockText}</div>
+        </div>`;
+      card.addEventListener('click', () => window.openProduct(productId));
+      colContainer.appendChild(card);
+    }
+  });
+
+  console.log(`✅ Rendered ${uniqueProducts.length} unique Salwar Suit products`);
 }
 
+// ✅ No hash guard — always renders the full product list
 onSnapshot(collection(db, "products"), (snapshot) => {
-  snapshot.forEach((docSnap) => {
-    const data  = docSnap.data();
-    const stock = parseInt(data.stock !== undefined ? data.stock : data.Stock) || 0;
+  const products = [];
 
-    // ✅ FIX 3: rawName is lowercase, NAME_TO_NUM keys are also lowercase — they match!
-    const rawName = (data.name || "").toLowerCase().trim();
-    const num     = NAME_TO_NUM[rawName];
+  snapshot.forEach((doc) => {
+    const data = doc.data();
+    const cat  = (data.cat || '').toLowerCase().trim();
 
-    if (num) {
-      applyStock(num, stock);
-    }
-    // Products from other pages (sarees, lehengas) are silently ignored
+    // Debug: uncomment the line below if products still don't show
+    // console.log(`📦 ${doc.id} | cat: "${data.cat}" | passes: ${cat.includes('Salwar Suit')}`);
+
+    if (!cat.includes('salwar suit')) return;
+
+    const stock     = parseInt(data.stock || 0);
+    const productId = doc.id;
+
+    window._stockData[productId] = stock;
+
+    products.push({ id: productId, ...data, stock, price: parseInt(data.price || 0) });
+
+    // Live-update badges on already-rendered cards
+    ['lat', 'col'].forEach(prefix => {
+      const badge = document.getElementById(`stock-${prefix}-${productId}`);
+      if (badge) {
+        badge.textContent = stock === 0 ? 'Out of Stock' : (stock <= 5 ? `Only ${stock} left!` : 'In Stock');
+        badge.className   = `stock-tag ${stock === 0 ? 'out' : (stock <= 5 ? 'low' : 'in')}`;
+      }
+    });
+
+    document.querySelectorAll(`[data-id="${productId}"]`).forEach(card => {
+      card.classList.toggle('out-of-stock', stock === 0);
+    });
+
+    if (window.updatePanelStock) window.updatePanelStock(productId, stock);
   });
+
+  products.sort((a, b) => {
+    const dateA = a.createdAt?.toDate?.() || new Date(0);
+    const dateB = b.createdAt?.toDate?.() || new Date(0);
+    return dateB - dateA;
+  });
+
+  renderProducts(products);
 });
 
-window.updatePanelStock = function(num, stock) {
-  const el     = document.getElementById("panelStockStatus");
-  if (!el) return;
-  el.dataset.productId = String(num);
-  const buyBtn = document.getElementById("btnBuy");
-
+window.updatePanelStock = function(productId, stock) {
+  const el = document.getElementById('panelStockStatus');
+  if (!el || el.dataset.productId !== productId) return;
+  const buyBtn = document.getElementById('btnBuy');
   if (stock === 0) {
-    el.className = "panel-stock-status out";
+    el.className = 'panel-stock-status out';
     el.innerHTML = `<span class="panel-stock-dot"></span> Out of Stock`;
     if (buyBtn) { buyBtn.disabled = true; buyBtn.innerHTML = `<i class="fa-solid fa-ban" style="margin-right:8px;"></i>Out of Stock`; }
   } else if (stock <= 5) {
-    el.className = "panel-stock-status low";
+    el.className = 'panel-stock-status low';
     el.innerHTML = `<span class="panel-stock-dot"></span> Only ${stock} left!`;
     if (buyBtn) { buyBtn.disabled = false; buyBtn.innerHTML = `<i class="fa-solid fa-bag-shopping" style="margin-right:8px;"></i>Add to Bag`; }
   } else {
-    el.className = "panel-stock-status in";
+    el.className = 'panel-stock-status in';
     el.innerHTML = `<span class="panel-stock-dot"></span> In Stock`;
     if (buyBtn) { buyBtn.disabled = false; buyBtn.innerHTML = `<i class="fa-solid fa-bag-shopping" style="margin-right:8px;"></i>Add to Bag`; }
   }
 };
 </script>
 
-<body>
 
+<body>
 <div class="top-bar">
-  <span class="top-bar-inner">
-    ✦ Free shipping on orders above ₹999 &nbsp;|&nbsp; New arrivals every Friday &nbsp;|&nbsp; Exclusive designs &nbsp;|&nbsp; 100% authentic fabric ✦
-  </span>
+  <span class="top-bar-inner">✦ Free shipping on orders above ₹999 &nbsp;|&nbsp; New arrivals every Friday &nbsp;|&nbsp; Exclusive designs &nbsp;|&nbsp; 100% authentic fabric ✦</span>
 </div>
 
 <nav>
@@ -311,9 +329,7 @@ window.updatePanelStock = function(num, stock) {
     </div>
     <a href="mycart.html" class="nav-cart"><i class="fa-solid fa-cart-shopping"></i></a>
     <a href="contact.html" class="nav-cart" style="margin-left:0;"><i class="fa-solid fa-phone"></i></a>
-    <button class="hamburger" id="hamburger" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
+    <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
   </div>
   <div class="mobile-nav" id="mobileNav">
     <div class="search-row">
@@ -329,44 +345,17 @@ window.updatePanelStock = function(num, stock) {
   </div>
 </nav>
 
-<div class="pic">
-  <img src="img/salwar suit collation.jpg" alt="Salwar Suit Collection">
-</div>
+<div class="pic"><img src="img/salwar suit collation.jpg" alt="Salwar Suit Collection"></div>
 
 <div class="divider"><div class="divider-line"></div><div class="divider-diamond"></div><div class="divider-line"></div></div>
 <div class="section-heading"><h2>Featured Picks</h2><p>Handpicked for you</p></div>
-
-<div class="lat">
-  <div class="latim" data-id="1"><img src="img/sast1.png" alt="Light Steel Blue Salwar Suit"><div class="latim-body"><p>Light Steel Blue Salwar Suit</p><h3>₹5,087</h3><span id="stock-1" class="stock-tag loading">Loading…</span></div></div>
-  <div class="latim" data-id="2"><img src="img/sast2.png" alt="Mint Green Salwar Suit"><div class="latim-body"><p>Mint Green Salwar Suit</p><h3>₹6,004</h3><span id="stock-2" class="stock-tag loading">Loading…</span></div></div>
-  <div class="latim" data-id="3"><img src="img/sast3.png" alt="Soft Coral Salwar Suit"><div class="latim-body"><p>Soft Coral Salwar Suit</p><h3>₹4,899</h3><span id="stock-3" class="stock-tag loading">Loading…</span></div></div>
-  <div class="latim" data-id="4"><img src="img/sast4.png" alt="Deep Pink Salwar Suit"><div class="latim-body"><p>Deep Pink Salwar Suit</p><h3>₹4,077</h3><span id="stock-4" class="stock-tag loading">Loading…</span></div></div>
-  <div class="latim" data-id="5"><img src="img/sast5.png" alt="Mustard Yellow Salwar Suit"><div class="latim-body"><p>Mustard Yellow Salwar Suit</p><h3>₹4,266</h3><span id="stock-5" class="stock-tag loading">Loading…</span></div></div>
-  <div class="latim" data-id="6"><img src="img/sast6.png" alt="Cream Color Salwar Suit"><div class="latim-body"><p>Cream Color Salwar Suit</p><h3>₹5,589</h3><span id="stock-6" class="stock-tag loading">Loading…</span></div></div>
-</div>
+<div class="lat"></div>
 
 <div class="banner"><img src="img/ban.png" alt="Banner"></div>
 
 <div class="divider"><div class="divider-line"></div><div class="divider-diamond"></div><div class="divider-line"></div></div>
 <div class="section-heading"><h2>Collection</h2><p>Browse our full collection</p></div>
-
-<div class="col">
-  <div class="im" data-id="7"><img src="img/sast7.png" alt="Hot Pink Salwar Suit"><div class="im-body"><h3>Hot Pink Salwar Suit</h3><span id="stock-7" class="stock-tag loading">Loading…</span><div class="tag">₹999</div></div></div>
-  <div class="im" data-id="8"><img src="img/sast8.png" alt="Royal Blue Salwar Suit"><div class="im-body"><h3>Royal Blue Salwar Suit</h3><span id="stock-8" class="stock-tag loading">Loading…</span><div class="tag">₹3,896</div></div></div>
-  <div class="im" data-id="9"><img src="img/sast9.png" alt="Blush Pink Salwar Suit"><div class="im-body"><h3>Blush Pink Salwar Suit</h3><span id="stock-9" class="stock-tag loading">Loading…</span><div class="tag">₹1,099</div></div></div>
-  <div class="im" data-id="10"><img src="img/sast10.png" alt="Bright Blue Salwar Suit"><div class="im-body"><h3>Bright Blue Salwar Suit</h3><span id="stock-10" class="stock-tag loading">Loading…</span><div class="tag">₹2,000</div></div></div>
-</div>
-
-<div class="col">
-  <div class="im" data-id="11"><img src="img/sast11.png" alt="Ash Grey Salwar Suit"><div class="im-body"><h3>Ash Grey Salwar Suit</h3><span id="stock-11" class="stock-tag loading">Loading…</span><div class="tag">₹1,199</div></div></div>
-  <div class="im" data-id="12"><img src="img/sast12.png" alt="Burnt Orange Salwar Suit"><div class="im-body"><h3>Burnt Orange Salwar Suit</h3><span id="stock-12" class="stock-tag loading">Loading…</span><div class="tag">₹1,399</div></div></div>
-  <div class="im" data-id="13"><img src="img/sast13.png" alt="Taupe Brown Salwar Suit"><div class="im-body"><h3>Taupe Brown Salwar Suit</h3><span id="stock-13" class="stock-tag loading">Loading…</span><div class="tag">₹1,099</div></div></div>
-  <div class="im" data-id="14"><img src="img/sast14.png" alt="Black & White Salwar Suit"><div class="im-body"><h3>Black &amp; White Salwar Suit</h3><span id="stock-14" class="stock-tag loading">Loading…</span><div class="tag">₹1,299</div></div></div>
-  <div class="im" data-id="15"><img src="img/sast15.png" alt="Golden Yellow Salwar Suit"><div class="im-body"><h3>Golden Yellow Salwar Suit</h3><span id="stock-15" class="stock-tag loading">Loading…</span><div class="tag">₹949</div></div></div>
-  <div class="im" data-id="16"><img src="img/sast16.png" alt="Indigo Blue Salwar Suit"><div class="im-body"><h3>Indigo Blue Salwar Suit</h3><span id="stock-16" class="stock-tag loading">Loading…</span><div class="tag">₹1,149</div></div></div>
-  <div class="im" data-id="17"><img src="img/sast17.png" alt="Crimson Salwar Suit"><div class="im-body"><h3>Crimson Salwar Suit</h3><span id="stock-17" class="stock-tag loading">Loading…</span><div class="tag">₹1,299</div></div></div>
-  <div class="im" data-id="18"><img src="img/sast18.png" alt="Voilet Blue Salwar Suit"><div class="im-body"><h3>Voilet Blue Salwar Suit</h3><span id="stock-18" class="stock-tag loading">Loading…</span><div class="tag">₹1,499</div></div></div>
-</div>
+<div class="col"></div>
 
 <footer>
   <div class="footer-brand">Trendlilly</div>
@@ -374,7 +363,6 @@ window.updatePanelStock = function(num, stock) {
   <p>Follow us on Instagram: <strong>Trendlilly_@26</strong></p>
 </footer>
 
-<!-- PRODUCT DETAIL OVERLAY -->
 <div class="overlay" id="overlay">
   <div class="overlay-backdrop" id="overlayBackdrop"></div>
   <div class="product-panel" id="productPanel">
@@ -384,24 +372,18 @@ window.updatePanelStock = function(num, stock) {
       <span class="panel-badge" id="panelBadge">New Arrival</span>
     </div>
     <div class="panel-info">
-      <div class="panel-category" id="panelCategory">Salwar Suit</div>
+      <div class="panel-category" id="panelCategory"> Suit</div>
       <div class="panel-name" id="panelName">Product Name</div>
       <div class="panel-tagline" id="panelTagline">Crafted with premium fabric for all-day elegance</div>
-      <div class="panel-stars">
-        <span class="stars">★★★★☆</span>
-        <span class="rating-count" id="panelRating">(124 reviews)</span>
-      </div>
+      <div class="panel-stars"><span class="stars">★★★★☆</span><span class="rating-count" id="panelRating">(124 reviews)</span></div>
       <div class="panel-price-row">
         <span class="panel-price" id="panelPrice">₹999</span>
         <span class="panel-price-old" id="panelPriceOld"></span>
         <span class="panel-discount" id="panelDiscount"></span>
       </div>
-      <!-- Live stock pill -->
-      <div class="panel-stock-status loading" id="panelStockStatus" data-product-id="">
+      <div class="panel-stock-status in" id="panelStockStatus" data-product-id="">
         <span class="panel-stock-dot"></span> Checking stock…
       </div>
-      <div class="panel-section-label">Colour Available</div>
-      <div class="color-swatches" id="panelColors"></div>
       <div class="panel-section-label">Select Size</div>
       <div class="size-grid" id="panelSizes"></div>
       <div class="panel-details" id="panelDetails"></div>
@@ -415,181 +397,132 @@ window.updatePanelStock = function(num, stock) {
       </div>
       <div class="panel-actions">
         <button class="btn-buy" id="btnBuy"><i class="fa-solid fa-bag-shopping" style="margin-right:8px;"></i>Add to Bag</button>
-        <button class="btn-wishlist" id="btnWishlist" title="Wishlist"><i class="fa-regular fa-heart"></i></button>
       </div>
     </div>
   </div>
 </div>
 
-<div class="toast" id="toast">Added to bag! 🛍️</div>
+<div class="toast" id="toast"></div>
 
 <script>
-const products = {
-  1: {name:"Light Steel Blue Salwar Suit",category:"Salwar Suit",img:"img/sast1.png",color:"Light Steel Blue",hex:"#B0C4DE",price:"₹5,087",priceOld:"₹7,000",discount:"27% OFF",tagline:"Rich navy with delicate embroidery — timeless festive charm.",fabric:"Georgette",occasion:"Festive / Party",work:"Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(98 reviews)"},
-  2: {name:"Mint Green Salwar Suit",category:"Salwar Suit",img:"img/sast2.png",color:"Mint Green",hex:"#98D8C8",price:"₹6,004",priceOld:"₹8,000",discount:"25% OFF",tagline:"Elegant mint chikankari — grace in every thread.",fabric:"Cotton",occasion:"Casual / Day",work:"Chikankari",sizes:["XS","S","M","L","XL","XXL"],rating:"(74 reviews)"},
-  3: {name:"Soft Coral Salwar Suit",category:"Salwar Suit",img:"img/sast3.png",color:"Soft Coral",hex:"#F88379",price:"₹4,899",priceOld:"₹6,500",discount:"25% OFF",tagline:"Bold coral that commands every room you enter.",fabric:"Silk Blend",occasion:"Wedding / Party",work:"Zari Work",sizes:["XS","S","M","L","XL","XXL"],rating:"(115 reviews)"},
-  4: {name:"Deep Pink Salwar Suit",category:"Salwar Suit",img:"img/sast4.png",color:"Deep Pink",hex:"#D6336C",price:"₹4,077",priceOld:"₹5,500",discount:"26% OFF",tagline:"Soft and dreamy — a wardrobe must-have for every occasion.",fabric:"Crepe",occasion:"Casual / Puja",work:"Digital Print",sizes:["XS","S","M","L","XL","XXL"],rating:"(62 reviews)"},
-  5: {name:"Mustard Yellow Salwar Suit",category:"Salwar Suit",img:"img/sast5.png",color:"Mustard Yellow",hex:"#D4A017",price:"₹4,266",priceOld:"₹5,800",discount:"26% OFF",tagline:"Contemporary mustard with subtle finesse — modern ethnic.",fabric:"Art Silk",occasion:"Office / Casual",work:"Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(88 reviews)"},
-  6: {name:"Cream Color Salwar Suit",category:"Salwar Suit",img:"img/sast6.png",color:"Cream / Off-White",hex:"#F5F5DC",price:"₹5,589",priceOld:"₹7,400",discount:"24% OFF",tagline:"Earthy warmth meets ethnic artistry — effortlessly chic.",fabric:"Banarasi",occasion:"Festive",work:"Woven",sizes:["XS","S","M","L","XL","XXL"],rating:"(51 reviews)"},
-  7: {name:"Hot Pink Salwar Suit",category:"Salwar Suit",img:"img/sast7.png",color:"Hot Pink",hex:"#FF1493",price:"₹999",priceOld:"₹1,499",discount:"33% OFF",tagline:"Vibrant hot pink — festival-ready and unforgettable.",fabric:"Cotton Silk",occasion:"Puja / Casual",work:"Block Print",sizes:["S","M","L","XL","XXL"],rating:"(203 reviews)"},
-  8: {name:"Royal Blue Salwar Suit",category:"Salwar Suit",img:"img/sast8.png",color:"Royal Blue",hex:"#1E3A8A",price:"₹3,896",priceOld:"₹5,200",discount:"25% OFF",tagline:"Classic royal blue with vivid prints — versatile and vivid.",fabric:"Poly Crepe",occasion:"Daily Wear",work:"Digital Print",sizes:["S","M","L","XL","XXL"],rating:"(141 reviews)"},
-  9: {name:"Blush Pink Salwar Suit",category:"Salwar Suit",img:"img/sast9.png",color:"Blush Pink",hex:"#F4C2C2",price:"₹1,099",priceOld:"₹1,499",discount:"27% OFF",tagline:"Floral pink elegance — the bloom of ethnic fashion.",fabric:"Organza",occasion:"Wedding / Party",work:"Embroidery",sizes:["XS","S","M","L","XL","XXL"],rating:"(176 reviews)"},
-  10: {name:"Bright Blue Salwar Suit",category:"Salwar Suit",img:"img/sast10.png",color:"Bright Blue",hex:"#2563EB",price:"₹2,000",priceOld:"₹2,800",discount:"27% OFF",tagline:"Bold and bright — for every celebration worth remembering.",fabric:"Heavy Silk",occasion:"Wedding / Bridal",work:"Heavy Zari",sizes:["XS","S","M","L","XL","XXL"],rating:"(89 reviews)"},
-  11: {name:"Ash Grey Salwar Suit",category:"Salwar Suit",img:"img/sast11.png",color:"Ash Grey",hex:"#B2BEB5",price:"₹1,199",priceOld:"₹1,699",discount:"29% OFF",tagline:"Understated grey — modern ethnic wear for every day.",fabric:"Cotton",occasion:"Casual / Puja",work:"Block Print",sizes:["S","M","L","XL","XXL"],rating:"(67 reviews)"},
-  12: {name:"Burnt Orange Salwar Suit",category:"Salwar Suit",img:"img/sast12.png",color:"Burnt Orange",hex:"#CC5500",price:"₹1,399",priceOld:"₹1,899",discount:"26% OFF",tagline:"Lush burnt orange — grace, flow and a timeless presence.",fabric:"Silk Blend",occasion:"Party / Festive",work:"Embroidery",sizes:["S","M","L","XL","XXL"],rating:"(93 reviews)"},
-  13: {name:"Taupe Brown Salwar Suit",category:"Salwar Suit",img:"img/sast13.png",color:"Taupe Brown",hex:"#8B6F47",price:"₹1,099",priceOld:"₹1,499",discount:"27% OFF",tagline:"Warm taupe — confidence in every stitch.",fabric:"Georgette",occasion:"Casual / Office",work:"Printed",sizes:["S","M","L","XL","XXL"],rating:"(112 reviews)"},
-  14: {name:"Black & White Salwar Suit",category:"Salwar Suit",img:"img/sast14.png",color:"Black & White",hex:"#1C1C1C",price:"₹1,249",priceOld:"₹1,699",discount:"26% OFF",tagline:"Classic black and white — timeless contrast for every occasion.",fabric:"Crepe",occasion:"Festive",work:"Embroidery",sizes:["S","M","L","XL","XXL"],rating:"(58 reviews)"},
-  15: {name:"Golden Yellow Salwar Suit",category:"Salwar Suit",img:"img/sast15.png",color:"Golden Yellow",hex:"#FFC107",price:"₹949",priceOld:"₹1,299",discount:"27% OFF",tagline:"Sunshine golden — radiant ethnic wear for every festivity.",fabric:"Cotton Silk",occasion:"Casual / Daily",work:"Thread Work",sizes:["S","M","L","XL","XXL"],rating:"(47 reviews)"},
-  16: {name:"Indigo Blue Salwar Suit",category:"Salwar Suit",img:"img/sast16.png",color:"Indigo Blue",hex:"#2C3E50",price:"₹1,149",priceOld:"₹1,599",discount:"28% OFF",tagline:"Rich indigo hues — earthy and effortlessly stylish.",fabric:"Art Silk",occasion:"Festive / Puja",work:"Block Print",sizes:["S","M","L","XL","XXL"],rating:"(71 reviews)"},
-  17: {name:"Crimson Salwar Suit",category:"Salwar Suit",img:"img/sast17.png",color:"Crimson Red",hex:"#B22222",price:"₹1,299",priceOld:"₹1,799",discount:"28% OFF",tagline:"Crimson serenity — modern meets traditional in perfect balance.",fabric:"Georgette",occasion:"Party / Festive",work:"Embroidery",sizes:["S","M","L","XL","XXL"],rating:"(84 reviews)"},
-  18: {name:"Voilet Blue Salwar Suit",category:"Salwar Suit",img:"img/sast18.png",color:"Violet Blue",hex:"#6A5ACD",price:"₹1,499",priceOld:"₹1,999",discount:"25% OFF",tagline:"Violet Blue — timeless richness for every grand occasion.",fabric:"Banarasi",occasion:"Wedding / Party",work:"Woven Zari",sizes:["XS","S","M","L","XL","XXL"],rating:"(129 reviews)"}
-};
-
-const overlay    = document.getElementById('overlay');
-const backdrop   = document.getElementById('overlayBackdrop');
-const panelClose = document.getElementById('panelClose');
-const panelImg   = document.getElementById('panelImg');
-const panelBadge = document.getElementById('panelBadge');
+const overlay       = document.getElementById('overlay');
+const backdrop      = document.getElementById('overlayBackdrop');
+const panelClose    = document.getElementById('panelClose');
+const panelImg      = document.getElementById('panelImg');
+const panelBadge    = document.getElementById('panelBadge');
 const panelCategory = document.getElementById('panelCategory');
-const panelName  = document.getElementById('panelName');
+const panelName     = document.getElementById('panelName');
 const panelTagline  = document.getElementById('panelTagline');
 const panelRating   = document.getElementById('panelRating');
 const panelPrice    = document.getElementById('panelPrice');
 const panelPriceOld = document.getElementById('panelPriceOld');
 const panelDiscount = document.getElementById('panelDiscount');
-const panelColors   = document.getElementById('panelColors');
 const panelSizes    = document.getElementById('panelSizes');
 const panelDetails  = document.getElementById('panelDetails');
-const qtyVal     = document.getElementById('qtyVal');
-const qtyMinus   = document.getElementById('qtyMinus');
-const qtyPlus    = document.getElementById('qtyPlus');
-const btnBuy     = document.getElementById('btnBuy');
-const btnWishlist= document.getElementById('btnWishlist');
-const toast      = document.getElementById('toast');
+const qtyVal        = document.getElementById('qtyVal');
+const qtyMinus      = document.getElementById('qtyMinus');
+const qtyPlus       = document.getElementById('qtyPlus');
+const btnBuy        = document.getElementById('btnBuy');
+const toast         = document.getElementById('toast');
 
-let currentProduct=null,currentProductId=null,qty=1,selectedSize='',selectedColor='';
+let currentProduct = null, currentProductId = null, qty = 1, selectedSize = '';
 
-const WISH_KEY='wishlist_ids';
-function getWishlist(){try{return new Set(JSON.parse(localStorage.getItem(WISH_KEY))||[]);}catch{return new Set();}}
-function saveWishlist(s){localStorage.setItem(WISH_KEY,JSON.stringify([...s]));}
-let wishlist=getWishlist();
-
-function getCart(){try{return JSON.parse(localStorage.getItem('cart'))||[];}catch{return[];}}
-function addToCartLS(product,productId,quantity,size,color){
-  const cart=getCart();
-  cart.push({id:Date.now(),productId,name:product.name,price:product.price,image:product.img,quantity,size,color,addedAt:new Date().toISOString()});
-  localStorage.setItem('cart',JSON.stringify(cart));
+function getCart(){ try{ return JSON.parse(localStorage.getItem('cart'))||[]; }catch{ return []; } }
+function addToCartLS(product, productId, quantity, size){
+  const cart = getCart();
+  cart.push({ id: Date.now(), productId, name: product.name, price: product.price, image: product.img, quantity, size, category: product.cat, addedAt: new Date().toISOString() });
+  localStorage.setItem('cart', JSON.stringify(cart));
 }
 
 function handleSearch(query){
-  if(!query.trim())return;
-  const q=query.toLowerCase();
-  const matches=Object.entries(products).filter(([,p])=>p.name.toLowerCase().includes(q)||p.color.toLowerCase().includes(q));
-  if(!matches.length){showToast('No products found for "'+query+'"');}
-  else{openProduct(parseInt(matches[0][0]));}
+  if (!query.trim()) return;
+  const q = query.toLowerCase();
+  const matches = Object.entries(window._productsData || {}).filter(([, p]) =>
+    (p.name || '').toLowerCase().includes(q) || (p.cat || '').toLowerCase().includes(q)
+  );
+  if (!matches.length){ showToast('No products found for "' + query + '"'); }
+  else { window.openProduct(matches[0][0]); }
 }
 
-function openProduct(id){
-  const p=products[id];
-  if(!p)return;
+window.openProduct = function(productId){
+  const p = window._productsData[productId];
+  if (!p) return;
+  const stock = (window._stockData || {})[productId] ?? p.stock ?? 0;
+  if (stock === 0){ showToast('This item is currently out of stock 😔'); return; }
 
-  // Block if out of stock
-  const stock=(window._stockData||{})[String(id)];
-  if(stock===0){showToast('This item is currently out of stock 😔');return;}
+  currentProduct   = p;
+  currentProductId = productId;
+  qty = 1;
+  qtyVal.textContent = 1;
+  selectedSize  = '';
 
-  currentProduct=p;currentProductId=id;qty=1;qtyVal.textContent=1;selectedSize='';selectedColor=p.color;
-  panelImg.src=p.img;panelImg.alt=p.name;
-  panelCategory.textContent=p.category;
-  panelName.textContent=p.name;
-  panelTagline.textContent=p.tagline;
-  panelRating.textContent=p.rating;
-  panelPrice.textContent=p.price;
-  panelPriceOld.textContent=p.priceOld;
-  panelDiscount.textContent=p.discount;
-  panelBadge.textContent=p.occasion||'Ethnic Wear';
+  panelImg.src              = p.img || 'img/placeholder.jpg';
+  panelImg.alt              = p.name;
+  panelCategory.textContent = p.cat      || 'Salwar Suit';
+  panelName.textContent     = p.name;
+  panelTagline.textContent  = p.tagline  || 'Crafted with premium fabric for all-day elegance';
+  panelRating.textContent   = p.rating   || '(New Product)';
+  panelPrice.textContent    = '₹' + (p.price || 999);
+  panelPriceOld.textContent = '';
+  panelDiscount.textContent = '';
+  panelBadge.textContent    = p.occasion || 'New Arrival';
 
-  // Stock pill
-  const panelStockEl=document.getElementById('panelStockStatus');
-  panelStockEl.dataset.productId=String(id);
-  if(typeof window.updatePanelStock==='function'){
-    window.updatePanelStock(String(id),stock!==undefined?stock:50);
-  }
+  const panelStockEl = document.getElementById('panelStockStatus');
+  panelStockEl.dataset.productId = productId;
+  if (typeof window.updatePanelStock === 'function') window.updatePanelStock(productId, stock);
 
-  // Color swatch
-  panelColors.innerHTML='';
-  const sw=document.createElement('div');
-  sw.className='swatch selected';
-  sw.style.background=p.hex||'#B0C4DE';
-  sw.title=p.color;
-  panelColors.appendChild(sw);
-
-  // Sizes
-  panelSizes.innerHTML='';
-  p.sizes.forEach(sz=>{
-    const btn=document.createElement('button');
-    btn.className='size-btn';btn.textContent=sz;
-    btn.addEventListener('click',()=>{
-      panelSizes.querySelectorAll('.size-btn').forEach(b=>b.classList.remove('selected'));
-      btn.classList.add('selected');selectedSize=sz;
+  panelSizes.innerHTML = '';
+  ['XS','S','M','L','XL','XXL'].forEach(sz => {
+    const btn = document.createElement('button');
+    btn.className   = 'size-btn';
+    btn.textContent = sz;
+    btn.addEventListener('click', () => {
+      panelSizes.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedSize = sz;
     });
     panelSizes.appendChild(btn);
   });
 
-  panelDetails.innerHTML=
-    `<div class="detail-row"><span class="detail-key">Colour</span><span class="detail-val">${p.color}</span></div>`+
-    `<div class="detail-row"><span class="detail-key">Fabric</span><span class="detail-val">${p.fabric}</span></div>`+
-    `<div class="detail-row"><span class="detail-key">Occasion</span><span class="detail-val">${p.occasion}</span></div>`+
-    `<div class="detail-row"><span class="detail-key">Work</span><span class="detail-val">${p.work}</span></div>`+
+  panelDetails.innerHTML =
+    `<div class="detail-row"><span class="detail-key">Colour</span><span class="detail-val">${p.color || 'Multiple Colors'}</span></div>`+
+    `<div class="detail-row"><span class="detail-key">Fabric</span><span class="detail-val">${p.fabric || 'Premium Quality'}</span></div>`+
+    `<div class="detail-row"><span class="detail-key">Occasion</span><span class="detail-val">${p.occasion || 'All Occasions'}</span></div>`+
+    `<div class="detail-row"><span class="detail-key">Work</span><span class="detail-val">${p.work || 'Handcrafted'}</span></div>`+
     `<div class="detail-row"><span class="detail-key">Set Includes</span><span class="detail-val">Top + Bottom + Dupatta</span></div>`;
 
-  const inWishlist=wishlist.has(id);
-  btnWishlist.innerHTML=inWishlist?'<i class="fa-solid fa-heart"></i>':'<i class="fa-regular fa-heart"></i>';
-  btnWishlist.classList.toggle('loved',inWishlist);
-  btnWishlist.dataset.id=id;
-
   overlay.classList.add('active');
-  document.body.style.overflow='hidden';
-}
+  document.body.style.overflow = 'hidden';
+};
 
-function closeOverlay(){overlay.classList.remove('active');document.body.style.overflow='';}
+function closeOverlay(){ overlay.classList.remove('active'); document.body.style.overflow = ''; }
 
-document.querySelectorAll('.latim,.im').forEach(card=>{
-  card.addEventListener('click',()=>{const id=parseInt(card.dataset.id);if(id)openProduct(id);});
-});
+backdrop.addEventListener('click', closeOverlay);
+panelClose.addEventListener('click', closeOverlay);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeOverlay(); });
+qtyMinus.addEventListener('click', () => { if (qty > 1){ qty--; qtyVal.textContent = qty; } });
+qtyPlus.addEventListener('click',  () => { if (qty < 10){ qty++; qtyVal.textContent = qty; } });
 
-backdrop.addEventListener('click',closeOverlay);
-panelClose.addEventListener('click',closeOverlay);
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeOverlay();});
-
-qtyMinus.addEventListener('click',()=>{if(qty>1){qty--;qtyVal.textContent=qty;}});
-qtyPlus.addEventListener('click', ()=>{if(qty<10){qty++;qtyVal.textContent=qty;}});
-
-btnBuy.addEventListener('click',()=>{
-  if(!selectedSize){showToast('Please select a size first ✂️');return;}
-  addToCartLS(currentProduct,currentProductId,qty,selectedSize,selectedColor);
+btnBuy.addEventListener('click', () => {
+  if (!selectedSize){ showToast('Please select a size first ✂️'); return; }
+  addToCartLS(currentProduct, currentProductId, qty, selectedSize);
   showToast(`Added ${qty} × ${currentProduct.name} (${selectedSize}) to bag 🛍️`);
   closeOverlay();
-  setTimeout(()=>{window.location.href='mycart.html';},1200);
+  setTimeout(() => { window.location.href = 'mycart.html'; }, 1200);
 });
 
-btnWishlist.addEventListener('click',()=>{
-  const id=parseInt(btnWishlist.dataset.id);
-  if(wishlist.has(id)){wishlist.delete(id);btnWishlist.innerHTML='<i class="fa-regular fa-heart"></i>';btnWishlist.classList.remove('loved');showToast('Removed from wishlist');}
-  else{wishlist.add(id);btnWishlist.innerHTML='<i class="fa-solid fa-heart"></i>';btnWishlist.classList.add('loved');showToast('Added to wishlist ❤️');}
-  saveWishlist(wishlist);
-});
 
 let toastTimer;
-function showToast(msg){toast.textContent=msg;toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),2800);}
 
-const hamburger=document.getElementById('hamburger');
-const mobileNav=document.getElementById('mobileNav');
-hamburger.addEventListener('click',()=>{hamburger.classList.toggle('open');mobileNav.classList.toggle('open');});
+function showToast(msg){ toast.textContent = msg; toast.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.classList.remove('show'), 2800); }
 
-document.getElementById('desktopSearchBtn').addEventListener('click',()=>handleSearch(document.getElementById('desktopSearchInput').value));
-document.getElementById('desktopSearchInput').addEventListener('keydown',e=>{if(e.key==='Enter')handleSearch(e.target.value);});
-document.getElementById('mobileSearchBtn').addEventListener('click',()=>{handleSearch(document.getElementById('mobileSearchInput').value);mobileNav.classList.remove('open');hamburger.classList.remove('open');});
-document.getElementById('mobileSearchInput').addEventListener('keydown',e=>{if(e.key==='Enter'){handleSearch(e.target.value);mobileNav.classList.remove('open');hamburger.classList.remove('open');}});
+const hamburger = document.getElementById('hamburger');
+const mobileNav = document.getElementById('mobileNav');
+hamburger.addEventListener('click', () => { hamburger.classList.toggle('open'); mobileNav.classList.toggle('open'); });
+document.getElementById('desktopSearchBtn').addEventListener('click', () => handleSearch(document.getElementById('desktopSearchInput').value));
+document.getElementById('desktopSearchInput').addEventListener('keydown', e => { if (e.key === 'Enter') handleSearch(e.target.value); });
+document.getElementById('mobileSearchBtn').addEventListener('click', () => { handleSearch(document.getElementById('mobileSearchInput').value); mobileNav.classList.remove('open'); hamburger.classList.remove('open'); });
+document.getElementById('mobileSearchInput').addEventListener('keydown', e => { if (e.key === 'Enter'){ handleSearch(e.target.value); mobileNav.classList.remove('open'); hamburger.classList.remove('open'); } });
 </script>
 </body>
 </html>
