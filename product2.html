@@ -435,95 +435,171 @@ const db  = getFirestore(app);
 
 // ✅ FIX 1: Variable name is consistently NAME_TO_NUM (all caps)
 // ✅ FIX 2: ALL keys are LOWERCASE — because we do .toLowerCase() before matching
-const NAME_TO_NUM = {
-  "black flared gown": "1",
-  "deep wine purple gown": "2",
-  "steel blue gown": "3",
-  "maroon red gown": "4",
-  "champagne beige gown": "5",
-  "sage green gown": "6",
-  "royal blue gown": "7",
-  "dusty pink embroidered gown": "8",
-  "mauve pink gown": "9",
-  "teal green gown": "10",
-  "jet black gown": "11",
-  "coffee brown gown": "12",
-  "lavender purple gown": "13",
-  "dark plum gown": "14",
-  "ice blue gown": "15",
-  "navy blue gown": "16",
-  "mocha brown gown": "17",
-  "soft baby pink gown": "18",
-};
-window._stockData = {};
 
-function applyStock(num, stock) {
-  window._stockData[String(num)] = stock;
+window._productsData = {};
+window._stockData    = {};
 
-  // Update badge on card
-  const badge = document.getElementById("stock-" + num);
-  if (badge) {
-    if (stock === 0) {
-      badge.textContent = "Out of Stock";
-      badge.className   = "stock-tag out";
-    } else if (stock <= 5) {
-      badge.textContent = `Only ${stock} left!`;
-      badge.className   = "stock-tag low";
-    } else {
-      badge.textContent = "In Stock";
-      badge.className   = "stock-tag in";
-    }
+// ── Track last rendered snapshot to avoid duplicate renders
+let lastSnapshotHash = '';
+
+function renderProducts(products) {
+  const latContainer = document.querySelector('.lat');
+  const colContainer = document.querySelector('.col');
+  if (!latContainer || !colContainer) return;
+
+  // Clear both grids completely
+  latContainer.innerHTML = '';
+  colContainer.innerHTML = '';
+
+  if (!products || products.length === 0) {
+    colContainer.innerHTML = '<p style="grid-column:1/-1;text-align:center;padding:40px;color:#999;">No products available.</p>';
+    return;
   }
 
-  // Dim card if out of stock
-  const card = document.querySelector(`.latim[data-id="${num}"], .im[data-id="${num}"]`);
-  if (card) card.classList.toggle("out-of-stock", stock === 0);
+  // Use a Set to guarantee no duplicate product IDs ever render
+  
+const uniqueProducts = [];
+const seen = new Set();
 
-  // Update overlay pill if open for this product
-  const panelStockEl = document.getElementById("panelStockStatus");
-  if (panelStockEl && panelStockEl.dataset.productId === String(num)) {
-    window.updatePanelStock(String(num), stock);
+products.forEach(product => {
+  if (!seen.has(product.id)) {
+    seen.add(product.id);
+    uniqueProducts.push(product);
   }
-}
-
-onSnapshot(collection(db, "products"), (snapshot) => {
-  snapshot.forEach((docSnap) => {
-    const data  = docSnap.data();
-    const stock = parseInt(data.stock !== undefined ? data.stock : data.Stock) || 0;
-
-    // ✅ FIX 3: rawName is lowercase, NAME_TO_NUM keys are also lowercase — they match!
-    const rawName = (data.name || "").toLowerCase().trim();
-    const num     = NAME_TO_NUM[rawName];
-
-    if (num) {
-      applyStock(num, stock);
-    }
-    // Products from other pages (sarees, lehengas) are silently ignored
-  });
 });
 
-window.updatePanelStock = function(num, stock) {
-  const el     = document.getElementById("panelStockStatus");
-  if (!el) return;
-  el.dataset.productId = String(num);
-  const buyBtn = document.getElementById("btnBuy");
+uniqueProducts.forEach((product, index) => {
+  const productId = product.id;
 
+  const stock      = product.stock || 0;
+  const stockClass = stock === 0 ? 'out' : (stock <= 5 ? 'low' : 'in');
+  const stockText  = stock === 0 ? 'Out of Stock' : (stock <= 5 ? `Only ${stock} left!` : 'In Stock');
+
+  window._productsData[productId] = product;
+  window._stockData[productId]    = stock;
+
+  // ✅ FIRST 6 → Featured
+  if (index < 6) {
+    const latCard = document.createElement('div');
+    latCard.className = `latim${stock === 0 ? ' out-of-stock' : ''}`;
+    latCard.dataset.id = productId;
+
+    latCard.innerHTML = `
+      <img src="${product.img || 'img/placeholder.jpg'}">
+      <div class="latim-body">
+        <p>${product.cat || 'Gown'}</p>
+        <h3>₹${product.price || 999}</h3>
+        <div class="stock-tag ${stockClass}">${stockText}</div>
+      </div>`;
+
+    latCard.onclick = () => window.openProduct(productId);
+    latContainer.appendChild(latCard);
+  }
+
+  // ✅ REST → Collection
+  else {
+    const colCard = document.createElement('div');
+    colCard.className = `im${stock === 0 ? ' out-of-stock' : ''}`;
+    colCard.dataset.id = productId;
+
+    colCard.innerHTML = `
+      <img src="${product.img || 'img/placeholder.jpg'}">
+      <div class="im-body">
+        <h3>${product.name}</h3>
+        <div class="tag">₹${product.price || 999}</div>
+        <div class="stock-tag ${stockClass}">${stockText}</div>
+      </div>`;
+
+    colCard.onclick = () => window.openProduct(productId);
+    colContainer.appendChild(colCard);
+  }
+});
+
+  console.log(`✅ Rendered ${seen.size} unique Gown products`);
+}
+
+// ── SINGLE listener — no duplicate listeners, no fromCache issues
+onSnapshot(collection(db, "products"), (snapshot) => {
+
+  // Build a hash of all doc IDs + stock values to detect real changes
+  const hash = snapshot.docs
+    .map(d => d.id + ':' + (d.data().stock || 0))
+    .sort()
+    .join('|');
+
+  // Only re-render if something actually changed
+  if (hash === lastSnapshotHash) return;
+  lastSnapshotHash = hash;
+
+  const products = [];
+
+  snapshot.forEach((doc) => {
+    const data = doc.data();
+    const cat  = (data.cat || '').toLowerCase().trim();
+
+    // Accept any variation: "Gown", "gown", etc.
+    if (!cat.includes('gown')) return;
+
+    const stock     = parseInt(data.stock || 0);
+    const productId = doc.id;
+
+    window._stockData[productId] = stock;
+
+    products.push({
+      id: productId,
+      ...data,
+      stock,
+      price: parseInt(data.price || 0)
+    });
+
+    // Live-update stock badges without re-rendering cards
+    ['lat', 'col'].forEach(prefix => {
+      const badge = document.getElementById(`stock-${prefix}-${productId}`);
+      if (badge) {
+        badge.textContent = stock === 0 ? 'Out of Stock' : (stock <= 5 ? `Only ${stock} left!` : 'In Stock');
+        badge.className   = `stock-tag ${stock === 0 ? 'out' : (stock <= 5 ? 'low' : 'in')}`;
+      }
+    });
+
+    // Live-update card out-of-stock ribbon
+    document.querySelectorAll(`[data-id="${productId}"]`).forEach(card => {
+      card.classList.toggle('out-of-stock', stock === 0);
+    });
+
+    // Live-update open product panel
+    if (window.updatePanelStock) window.updatePanelStock(productId, stock);
+  });
+
+  // Sort newest first
+  products.sort((a, b) => {
+    const dateA = a.createdAt?.toDate?.() || new Date(0);
+    const dateB = b.createdAt?.toDate?.() || new Date(0);
+    return dateB - dateA;
+  });
+
+  renderProducts(products);
+});
+
+// ── Panel stock updater
+window.updatePanelStock = function(productId, stock) {
+  const el = document.getElementById('panelStockStatus');
+  if (!el || el.dataset.productId !== productId) return;
+  const buyBtn = document.getElementById('btnBuy');
   if (stock === 0) {
-    el.className = "panel-stock-status out";
+    el.className = 'panel-stock-status out';
     el.innerHTML = `<span class="panel-stock-dot"></span> Out of Stock`;
     if (buyBtn) { buyBtn.disabled = true; buyBtn.innerHTML = `<i class="fa-solid fa-ban" style="margin-right:8px;"></i>Out of Stock`; }
   } else if (stock <= 5) {
-    el.className = "panel-stock-status low";
+    el.className = 'panel-stock-status low';
     el.innerHTML = `<span class="panel-stock-dot"></span> Only ${stock} left!`;
     if (buyBtn) { buyBtn.disabled = false; buyBtn.innerHTML = `<i class="fa-solid fa-bag-shopping" style="margin-right:8px;"></i>Add to Bag`; }
   } else {
-    el.className = "panel-stock-status in";
+    el.className = 'panel-stock-status in';
     el.innerHTML = `<span class="panel-stock-dot"></span> In Stock`;
     if (buyBtn) { buyBtn.disabled = false; buyBtn.innerHTML = `<i class="fa-solid fa-bag-shopping" style="margin-right:8px;"></i>Add to Bag`; }
   }
 };
 </script>
-
 <body>
 
 <div class="top-bar">
@@ -578,33 +654,7 @@ window.updatePanelStock = function(num, stock) {
 <div class="section-heading"><h2>Featured Picks</h2><p>Handpicked for you</p></div>
 
 <!-- Row 1 — 6 gowns -->
-<div class="lat">
-  <div class="latim" data-id="1">
-    <img src="img/gown1.png" alt="Black Flared Gown">
-    <div class="latim-body"><p>Black Flared Gown</p><h3>₹1,300</h3><span id="stock-1" class="stock-tag loading">Loading...</span></div>
-  </div>
-  <div class="latim" data-id="2">
-    <img src="img/gown2.png" alt="Deep Wine Purple Gown">
-    <div class="latim-body"><p>Deep Wine Purple Gown</p><h3>₹1,300</h3><span id="stock-2" class="stock-tag loading">Loading...</span></div>
-  </div>
-  <div class="latim" data-id="3">
-    <img src="img/gown3.png" alt="Steel Blue Gown">
-    <div class="latim-body"><p>Steel Blue Gown</p><h3>₹1,300</h3><span id="stock-3" class="stock-tag loading">Loading...</span></div>
-  </div>
-  <div class="latim" data-id="4">
-    <img src="img/gown4.png" alt="Maroon Red Gown">
-    <div class="latim-body"><p>Maroon Red Gown</p><h3>₹1,300</h3><span id="stock-4" class="stock-tag loading">Loading...</span></div>
-  </div>
-  <div class="latim" data-id="5">
-    <img src="img/gown5.png" alt="Champagne Beige Gown">
-    <div class="latim-body"><p>Champagne Beige Gown</p><h3>₹1,300</h3><span id="stock-5" class="stock-tag loading">Loading...</span></div>
-  </div>
-  <div class="latim" data-id="6">
-    <img src="img/gown6.png" alt="Sage Green Gown">
-    <div class="latim-body"><p>Sage Green Gown</p><h3>₹1,300</h3><span id="stock-6" class="stock-tag loading">Loading...</span></div>
-  </div>
-</div>
-
+<div class="lat"></div>
 <!-- BANNER -->
 <div class="banner"><img src="img/ban.png" alt="Banner"></div>
 
@@ -613,61 +663,8 @@ window.updatePanelStock = function(num, stock) {
 <div class="section-heading"><h2>Collection</h2><p>Browse our full collection</p></div>
 
 <!-- Row 2 — middle row 4 gowns -->
-<div class="col">
-  <div class="im" data-id="7">
-    <img src="img/gown7.png" alt="Royal Blue Gown">
-    <div class="im-body"><h3>Royal Blue Gown</h3><div class="tag">₹1,300<span id="stock-7" class="stock-tag loading">Loading...</span></div></div>
-  </div>
-  <div class="im" data-id="8">
-    <img src="img/gown8.png" alt="Dusty Pink Embroidered Gown">
-    <div class="im-body"><h3>Dusty Pink Embroidered Gown</h3><div class="tag">₹1,300<span id="stock-8" class="stock-tag loading">Loading...</span></div></div>
-  </div>
-  <div class="im" data-id="9">
-    <img src="img/gown19.png" alt="Mauve Pink Gown">
-    <div class="im-body"><h3>Mauve Pink Gown</h3><div class="tag">₹1,300<span id="stock-9" class="stock-tag loading">Loading...</span></div></div>
-  </div>
-  <div class="im" data-id="10">
-    <img src="img/gown21.png" alt="Teal Green Gown">
-    <div class="im-body"><h3>Teal Green Gown</h3><div class="tag">₹1,300<span id="stock-10" class="stock-tag loading">Loading...</span></div></div>
-  </div>
-</div>
-
-<!-- Row 3 + Row 4 -->
-<div class="col">
-  <div class="im" data-id="11">
-    <img src="img/gown11.png" alt="Jet Black Gown">
-    <div class="im-body"><h3>Jet Black Gown</h3><div class="tag">₹1,300<span id="stock-11" class="stock-tag loading">Loading...</span></div></div>
-  </div>
-  <div class="im" data-id="12">
-    <img src="img/gown12.png" alt="Coffee Brown Gown">
-    <div class="im-body"><h3>Coffee Brown Gown</h3><div class="tag">₹1,300<span id="stock-12" class="stock-tag loading">Loading...</span></div></div>
-  </div>
-  <div class="im" data-id="13">
-    <img src="img/gown13.png" alt="Lavender Purple Gown">
-    <div class="im-body"><h3>Lavender Purple Gown</h3><div class="tag">₹1,300<span id="stock-13" class="stock-tag loading">Loading...</span></div></div>
-  </div>
-  <div class="im" data-id="14">
-    <img src="img/gown14.png" alt="Dark Plum Gown">
-    <div class="im-body"><h3>Dark Plum Gown</h3><div class="tag">₹1,300<span id="stock-14" class="stock-tag loading">Loading...</span></div></div>
-  </div>
-  <div class="im" data-id="15">
-    <img src="img/gown15.png" alt="Ice Blue Gown">
-    <div class="im-body"><h3>Ice Blue Gown</h3><div class="tag">₹1,300<span id="stock-15" class="stock-tag loading">Loading...</span></div></div>
-  </div>
-  <div class="im" data-id="16">
-    <img src="img/gown16.png" alt="Navy Blue Gown">
-    <div class="im-body"><h3>Navy Blue Gown</h3><div class="tag">₹1,300<span id="stock-16" class="stock-tag loading">Loading...</span></div></div>
-  </div>
-  <div class="im" data-id="17">
-    <img src="img/gown17.png" alt="Mocha Brown Gown">
-    <div class="im-body"><h3>Mocha Brown Gown</h3><div class="tag">₹1,300<span id="stock-17" class="stock-tag loading">Loading...</span></div></div>
-  </div>
-  <div class="im" data-id="18">
-    <img src="img/gown20.png" alt="Soft Baby Pink Gown">
-    <div class="im-body"><h3>Soft Baby Pink Gown</h3><div class="tag">₹1,300<span id="stock-18" class="stock-tag loading">Loading...</span></div></div>
-  </div>
-</div>
-
+<div class="col"></div>
+  
 <footer>
   <div class="footer-brand">Trendlilly</div>
   <p>&copy; 2026 TrendLilly &nbsp;|&nbsp; Organized by me</p>
@@ -679,45 +676,26 @@ window.updatePanelStock = function(num, stock) {
   <div class="overlay-backdrop" id="overlayBackdrop"></div>
   <div class="product-panel" id="productPanel">
     <button class="panel-close" id="panelClose"><i class="fa-solid fa-xmark"></i></button>
-
     <div class="panel-img">
       <img id="panelImg" src="" alt="">
       <span class="panel-badge" id="panelBadge">New Arrival</span>
     </div>
-
     <div class="panel-info">
-      <div class="panel-category" id="panelCategory">Gown</div>
+      <div class="panel-category" id="panelCategory"> Suit</div>
       <div class="panel-name" id="panelName">Product Name</div>
       <div class="panel-tagline" id="panelTagline">Crafted with premium fabric for all-day elegance</div>
-
-      <div class="panel-stars">
-        <span class="stars">★★★★☆</span>
-        <span class="rating-count" id="panelRating">(124 reviews)</span>
-      </div>
-
+      <div class="panel-stars"><span class="stars">★★★★☆</span><span class="rating-count" id="panelRating">(124 reviews)</span></div>
       <div class="panel-price-row">
-        <span class="panel-price" id="panelPrice">₹1,300</span>
+        <span class="panel-price" id="panelPrice">₹999</span>
         <span class="panel-price-old" id="panelPriceOld"></span>
         <span class="panel-discount" id="panelDiscount"></span>
       </div>
-
-      <!-- Colour Available -->
-      <div class="panel-section-label">Colour Available</div>
-      <div class="color-swatches" id="panelColors"></div>
-       
-       <!-- Live stock pill -->
-      <div class="panel-stock-status loading" id="panelStockStatus" data-product-id="">
+      <div class="panel-stock-status in" id="panelStockStatus" data-product-id="">
         <span class="panel-stock-dot"></span> Checking stock…
       </div>
-     
-      <!-- Size -->
       <div class="panel-section-label">Select Size</div>
       <div class="size-grid" id="panelSizes"></div>
-
-      <!-- Product Details -->
       <div class="panel-details" id="panelDetails"></div>
-
-      <!-- Quantity -->
       <div class="qty-row">
         <span class="qty-label">Qty</span>
         <div class="qty-control">
@@ -726,298 +704,134 @@ window.updatePanelStock = function(num, stock) {
           <button id="qtyPlus">+</button>
         </div>
       </div>
-
-      <!-- Actions -->
       <div class="panel-actions">
         <button class="btn-buy" id="btnBuy"><i class="fa-solid fa-bag-shopping" style="margin-right:8px;"></i>Add to Bag</button>
-        <button class="btn-wishlist" id="btnWishlist" title="Wishlist"><i class="fa-regular fa-heart"></i></button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Toast -->
-<div class="toast" id="toast">Added to bag! 🛍️</div>
+<div class="toast" id="toast"></div>
 
 <script>
-  localStorage.setItem("lastPage", window.location.href);
-
-  // ── Product Data ──────────────────────────────────────────
-  const products = {
-    1: {
-      name:"Black Flared Gown", category:"Featured Pick", img:"img/gown1.png",
-      color:"Black", hex:"#1C1C1C", price:"₹1,300", priceOld:"₹2,500", discount:"48% OFF",
-      tagline:"Sleek black flared gown — power, poise and pure elegance in one.",
-      fabric:"Georgette / Silk", style:"Flared Gown", occasion:"Evening / Party", work:"Minimal Embellishment",
-      swatches:["#1C1C1C"], sizes:["XS","S","M","L","XL","XXL"], rating:"(138 reviews)"
-    },
-    2: {
-      name:"Deep Wine Purple Gown", category:"Featured Pick", img:"img/gown2.png",
-      color:"Wine Purple", hex:"#5A2A4A", price:"₹1,300", priceOld:"₹2,500", discount:"48% OFF",
-      tagline:"Rich wine purple velvet — heavy flare for your most royal moments.",
-      fabric:"Velvet", style:"Heavy Flare Gown", occasion:"Wedding", work:"Embroidery",
-      swatches:["#5A2A4A"], sizes:["XS","S","M","L","XL","XXL"], rating:"(192 reviews)"
-    },
-    3: {
-      name:"Steel Blue Gown", category:"Featured Pick", img:"img/gown3.png",
-      color:"Steel Blue", hex:"#4A6FA5", price:"₹1,300", priceOld:"₹2,200", discount:"41% OFF",
-      tagline:"Polished steel blue satin — formal elegance with every step.",
-      fabric:"Satin / Silk", style:"Elegant Long Gown", occasion:"Formal", work:"Plain / Minimal",
-      swatches:["#4A6FA5"], sizes:["XS","S","M","L","XL","XXL"], rating:"(87 reviews)"
-    },
-    4: {
-      name:"Maroon Red Gown", category:"Featured Pick", img:"img/gown4.png",
-      color:"Maroon", hex:"#7B1E2B", price:"₹1,300", priceOld:"₹2,500", discount:"48% OFF",
-      tagline:"Deep maroon silk — auspicious, bold and wedding-ready.",
-      fabric:"Silk", style:"Party Wear Gown", occasion:"Wedding", work:"Zari Work",
-      swatches:["#7B1E2B"], sizes:["XS","S","M","L","XL","XXL"], rating:"(211 reviews)"
-    },
-    5: {
-      name:"Champagne Beige Gown", category:"Featured Pick", img:"img/gown5.png",
-      color:"Champagne", hex:"#F3E5AB", price:"₹1,300", priceOld:"₹2,000", discount:"35% OFF",
-      tagline:"Shimmering champagne net — a designer dream for every festivity.",
-      fabric:"Net / Organza", style:"Designer Gown", occasion:"Festive", work:"Sequin Work",
-      swatches:["#F3E5AB"], sizes:["XS","S","M","L","XL","XXL"], rating:"(74 reviews)"
-    },
-    6: {
-      name:"Sage Green Gown", category:"Featured Pick", img:"img/gown6.png",
-      color:"Sage Green", hex:"#9CAF88", price:"₹1,300", priceOld:"₹2,000", discount:"35% OFF",
-      tagline:"Earthy sage green cotton silk — effortlessly chic for every day.",
-      fabric:"Cotton Silk", style:"Straight Gown", occasion:"Casual / Festive", work:"Block Print",
-      swatches:["#9CAF88"], sizes:["XS","S","M","L","XL","XXL"], rating:"(63 reviews)"
-    },
-    7: {
-      name:"Royal Blue Gown", category:"Collection", img:"img/gown7.png",
-      color:"Royal Blue", hex:"#1F4E8C", price:"₹1,300", priceOld:"₹2,500", discount:"48% OFF",
-      tagline:"Striking royal blue silk — a flowy drape that commands attention.",
-      fabric:"Silk", style:"Flowy Gown", occasion:"Party", work:"Embroidery",
-      swatches:["#1F4E8C"], sizes:["S","M","L","XL","XXL"], rating:"(149 reviews)"
-    },
-    8: {
-      name:"Dusty Pink Embroidered Gown", category:"Collection", img:"img/gown8.png",
-      color:"Dusty Pink", hex:"#D4A5A5", price:"₹1,300", priceOld:"₹2,500", discount:"48% OFF",
-      tagline:"Dusty pink net with heavy embroidery — bridal beauty redefined.",
-      fabric:"Net", style:"Heavy Embroidery Gown", occasion:"Wedding", work:"Heavy Embroidery",
-      swatches:["#D4A5A5"], sizes:["S","M","L","XL","XXL"], rating:"(176 reviews)"
-    },
-    9: {
-      name:"Mauve Pink Gown", category:"Collection", img:"img/gown19.png",
-      color:"Mauve", hex:"#B7848C", price:"₹1,300", priceOld:"₹2,200", discount:"41% OFF",
-      tagline:"Elegant mauve georgette — understated sophistication at its finest.",
-      fabric:"Georgette", style:"Elegant Gown", occasion:"Formal", work:"Thread Work",
-      swatches:["#B7848C"], sizes:["S","M","L","XL","XXL"], rating:"(98 reviews)"
-    },
-    10: {
-      name:"Teal Green Gown", category:"Collection", img:"img/gown21.png",
-      color:"Teal", hex:"#2E8B8B", price:"₹1,300", priceOld:"₹2,500", discount:"48% OFF",
-      tagline:"Vivid teal silk — a designer masterpiece for every grand festivity.",
-      fabric:"Silk", style:"Designer Gown", occasion:"Festive", work:"Zari Border",
-      swatches:["#2E8B8B"], sizes:["S","M","L","XL","XXL"], rating:"(121 reviews)"
-    },
-    11: {
-      name:"Jet Black Gown", category:"Collection", img:"img/gown11.png",
-      color:"Jet Black", hex:"#0F0F0F", price:"₹1,300", priceOld:"₹2,000", discount:"35% OFF",
-      tagline:"Minimal jet black satin — timeless after-dark glamour.",
-      fabric:"Satin", style:"Minimal Gown", occasion:"Evening", work:"Plain",
-      swatches:["#0F0F0F"], sizes:["S","M","L","XL","XXL"], rating:"(83 reviews)"
-    },
-    12: {
-      name:"Coffee Brown Gown", category:"Collection", img:"img/gown12.png",
-      color:"Coffee Brown", hex:"#8B6B4A", price:"₹1,300", priceOld:"₹2,000", discount:"35% OFF",
-      tagline:"Warm coffee brown cotton — casual ease with an ethnic soul.",
-      fabric:"Cotton", style:"Casual Gown", occasion:"Daily Wear", work:"Digital Print",
-      swatches:["#8B6B4A"], sizes:["S","M","L","XL","XXL"], rating:"(55 reviews)"
-    },
-    13: {
-      name:"Lavender Purple Gown", category:"Collection", img:"img/gown13.png",
-      color:"Lavender", hex:"#B497BD", price:"₹1,300", priceOld:"₹2,200", discount:"41% OFF",
-      tagline:"Dreamy lavender net — light, floaty and perfectly festive.",
-      fabric:"Net / Organza", style:"Light Party Gown", occasion:"Festive", work:"Embroidery",
-      swatches:["#B497BD"], sizes:["S","M","L","XL","XXL"], rating:"(107 reviews)"
-    },
-    14: {
-      name:"Dark Plum Gown", category:"Collection", img:"img/gown14.png",
-      color:"Dark Plum", hex:"#6D3B47", price:"₹1,300", priceOld:"₹2,500", discount:"48% OFF",
-      tagline:"Deep plum velvet — heavy, lush and made for grand weddings.",
-      fabric:"Velvet", style:"Heavy Gown", occasion:"Wedding", work:"Heavy Embroidery",
-      swatches:["#6D3B47"], sizes:["XS","S","M","L","XL","XXL"], rating:"(162 reviews)"
-    },
-    15: {
-      name:"Ice Blue Gown", category:"Collection", img:"img/gown15.png",
-      color:"Ice Blue", hex:"#CFE8F3", price:"₹1,300", priceOld:"₹2,200", discount:"41% OFF",
-      tagline:"Cool ice blue net — a breezy designer pick for every party.",
-      fabric:"Net", style:"Designer Gown", occasion:"Party", work:"Sequin & Thread Work",
-      swatches:["#CFE8F3"], sizes:["S","M","L","XL","XXL"], rating:"(69 reviews)"
-    },
-    16: {
-      name:"Navy Blue Gown", category:"Collection", img:"img/gown16.png",
-      color:"Navy Blue", hex:"#1A2A44", price:"₹1,300", priceOld:"₹2,500", discount:"48% OFF",
-      tagline:"Classic navy silk — poised, polished and timelessly elegant.",
-      fabric:"Silk", style:"Elegant Gown", occasion:"Formal", work:"Woven Border",
-      swatches:["#1A2A44"], sizes:["S","M","L","XL","XXL"], rating:"(94 reviews)"
-    },
-    17: {
-      name:"Mocha Brown Gown", category:"Collection", img:"img/gown17.png",
-      color:"Mocha Brown", hex:"#6F4E37", price:"₹1,300", priceOld:"₹2,000", discount:"35% OFF",
-      tagline:"Warm mocha cotton silk — grounded, chic and everyday beautiful.",
-      fabric:"Cotton Silk", style:"Straight Gown", occasion:"Casual", work:"Block Print",
-      swatches:["#6F4E37"], sizes:["S","M","L","XL","XXL"], rating:"(48 reviews)"
-    },
-    18: {
-      name:"Soft Baby Pink Gown", category:"Collection", img:"img/gown20.png",
-      color:"Baby Pink", hex:"#F4C2C2", price:"₹1,300", priceOld:"₹2,000", discount:"35% OFF",
-      tagline:"Soft baby pink organza — delicate, feminine and day-perfect.",
-      fabric:"Organza", style:"Light Gown", occasion:"Day Wear", work:"Thread Work",
-      swatches:["#F4C2C2"], sizes:["XS","S","M","L","XL","XXL"], rating:"(77 reviews)"
-    }
-  };
-
-
-const overlay    = document.getElementById('overlay');
-const backdrop   = document.getElementById('overlayBackdrop');
-const panelClose = document.getElementById('panelClose');
-const panelImg   = document.getElementById('panelImg');
-const panelBadge = document.getElementById('panelBadge');
+const overlay       = document.getElementById('overlay');
+const backdrop      = document.getElementById('overlayBackdrop');
+const panelClose    = document.getElementById('panelClose');
+const panelImg      = document.getElementById('panelImg');
+const panelBadge    = document.getElementById('panelBadge');
 const panelCategory = document.getElementById('panelCategory');
-const panelName  = document.getElementById('panelName');
+const panelName     = document.getElementById('panelName');
 const panelTagline  = document.getElementById('panelTagline');
 const panelRating   = document.getElementById('panelRating');
 const panelPrice    = document.getElementById('panelPrice');
 const panelPriceOld = document.getElementById('panelPriceOld');
 const panelDiscount = document.getElementById('panelDiscount');
-const panelColors   = document.getElementById('panelColors');
 const panelSizes    = document.getElementById('panelSizes');
 const panelDetails  = document.getElementById('panelDetails');
-const qtyVal     = document.getElementById('qtyVal');
-const qtyMinus   = document.getElementById('qtyMinus');
-const qtyPlus    = document.getElementById('qtyPlus');
-const btnBuy     = document.getElementById('btnBuy');
-const btnWishlist= document.getElementById('btnWishlist');
-const toast      = document.getElementById('toast');
+const qtyVal        = document.getElementById('qtyVal');
+const qtyMinus      = document.getElementById('qtyMinus');
+const qtyPlus       = document.getElementById('qtyPlus');
+const btnBuy        = document.getElementById('btnBuy');
+const toast         = document.getElementById('toast');
 
-let currentProduct=null,currentProductId=null,qty=1,selectedSize='',selectedColor='';
+let currentProduct = null, currentProductId = null, qty = 1, selectedSize = '';
 
-const WISH_KEY='wishlist_ids';
-function getWishlist(){try{return new Set(JSON.parse(localStorage.getItem(WISH_KEY))||[]);}catch{return new Set();}}
-function saveWishlist(s){localStorage.setItem(WISH_KEY,JSON.stringify([...s]));}
-let wishlist=getWishlist();
-
-function getCart(){try{return JSON.parse(localStorage.getItem('cart'))||[];}catch{return[];}}
-function addToCartLS(product,productId,quantity,size,color){
-  const cart=getCart();
-  cart.push({id:Date.now(),productId,name:product.name,price:product.price,image:product.img,quantity,size,color,addedAt:new Date().toISOString()});
-  localStorage.setItem('cart',JSON.stringify(cart));
+function getCart(){ try{ return JSON.parse(localStorage.getItem('cart'))||[]; }catch{ return []; } }
+function addToCartLS(product, productId, quantity, size){
+  const cart = getCart();
+  cart.push({ id: Date.now(), productId, name: product.name, price: product.price, image: product.img, quantity, size, category: product.cat, addedAt: new Date().toISOString() });
+  localStorage.setItem('cart', JSON.stringify(cart));
 }
 
 function handleSearch(query){
-  if(!query.trim())return;
-  const q=query.toLowerCase();
-  const matches=Object.entries(products).filter(([,p])=>p.name.toLowerCase().includes(q)||p.color.toLowerCase().includes(q));
-  if(!matches.length){showToast('No products found for "'+query+'"');}
-  else{openProduct(parseInt(matches[0][0]));}
+  if (!query.trim()) return;
+  const q = query.toLowerCase();
+  const matches = Object.entries(window._productsData || {}).filter(([, p]) =>
+    (p.name || '').toLowerCase().includes(q) || (p.cat || '').toLowerCase().includes(q)
+  );
+  if (!matches.length){ showToast('No products found for "' + query + '"'); }
+  else { window.openProduct(matches[0][0]); }
 }
 
-function openProduct(id){
-  const p=products[id];
-  if(!p)return;
+window.openProduct = function(productId){
+  const p = window._productsData[productId];
+  if (!p) return;
+  const stock = (window._stockData || {})[productId] ?? p.stock ?? 0;
+  if (stock === 0){ showToast('This item is currently out of stock 😔'); return; }
 
-  // Block if out of stock
-  const stock=(window._stockData||{})[String(id)];
-  if(stock===0){showToast('This item is currently out of stock 😔');return;}
+  currentProduct   = p;
+  currentProductId = productId;
+  qty = 1;
+  qtyVal.textContent = 1;
+  selectedSize  = '';
 
-  currentProduct=p;currentProductId=id;qty=1;qtyVal.textContent=1;selectedSize='';selectedColor=p.color;
-  panelImg.src=p.img;panelImg.alt=p.name;
-  panelCategory.textContent=p.category;
-  panelName.textContent=p.name;
-  panelTagline.textContent=p.tagline;
-  panelRating.textContent=p.rating;
-  panelPrice.textContent=p.price;
-  panelPriceOld.textContent=p.priceOld;
-  panelDiscount.textContent=p.discount;
-  panelBadge.textContent=p.occasion||'Ethnic Wear';
+  panelImg.src              = p.img || 'img/placeholder.jpg';
+  panelImg.alt              = p.name;
+  panelCategory.textContent = p.cat      || 'Gown';
+  panelName.textContent     = p.name;
+  panelTagline.textContent  = p.tagline  || 'Crafted with premium fabric for all-day elegance';
+  panelRating.textContent   = p.rating   || '(New Product)';
+  panelPrice.textContent    = '₹' + (p.price || 999);
+  panelPriceOld.textContent = '';
+  panelDiscount.textContent = '';
+  panelBadge.textContent    = p.occasion || 'New Arrival';
 
-  // Stock pill
-  const panelStockEl=document.getElementById('panelStockStatus');
-  panelStockEl.dataset.productId=String(id);
-  if(typeof window.updatePanelStock==='function'){
-    window.updatePanelStock(String(id),stock!==undefined?stock:50);
-  }
+  const panelStockEl = document.getElementById('panelStockStatus');
+  panelStockEl.dataset.productId = productId;
+  if (typeof window.updatePanelStock === 'function') window.updatePanelStock(productId, stock);
 
-  // Color swatch
-  panelColors.innerHTML='';
-  const sw=document.createElement('div');
-  sw.className='swatch selected';
-  sw.style.background=p.hex||'#B0C4DE';
-  sw.title=p.color;
-  panelColors.appendChild(sw);
-
-  // Sizes
-  panelSizes.innerHTML='';
-  p.sizes.forEach(sz=>{
-    const btn=document.createElement('button');
-    btn.className='size-btn';btn.textContent=sz;
-    btn.addEventListener('click',()=>{
-      panelSizes.querySelectorAll('.size-btn').forEach(b=>b.classList.remove('selected'));
-      btn.classList.add('selected');selectedSize=sz;
+  panelSizes.innerHTML = '';
+  ['XS','S','M','L','XL','XXL'].forEach(sz => {
+    const btn = document.createElement('button');
+    btn.className   = 'size-btn';
+    btn.textContent = sz;
+    btn.addEventListener('click', () => {
+      panelSizes.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedSize = sz;
     });
     panelSizes.appendChild(btn);
   });
 
-  panelDetails.innerHTML=
-    `<div class="detail-row"><span class="detail-key">Colour</span><span class="detail-val">${p.color}</span></div>`+
-    `<div class="detail-row"><span class="detail-key">Fabric</span><span class="detail-val">${p.fabric}</span></div>`+
-    `<div class="detail-row"><span class="detail-key">Occasion</span><span class="detail-val">${p.occasion}</span></div>`+
-    `<div class="detail-row"><span class="detail-key">Work</span><span class="detail-val">${p.work}</span></div>`+
+  panelDetails.innerHTML =
+    `<div class="detail-row"><span class="detail-key">Colour</span><span class="detail-val">${p.color || 'Multiple Colors'}</span></div>`+
+    `<div class="detail-row"><span class="detail-key">Fabric</span><span class="detail-val">${p.fabric || 'Premium Quality'}</span></div>`+
+    `<div class="detail-row"><span class="detail-key">Occasion</span><span class="detail-val">${p.occasion || 'All Occasions'}</span></div>`+
+    `<div class="detail-row"><span class="detail-key">Work</span><span class="detail-val">${p.work || 'Handcrafted'}</span></div>`+
     `<div class="detail-row"><span class="detail-key">Set Includes</span><span class="detail-val">Top + Bottom + Dupatta</span></div>`;
 
-  const inWishlist=wishlist.has(id);
-  btnWishlist.innerHTML=inWishlist?'<i class="fa-solid fa-heart"></i>':'<i class="fa-regular fa-heart"></i>';
-  btnWishlist.classList.toggle('loved',inWishlist);
-  btnWishlist.dataset.id=id;
-
   overlay.classList.add('active');
-  document.body.style.overflow='hidden';
-}
+  document.body.style.overflow = 'hidden';
+};
 
-function closeOverlay(){overlay.classList.remove('active');document.body.style.overflow='';}
+function closeOverlay(){ overlay.classList.remove('active'); document.body.style.overflow = ''; }
 
-document.querySelectorAll('.latim,.im').forEach(card=>{
-  card.addEventListener('click',()=>{const id=parseInt(card.dataset.id);if(id)openProduct(id);});
-});
+backdrop.addEventListener('click', closeOverlay);
+panelClose.addEventListener('click', closeOverlay);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeOverlay(); });
+qtyMinus.addEventListener('click', () => { if (qty > 1){ qty--; qtyVal.textContent = qty; } });
+qtyPlus.addEventListener('click',  () => { if (qty < 10){ qty++; qtyVal.textContent = qty; } });
 
-backdrop.addEventListener('click',closeOverlay);
-panelClose.addEventListener('click',closeOverlay);
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeOverlay();});
-
-qtyMinus.addEventListener('click',()=>{if(qty>1){qty--;qtyVal.textContent=qty;}});
-qtyPlus.addEventListener('click', ()=>{if(qty<10){qty++;qtyVal.textContent=qty;}});
-
-btnBuy.addEventListener('click',()=>{
-  if(!selectedSize){showToast('Please select a size first ✂️');return;}
-  addToCartLS(currentProduct,currentProductId,qty,selectedSize,selectedColor);
+btnBuy.addEventListener('click', () => {
+  if (!selectedSize){ showToast('Please select a size first ✂️'); return; }
+  addToCartLS(currentProduct, currentProductId, qty, selectedSize);
   showToast(`Added ${qty} × ${currentProduct.name} (${selectedSize}) to bag 🛍️`);
   closeOverlay();
-  setTimeout(()=>{window.location.href='mycart.html';},1200);
+  setTimeout(() => { window.location.href = 'mycart.html'; }, 1200);
 });
 
-btnWishlist.addEventListener('click',()=>{
-  const id=parseInt(btnWishlist.dataset.id);
-  if(wishlist.has(id)){wishlist.delete(id);btnWishlist.innerHTML='<i class="fa-regular fa-heart"></i>';btnWishlist.classList.remove('loved');showToast('Removed from wishlist');}
-  else{wishlist.add(id);btnWishlist.innerHTML='<i class="fa-solid fa-heart"></i>';btnWishlist.classList.add('loved');showToast('Added to wishlist ❤️');}
-  saveWishlist(wishlist);
-});
 
 let toastTimer;
-function showToast(msg){toast.textContent=msg;toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),2800);}
 
-const hamburger=document.getElementById('hamburger');
-const mobileNav=document.getElementById('mobileNav');
-hamburger.addEventListener('click',()=>{hamburger.classList.toggle('open');mobileNav.classList.toggle('open');});
+function showToast(msg){ toast.textContent = msg; toast.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.classList.remove('show'), 2800); }
 
-document.getElementById('desktopSearchBtn').addEventListener('click',()=>handleSearch(document.getElementById('desktopSearchInput').value));
-document.getElementById('desktopSearchInput').addEventListener('keydown',e=>{if(e.key==='Enter')handleSearch(e.target.value);});
-document.getElementById('mobileSearchBtn').addEventListener('click',()=>{handleSearch(document.getElementById('mobileSearchInput').value);mobileNav.classList.remove('open');hamburger.classList.remove('open');});
-document.getElementById('mobileSearchInput').addEventListener('keydown',e=>{if(e.key==='Enter'){handleSearch(e.target.value);mobileNav.classList.remove('open');hamburger.classList.remove('open');}});
+const hamburger = document.getElementById('hamburger');
+const mobileNav = document.getElementById('mobileNav');
+hamburger.addEventListener('click', () => { hamburger.classList.toggle('open'); mobileNav.classList.toggle('open'); });
+document.getElementById('desktopSearchBtn').addEventListener('click', () => handleSearch(document.getElementById('desktopSearchInput').value));
+document.getElementById('desktopSearchInput').addEventListener('keydown', e => { if (e.key === 'Enter') handleSearch(e.target.value); });
+document.getElementById('mobileSearchBtn').addEventListener('click', () => { handleSearch(document.getElementById('mobileSearchInput').value); mobileNav.classList.remove('open'); hamburger.classList.remove('open'); });
+document.getElementById('mobileSearchInput').addEventListener('keydown', e => { if (e.key === 'Enter'){ handleSearch(e.target.value); mobileNav.classList.remove('open'); hamburger.classList.remove('open'); } });
 </script>
 </body>
 </html>
