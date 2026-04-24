@@ -549,10 +549,17 @@
         btn.disabled = true;
         btn.innerHTML = `<span style="display:inline-block;animation:spin 0.7s linear infinite">🌸</span>`;
         document.getElementById('crResults').innerHTML = `<div class="cr-empty"><div class="ei" style="animation:spin 1s linear infinite;display:inline-block">🌸</div><p style="margin-top:12px">Looking up your messages…</p></div>`;
+try {
+            const snap = await getDocs(
+                query(collection(db, 'contactSubmissions'), where('email', '==', email))
+            );
 
-        try {
-            const q = query(collection(db, 'contactSubmissions'), where('email','==', email), orderBy('submittedAt','desc'));
-            const snap = await getDocs(q);
+            // Sort newest first (client-side, no index needed)
+            snap.docs.sort((a, b) => {
+                const ta = a.data().submittedAt ? a.data().submittedAt.seconds : 0;
+                const tb = b.data().submittedAt ? b.data().submittedAt.seconds : 0;
+                return tb - ta;
+            });
 
             btn.disabled = false;
             btn.textContent = 'Check Replies';
@@ -609,13 +616,8 @@
 </script>
 
 <script>
-        document.getElementById('hamburgerBtn').classList.toggle('open');
-        document.getElementById('mobileNav').classList.toggle('open');
     
 
-        // WRONG — runs immediately on page load, breaks everything
-document.getElementById('hamburgerBtn').classList.toggle('open');
-document.getElementById('mobileNav').classList.toggle('open');
 
     function toggleFaq(btn) {
         const item = btn.closest('.faq-item');
