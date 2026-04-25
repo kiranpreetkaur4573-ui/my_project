@@ -250,6 +250,164 @@
         }
         .product-card-body .tag { font-size: 10px; color: var(--rose); letter-spacing: 1px; }
 
+        /* ══════════════════════════════════════════════
+           NEW UPDATES SECTION — Firebase Live Products
+        ══════════════════════════════════════════════ */
+        .updates-section {
+            margin: 0 40px 60px;
+        }
+
+        /* Live status pill */
+        .live-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: white;
+            border: 1.5px solid var(--soft);
+            border-radius: 20px;
+            padding: 5px 14px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--deep);
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(122,45,82,0.07);
+        }
+        .live-dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: #2e7d4f;
+            box-shadow: 0 0 0 3px rgba(46,125,79,0.2);
+            animation: livePulse 1.8s ease-in-out infinite;
+        }
+        .live-dot.loading { background: #f0a500; box-shadow: 0 0 0 3px rgba(240,165,0,0.2); animation: none; }
+        .live-dot.error   { background: #c0392b; box-shadow: 0 0 0 3px rgba(192,57,43,0.2); animation: none; }
+        @keyframes livePulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50%       { opacity: 0.6; transform: scale(0.85); }
+        }
+
+        /* Updates grid */
+        .updates-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 22px;
+        }
+
+        /* Firebase product card */
+        .fb-card {
+            background: white;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 2px solid transparent;
+            box-shadow: 0 4px 20px rgba(122,45,82,0.08);
+            transition: transform 0.35s, box-shadow 0.35s, border-color 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+        .fb-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 14px 40px rgba(122,45,82,0.18);
+            border-color: var(--rose);
+        }
+        .fb-card-img {
+            width: 100%; height: 320px;
+            object-fit: cover; display: block;
+            transition: transform 0.45s;
+        }
+        .fb-card:hover .fb-card-img { transform: scale(1.05); }
+
+        /* New badge */
+        .fb-new-badge {
+            position: absolute;
+            top: 12px; left: 12px;
+            background: linear-gradient(135deg, var(--rose), var(--deep));
+            color: white;
+            font-size: 9px; font-weight: 700; letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding: 4px 11px; border-radius: 20px;
+        }
+
+        /* Stock tag on card */
+        .fb-stock-tag {
+            position: absolute;
+            top: 12px; right: 12px;
+            font-size: 9px; font-weight: 700; letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 4px 10px; border-radius: 20px;
+        }
+        .fb-stock-tag.in  { background: rgba(46,125,79,0.12);  color: #2e7d4f; }
+        .fb-stock-tag.low { background: rgba(240,165,0,0.15);  color: #a06800; }
+        .fb-stock-tag.out { background: rgba(192,57,43,0.12);  color: #c0392b; }
+
+        .fb-card-body { padding: 13px 15px 16px; }
+        .fb-card-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 15px; font-style: italic;
+            color: var(--plum); font-weight: 600;
+            margin-bottom: 3px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .fb-card-cat {
+            font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+            text-transform: uppercase; color: var(--rose); margin-bottom: 8px;
+        }
+        .fb-card-price {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 18px; font-weight: 700;
+            color: var(--deep);
+        }
+
+        /* Emoji fallback when no image */
+        .fb-card-emoji {
+            width: 100%; height: 320px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 72px; background: var(--soft);
+        }
+
+        /* Skeleton shimmer for loading */
+        .fb-skeleton {
+            background: white;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(122,45,82,0.06);
+        }
+        .skel-img {
+            height: 320px;
+            background: linear-gradient(90deg, #f5dde8 25%, #faedf0 50%, #f5dde8 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.4s infinite;
+        }
+        .skel-body { padding: 14px 15px; display: flex; flex-direction: column; gap: 8px; }
+        .skel-line {
+            height: 13px; border-radius: 6px;
+            background: linear-gradient(90deg, #f5dde8 25%, #faedf0 50%, #f5dde8 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.4s infinite;
+        }
+        @keyframes shimmer {
+            0%   { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Out-of-stock ribbon */
+        .fb-card.out-of-stock { opacity: 0.65; cursor: not-allowed; }
+        .fb-card.out-of-stock:hover {
+            transform: none;
+            box-shadow: 0 4px 20px rgba(122,45,82,0.08);
+            border-color: transparent;
+        }
+
+        /* Empty / error state */
+        .updates-empty {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+            color: #b89aaa;
+        }
+        .updates-empty .empty-icon { font-size: 48px; margin-bottom: 14px; }
+        .updates-empty p { font-size: 14px; }
+
         /* ── FOOTER ── */
         footer {
             background: var(--plum); padding: 32px 20px;
@@ -264,54 +422,31 @@
         footer strong { color: var(--rose); }
 
         /* ══ RESPONSIVE ══ */
-
-        /* ── 1100px–1400px: wide mid-range (the new target range) ── */
         @media (min-width: 822px) and (max-width: 1400px) {
-            .navbar {
-                max-width: 100%;
-                padding: 0 24px;
-                gap: 8px;
-            }
+            .navbar { max-width: 100%; padding: 0 24px; gap: 8px; }
             .nav-search input { width: 120px; }
-
-            /* Slider: slightly smaller slides */
             .slide { min-width: 260px; height: 340px; }
             .slide img { height: 320px; }
             .slide-track { width: calc(260px * 24); }
-
-            /* Category grid: keep 12 columns but tighter circles */
-            .cat-grid {
-                grid-template-columns: repeat(12, 1fr);
-                gap: 10px;
-                padding: 0 28px;
-            }
+            .cat-grid { grid-template-columns: repeat(12, 1fr); gap: 10px; padding: 0 28px; }
             .cat-circle { width: 80px; height: 80px; border-radius: 12px; }
             .cat-item span { font-size: 9px; letter-spacing: 0.5px; }
-
-            /* Product grid: 4 columns with adjusted image heights */
-            .product-grid {
-                grid-template-columns: repeat(4, 1fr);
-                gap: 16px;
-                margin: 0 28px 44px;
-            }
+            .product-grid { grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 0 28px 44px; }
             .product-card img { height: 280px; }
-            .product-card-body h3 { font-size: 10px; letter-spacing: 2px; }
-
+            .updates-section { margin: 0 28px 50px; }
+            .updates-grid { grid-template-columns: repeat(4, 1fr); gap: 16px; }
+            .fb-card-img, .fb-card-emoji, .skel-img { height: 260px; }
             .divider { margin: 32px 28px 0; }
             .section-heading { margin: 14px 28px 24px; }
         }
-
-        /* ── 1100px–1200px: tighter mid-range ── */
         @media (min-width: 822px) and (max-width: 1200px) {
             .cat-circle { width: 72px; height: 72px; }
             .product-card img { height: 240px; }
-
             .slide { min-width: 240px; height: 310px; }
             .slide img { height: 290px; }
             .slide-track { width: calc(240px * 24); }
+            .updates-grid { grid-template-columns: repeat(3, 1fr); }
         }
-
-        /* ── Below 1100px (existing logic, now starts at 822 lower bound) ── */
         @media (max-width: 860px) {
             .nav-links, .nav-search, .nav-cart { display: none; }
             .hamburger { display: flex; }
@@ -323,6 +458,8 @@
             .cat-grid { grid-template-columns: repeat(6, 1fr); padding: 0 16px; gap: 10px; }
             .cat-circle { width: 80px; height: 80px; }
             .divider { margin: 24px 16px 0; }
+            .updates-section { margin: 0 16px 40px; }
+            .updates-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
         }
         @media (max-width: 600px) {
             .slide { min-width: 180px; height: 230px; padding: 6px; }
@@ -335,11 +472,115 @@
             .cat-item span { font-size: 9px; }
             .divider { margin: 20px 12px 0; }
             .section-heading { margin: 12px 12px 20px; }
+            .updates-section { margin: 0 12px 32px; }
+            .updates-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .fb-card-img, .fb-card-emoji, .skel-img { height: 200px; }
         }
         @media (max-width: 380px) {
             .product-card img { height: 155px; }
             .cat-grid { grid-template-columns: repeat(3, 1fr); }
+            .updates-grid { grid-template-columns: 1fr 1fr; }
         }
+
+        /* ── PRODUCT DETAIL OVERLAY (Firebase products only) ── */
+        .overlay {
+            position: fixed; inset: 0; z-index: 9999;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.35s ease;
+        }
+        .overlay.active { opacity: 1; pointer-events: all; }
+        .overlay-backdrop {
+            position: absolute; inset: 0;
+            background: rgba(74,26,50,0.55);
+            backdrop-filter: blur(6px);
+            cursor: pointer;
+        }
+        .product-panel {
+            position: relative; z-index: 2;
+            background: #fff;
+            border-radius: 20px;
+            width: min(860px, 95vw);
+            max-height: 90vh;
+            overflow-y: auto;
+            display: flex; flex-direction: row;
+            box-shadow: 0 30px 80px rgba(74,26,50,0.35);
+            transform: translateY(40px) scale(0.97);
+            transition: transform 0.38s cubic-bezier(0.22,1,0.36,1);
+        }
+        .overlay.active .product-panel { transform: translateY(0) scale(1); }
+        .panel-img {
+            width: 42%; flex-shrink: 0; position: relative;
+            overflow: hidden; border-radius: 20px 0 0 20px;
+            background: #f9eef4;
+        }
+        .panel-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .panel-badge {
+            position: absolute; top: 16px; left: 16px;
+            background: var(--deep); color: white;
+            font-size: 9px; font-weight: 700; letter-spacing: 2px;
+            text-transform: uppercase; padding: 5px 12px; border-radius: 20px;
+        }
+        .panel-info {
+            flex: 1; padding: 36px 32px 28px;
+            display: flex; flex-direction: column; gap: 0; overflow-y: auto;
+        }
+        .panel-close {
+            position: absolute; top: 16px; right: 18px; z-index: 3;
+            width: 36px; height: 36px; border-radius: 50%;
+            background: rgba(255,255,255,0.9); border: 1.5px solid #e8c8d8;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            color: var(--plum); font-size: 20px; line-height: 1;
+            transition: background 0.2s, transform 0.2s;
+            box-shadow: 0 2px 8px rgba(122,45,82,0.12);
+        }
+        .panel-close:hover { background: var(--soft); transform: rotate(90deg); }
+        .panel-category { font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--rose); margin-bottom: 8px; }
+        .panel-name { font-family: 'Cormorant Garamond',serif; font-size: clamp(22px,3.5vw,30px); font-style: italic; color: var(--plum); line-height: 1.2; margin-bottom: 6px; }
+        .panel-tagline { font-size: 12px; color: #8a5a6a; margin-bottom: 16px; font-weight: 400; line-height: 1.5; }
+
+        .panel-price-row { display: flex; align-items: baseline; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+        .panel-price { font-family: 'Cormorant Garamond',serif; font-size: 32px; font-weight: 600; color: var(--deep); }
+
+        .panel-stock-status { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 5px 12px; border-radius: 20px; margin-bottom: 18px; }
+        .panel-stock-status.in  { background: rgba(46,125,79,0.1);  color: #2e7d4f; }
+        .panel-stock-status.low { background: rgba(240,165,0,0.15); color: #a06800; }
+        .panel-stock-status.out { background: rgba(192,57,43,0.1);  color: #c0392b; }
+        .panel-stock-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; background: currentColor; }
+
+        .panel-section-label { font-size: 10px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: #7a4060; margin-bottom: 10px; }
+
+        .size-grid { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+        .size-btn { min-width: 42px; padding: 6px 10px; border-radius: 8px; border: 1.5px solid #ddb8cc; background: white; font-size: 12px; font-weight: 600; color: var(--text); cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; letter-spacing: 0.5px; }
+        .size-btn:hover { border-color: var(--rose); color: var(--deep); }
+        .size-btn.selected { background: var(--deep); color: white; border-color: var(--deep); }
+
+        .panel-details { margin-bottom: 20px; }
+        .detail-row { display: flex; gap: 10px; padding: 7px 0; border-bottom: 1px solid #f0e0ea; font-size: 12px; }
+        .detail-row:last-child { border-bottom: none; }
+        .detail-key { color: #9a7080; font-weight: 600; letter-spacing: 0.5px; min-width: 80px; }
+        .detail-val { color: var(--text); font-weight: 500; }
+
+        .qty-row { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+        .qty-label { font-size: 10px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: #7a4060; }
+        .qty-control { display: flex; align-items: center; border: 1.5px solid #ddb8cc; border-radius: 30px; overflow: hidden; }
+        .qty-control button { width: 32px; height: 32px; border: none; background: transparent; font-size: 18px; color: var(--deep); cursor: pointer; transition: background 0.2s; font-weight: 700; }
+        .qty-control button:hover { background: var(--soft); }
+        .qty-control span { width: 36px; text-align: center; font-size: 14px; font-weight: 700; color: var(--text); }
+
+        .panel-actions { display: flex; gap: 10px; margin-top: auto; padding-top: 6px; }
+        .btn-buy { flex: 1; padding: 14px; border: none; background: linear-gradient(135deg,var(--rose),var(--deep)); color: white; font-family: 'DM Sans',sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; border-radius: 30px; cursor: pointer; transition: opacity 0.2s, transform 0.2s; box-shadow: 0 6px 20px rgba(122,45,82,0.3); }
+        .btn-buy:hover { opacity: 0.88; transform: translateY(-2px); }
+        .btn-buy:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+        .btn-wishlist { width: 50px; height: 50px; border: 1.5px solid #ddb8cc; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; color: var(--rose); transition: background 0.2s, border-color 0.2s, transform 0.2s; flex-shrink: 0; }
+        .btn-wishlist:hover { background: var(--soft); border-color: var(--rose); transform: scale(1.1); }
+        .btn-wishlist.loved { color: #e04060; }
+
+        .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--plum); color: white; padding: 12px 28px; border-radius: 30px; font-size: 13px; font-weight: 600; letter-spacing: 0.5px; z-index: 10000; opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.3s; white-space: nowrap; }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        @media (max-width: 768px) { .panel-img { display: none; } .panel-info { padding: 28px 22px 22px; } }
+        @media (max-width: 500px) { .panel-actions { flex-direction: column; } .btn-wishlist { width: 100%; border-radius: 30px; } }
     </style>
 </head>
 <body>
@@ -357,12 +598,11 @@
             <a href="index.html">HOME</a>
             <a href="contact.html">Contact</a>
         </div>
-      <div class="nav-search">
-               <input data-search-input type="text" placeholder="Search...">
-               <script src="server.js"></script>
+        <div class="nav-search">
+            <input data-search-input type="text" placeholder="Search...">
             <button>Search</button>
         </div>
-          <a href="mycart.html" class="nav-cart">
+        <a href="mycart.html" class="nav-cart">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.35 6.15A1 1 0 007.6 20h9.8a1 1 0 00.97-.77L19 13M7 13H5.4M10 21a1 1 0 100-2 1 1 0 000 2zm7 0a1 1 0 100-2 1 1 0 000 2z"/>
             </svg>
@@ -377,20 +617,16 @@
         <a href="index.html">Home</a>
         <a href="mycart.html">My Cart</a>
         <a href="contact.html">Contact</a>
-       <div class="search-row">
+        <div class="search-row">
             <input data-search-input type="text" placeholder="Search...">
-               <script src="server.js"></script>
-        
             <button>Search</button>
         </div>
-   
-      </div>
+    </div>
 </nav>
 
 <!-- INFINITE SLIDER -->
 <div class="slider">
     <div class="slide-track">
-        <!-- original 12 images -->
         <div class="slide"><img src="img/Screenshot 2026-03-06 175828.png"></div>
         <div class="slide"><img src="img/Screenshot 2026-03-02 174416.png"></div>
         <div class="slide"><img src="img/Screenshot 2026-03-04 172443.png"></div>
@@ -403,7 +639,7 @@
         <div class="slide"><img src="img/Screenshot 2026-03-07 200241.png"></div>
         <div class="slide"><img src="img/Screenshot 2026-03-07 200346.png"></div>
         <div class="slide"><img src="img/Screenshot 2026-03-07 200525.png"></div>
-        <!-- duplicate for seamless loop -->
+        <!-- duplicates for seamless loop -->
         <div class="slide"><img src="img/Screenshot 2026-03-06 175828.png"></div>
         <div class="slide"><img src="img/Screenshot 2026-03-02 174416.png"></div>
         <div class="slide"><img src="img/Screenshot 2026-03-04 172443.png"></div>
@@ -441,544 +677,361 @@
     <a href="product11.html" class="cat-item"><div class="cat-circle"><img src="img/banner12.png" alt=""></div><span>Pazami</span></a>
 </div>
 
-<!-- TRENDING NOW -->
+<!-- ════════════════════════════════════════
+     TRENDING NOW — Direct links, no overlay
+════════════════════════════════════════ -->
+
+
+
+
+<!-- ════════════════════════════════════════
+     NEW UPDATES — Live from Firebase
+════════════════════════════════════════ -->
 <div class="divider"><div class="divider-line"></div><div class="divider-diamond"></div><div class="divider-line"></div></div>
 <div class="section-heading">
-    <h2>Trending Now</h2>
-    <p>Our most-loved styles</p>
+    <h2>New Updates</h2>
+    <p>Fresh arrivals — added live from our store</p>
 </div>
 
-<div class="product-grid">
-    <div class="product-card"><a href="product.html"><img src="img/sal13.png" alt="Salwar Suits"></a><div class="product-card-body"><h3>Salwar Suits</h3><div class="tag">Ethnic Wear</div></div></div>
-    <div class="product-card"><a href="product1.html"><img src="img/product2.png" alt="Sarees"></a><div class="product-card-body"><h3>Sarees</h3><div class="tag">Traditional</div></div></div>
-    <div class="product-card"><a href="product2.html"><img src="img/product3.png" alt="Gown"></a><div class="product-card-body"><h3>Gown</h3><div class="tag">Party Wear</div></div></div>
-    <div class="product-card"><a href="product3.html"><img src="img/product4.png" alt="Pent-Plazo Suits"></a><div class="product-card-body"><h3>Pent-Plazo Suits</h3><div class="tag">Casual</div></div></div>
-    <div class="product-card"><a href="product4.html"><img src="img/lah.png" alt="Lehanga"></a><div class="product-card-body"><h3>Lehanga</h3><div class="tag">Bridal</div></div></div>
-    <div class="product-card"><a href="product5.html"><img src="img/product6.png" alt="Peplum"></a><div class="product-card-body"><h3>Peplum</h3><div class="tag">Indo-Western</div></div></div>
-    <div class="product-card"><a href="prodct6.html"><img src="img/product7 (2).png" alt="Frock Suits"></a><div class="product-card-body"><h3>Frock Suits</h3><div class="tag">Festive</div></div></div>
-    <div class="product-card"><a href="prodct7.html"><img src="img/product8.png" alt="Pakistani Suits"></a><div class="product-card-body"><h3>Pakistani Suits</h3><div class="tag">Ethnic Wear</div></div></div>
-    <div class="product-card"><a href="prodct8.html"><img src="img/product9.png" alt="Sharara Suits"></a><div class="product-card-body"><h3>Sharara Suits</h3><div class="tag">Festive</div></div></div>
-    <div class="product-card"><a href="prodct9.html"><img src="img/product10 (2).png" alt="Plazo Suits"></a><div class="product-card-body"><h3>Plazo Suits</h3><div class="tag">Casual</div></div></div>
-    <div class="product-card"><a href="prodct10.html"><img src="img/product11 (2).png" alt="Indo-Western"></a><div class="product-card-body"><h3>Indo-Western</h3><div class="tag">Fusion</div></div></div>
-    <div class="product-card"><a href="prodct11.html"><img src="img/banner12.png" alt="Pazami Suits"></a><div class="product-card-body"><h3>Pazami Suits</h3><div class="tag">Traditional</div></div></div>
+<div class="updates-section">
+    <div class="live-pill">
+        <span class="live-dot loading" id="liveStatusDot"></span>
+        <span id="liveStatusText">Connecting to store…</span>
+    </div>
+
+    <div class="updates-grid" id="updatesGrid">
+        <div class="fb-skeleton"><div class="skel-img"></div><div class="skel-body"><div class="skel-line" style="width:70%"></div><div class="skel-line" style="width:45%"></div><div class="skel-line" style="width:55%"></div></div></div>
+        <div class="fb-skeleton"><div class="skel-img"></div><div class="skel-body"><div class="skel-line" style="width:65%"></div><div class="skel-line" style="width:50%"></div><div class="skel-line" style="width:40%"></div></div></div>
+        <div class="fb-skeleton"><div class="skel-img"></div><div class="skel-body"><div class="skel-line" style="width:75%"></div><div class="skel-line" style="width:45%"></div><div class="skel-line" style="width:60%"></div></div></div>
+        <div class="fb-skeleton"><div class="skel-img"></div><div class="skel-body"><div class="skel-line" style="width:60%"></div><div class="skel-line" style="width:55%"></div><div class="skel-line" style="width:35%"></div></div></div>
+    </div>
 </div>
 
+<!-- ── FOOTER ── -->
 <footer>
     <div class="footer-brand">Trendlilly</div>
     <p>&copy; 2026 TrendLilly &nbsp;|&nbsp; Organized by me</p>
     <p>Follow us on Instagram: <strong>Trendlilly_@26</strong></p>
 </footer>
 
+<!-- ════════════════════════════════════════
+     PRODUCT DETAIL OVERLAY
+     (Firebase / New Updates products only)
+════════════════════════════════════════ -->
+<div class="overlay" id="overlay">
+    <div class="overlay-backdrop" id="overlayBackdrop"></div>
+    <div class="product-panel" id="productPanel">
+        <button class="panel-close" id="panelClose">&times;</button>
+
+        <div class="panel-img">
+            <img id="panelImg" src="" alt="">
+            <span class="panel-badge">New Arrival</span>
+        </div>
+
+        <div class="panel-info">
+            <div class="panel-category" id="panelCategory">Ethnic Wear</div>
+            <div class="panel-name" id="panelName">Product Name</div>
+            <div class="panel-tagline" id="panelTagline">Crafted with premium fabric for all-day elegance</div>
+
+            <div class="panel-price-row">
+                <span class="panel-price" id="panelPrice">₹999</span>
+            </div>
+
+            <div class="panel-stock-status in" id="panelStockStatus">
+                <span class="panel-stock-dot"></span>
+                <span id="panelStockText">In Stock</span>
+            </div>
+
+            <div class="panel-section-label">Select Size</div>
+            <div class="size-grid" id="panelSizes"></div>
+
+            <div class="panel-details" id="panelDetails"></div>
+
+            <div class="qty-row">
+                <span class="qty-label">Qty</span>
+                <div class="qty-control">
+                    <button id="qtyMinus">−</button>
+                    <span id="qtyVal">1</span>
+                    <button id="qtyPlus">+</button>
+                </div>
+            </div>
+
+            <div class="panel-actions">
+                <button class="btn-buy" id="btnBuy">🛍️ &nbsp;Add to Bag</button>
+                <button class="btn-wishlist" id="btnWishlist" title="Wishlist">♡</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- ════════════════════════════════════════
+     SHARED HELPERS
+════════════════════════════════════════ -->
 <script>
+    function closeOverlay() {
+        document.getElementById('overlay').classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    document.getElementById('overlayBackdrop').addEventListener('click', closeOverlay);
+    document.getElementById('panelClose').addEventListener('click', closeOverlay);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeOverlay(); });
+
+    document.getElementById('qtyMinus').addEventListener('click', () => {
+        const el = document.getElementById('qtyVal');
+        let v = parseInt(el.textContent) || 1;
+        if (v > 1) el.textContent = --v;
+    });
+    document.getElementById('qtyPlus').addEventListener('click', () => {
+        const el = document.getElementById('qtyVal');
+        let v = parseInt(el.textContent) || 1;
+        if (v < 10) el.textContent = ++v;
+    });
+
+    let toastTimer;
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+    }
+    window.showToast = showToast;
+
     function toggleMenu() {
         document.getElementById('mobileNav').classList.toggle('open');
         document.getElementById('hamburgerBtn').classList.toggle('open');
     }
+
     localStorage.setItem("lastPage", window.location.href);
 </script>
 
-<style id="COPY-THIS-CSS">
-/* ══════════════════════════
-   PRODUCT DETAIL OVERLAY
-══════════════════════════ */
-.overlay{
-  position:fixed;inset:0;z-index:9999;
-  display:flex;align-items:center;justify-content:center;
-  opacity:0;pointer-events:none;
-  transition:opacity .35s ease;
-}
-.overlay.active{opacity:1;pointer-events:all;}
+<!-- ════════════════════════════════════════
+     FIREBASE — New Updates section
+════════════════════════════════════════ -->
+<script type="module">
+import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, onSnapshot, orderBy, query, limit }
+                           from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-.overlay-backdrop{
-  position:absolute;inset:0;
-  background:rgba(74,26,50,.55);
-  backdrop-filter:blur(6px);
-  cursor:pointer;
-}
-
-.product-panel{
-  position:relative;z-index:2;
-  background:#fff;
-  border-radius:20px;
-  width:min(920px,95vw);
-  max-height:90vh;
-  overflow-y:auto;
-  display:flex;
-  flex-direction:row;
-  box-shadow:0 30px 80px rgba(74,26,50,.35);
-  transform:translateY(40px) scale(.97);
-  transition:transform .38s cubic-bezier(.22,1,.36,1);
-}
-.overlay.active .product-panel{transform:translateY(0) scale(1);}
-
-.panel-img{
-  width:45%;flex-shrink:0;position:relative;
-  overflow:hidden;border-radius:20px 0 0 20px;
-  background:#f9eef4;
-}
-.panel-img img{width:100%;height:100%;object-fit:cover;display:block;}
-.panel-badge{
-  position:absolute;top:16px;left:16px;
-  background:var(--deep);color:white;
-  font-size:9px;font-weight:700;letter-spacing:2px;
-  text-transform:uppercase;padding:5px 12px;border-radius:20px;
-}
-
-.panel-info{
-  flex:1;padding:36px 36px 30px;
-  display:flex;flex-direction:column;gap:0;overflow-y:auto;
-}
-
-.panel-close{
-  position:absolute;top:16px;right:18px;z-index:3;
-  width:36px;height:36px;border-radius:50%;
-  background:rgba(255,255,255,.9);border:1.5px solid #e8c8d8;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;
-  color:var(--plum);font-size:20px;line-height:1;
-  transition:background .2s,transform .2s;
-  box-shadow:0 2px 8px rgba(122,45,82,.12);
-}
-.panel-close:hover{background:var(--soft);transform:rotate(90deg);}
-
-.panel-category{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--rose);margin-bottom:8px;}
-.panel-name{font-family:'Cormorant Garamond',serif;font-size:clamp(22px,3.5vw,32px);font-style:italic;color:var(--plum);line-height:1.2;margin-bottom:6px;}
-.panel-tagline{font-size:12px;color:#8a5a6a;margin-bottom:18px;font-weight:400;line-height:1.5;}
-
-.panel-stars{display:flex;align-items:center;gap:6px;margin-bottom:18px;}
-.stars{color:#e0a84e;font-size:13px;letter-spacing:1px;}
-.rating-count{font-size:11px;color:#9a7080;font-weight:500;}
-
-.panel-price-row{display:flex;align-items:baseline;gap:10px;margin-bottom:22px;}
-.panel-price{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:600;color:var(--deep);}
-.panel-price-old{font-size:16px;color:#b09098;text-decoration:line-through;}
-.panel-discount{font-size:11px;font-weight:700;letter-spacing:1px;color:white;background:linear-gradient(135deg,#e07090,var(--deep));padding:3px 10px;border-radius:20px;}
-
-.panel-section-label{font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:#7a4060;margin-bottom:10px;}
-.color-swatches{display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap;}
-.swatch{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .2s,border-color .2s;box-shadow:0 2px 6px rgba(0,0,0,.15);}
-.swatch:hover{transform:scale(1.15);}
-.swatch.selected{border-color:var(--deep);transform:scale(1.1);}
-
-.size-grid{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;}
-.size-btn{min-width:42px;padding:6px 10px;border-radius:8px;border:1.5px solid #ddb8cc;background:white;font-size:12px;font-weight:600;color:var(--text);cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;letter-spacing:.5px;}
-.size-btn:hover{border-color:var(--rose);color:var(--deep);}
-.size-btn.selected{background:var(--deep);color:white;border-color:var(--deep);}
-
-.panel-details{margin-bottom:24px;}
-.detail-row{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid #f0e0ea;font-size:12px;}
-.detail-row:last-child{border-bottom:none;}
-.detail-key{color:#9a7080;font-weight:600;letter-spacing:.5px;min-width:90px;}
-.detail-val{color:var(--text);font-weight:500;}
-
-.qty-row{display:flex;align-items:center;gap:16px;margin-bottom:22px;}
-.qty-label{font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:#7a4060;}
-.qty-control{display:flex;align-items:center;border:1.5px solid #ddb8cc;border-radius:30px;overflow:hidden;}
-.qty-control button{width:32px;height:32px;border:none;background:transparent;font-size:18px;color:var(--deep);cursor:pointer;transition:background .2s;font-weight:700;}
-.qty-control button:hover{background:var(--soft);}
-.qty-control span{width:36px;text-align:center;font-size:14px;font-weight:700;color:var(--text);}
-
-.panel-actions{display:flex;gap:10px;margin-top:auto;padding-top:6px;}
-.btn-buy{flex:1;padding:14px;border:none;background:linear-gradient(135deg,var(--rose),var(--deep));color:white;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border-radius:30px;cursor:pointer;transition:opacity .2s,transform .2s;box-shadow:0 6px 20px rgba(122,45,82,.3);}
-.btn-buy:hover{opacity:.88;transform:translateY(-2px);}
-.btn-wishlist{width:50px;height:50px;border:1.5px solid #ddb8cc;border-radius:50%;background:white;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--rose);transition:background .2s,border-color .2s,transform .2s;flex-shrink:0;}
-.btn-wishlist:hover{background:var(--soft);border-color:var(--rose);transform:scale(1.1);}
-.btn-wishlist.loved{color:#e04060;}
-
-.variety-view-btn{display:block;margin-top:8px;text-align:center;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--rose);text-decoration:none;padding:6px;border-radius:8px;transition:background .2s;}
-.variety-view-btn:hover{background:var(--soft);}
-
-.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--plum);color:white;padding:12px 28px;border-radius:30px;font-size:13px;font-weight:600;letter-spacing:.5px;z-index:10000;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;white-space:nowrap;}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-
-@media(max-width:768px){
-  .panel-img{display:none;}
-  .panel-info{padding:28px 22px 22px;}
-}
-@media(max-width:500px){
-  .panel-actions{flex-direction:column;}
-  .btn-wishlist{width:100%;border-radius:30px;}
-}
-</style>
-
-
-<!-- Product Overlay -->
-<div class="overlay" id="overlay">
-  <div class="overlay-backdrop" id="overlayBackdrop"></div>
-  <div class="product-panel" id="productPanel">
-    <button class="panel-close" id="panelClose">&times;</button>
-
-    <div class="panel-img">
-      <img id="panelImg" src="" alt="">
-      <span class="panel-badge" id="panelBadge">New Arrival</span>
-    </div>
-
-    <div class="panel-info">
-      <div class="panel-category" id="panelCategory">Ethnic Wear</div>
-      <div class="panel-name" id="panelName">Product Name</div>
-      <div class="panel-tagline" id="panelTagline">Crafted with premium fabric for all-day elegance</div>
-
-      <div class="panel-stars">
-        <span class="stars">★★★★☆</span>
-        <span class="rating-count" id="panelRating">(124 reviews)</span>
-      </div>
-
-      <div class="panel-price-row">
-        <span class="panel-price" id="panelPrice">₹999</span>
-        <span class="panel-price-old" id="panelPriceOld"></span>
-        <span class="panel-discount" id="panelDiscount"></span>
-      </div>
-
-      <div class="panel-section-label">Select Colour</div>
-      <div class="color-swatches" id="panelColors"></div>
-
-      <div class="panel-section-label">Select Size</div>
-      <div class="size-grid" id="panelSizes"></div>
-
-      <div class="panel-details" id="panelDetails"></div>
-
-      <div class="qty-row">
-        <span class="qty-label">Qty</span>
-        <div class="qty-control">
-          <button id="qtyMinus">−</button>
-          <span id="qtyVal">1</span>
-          <button id="qtyPlus">+</button>
-        </div>
-      </div>
-
-      <div class="panel-actions">
-        <button class="btn-buy" id="btnBuy">🛍️ &nbsp;Add to Bag</button>
-        <button class="btn-wishlist" id="btnWishlist" title="Wishlist">♡</button>
-      </div>
-
-      <!-- Link to full product page -->
-      <a id="panelFullLink" href="#" class="variety-view-btn">View Full Details →</a>
-    </div>
-  </div>
-</div>
-
-<!-- Toast Notification -->
-<div class="toast" id="toast"></div>
-
-
-<script id="COPY-THIS-SCRIPT">
-const varietyProducts = {
-  "salwar": {
-    name: "Salwar Suits", category: "Ethnic Wear",
-    img: "img/sal13.png",
-    badge: "Bestseller", tagline: "Classic ethnic comfort with intricate craftsmanship.",
-    price: "₹2,499", priceOld: "₹3,299", discount: "24% OFF",
-    rating: "(312 reviews)",
-    swatches: ["#D8A7A3"],
-    sizes: ["XS","S","M","L","XL","XXL"],
-    fabric: "Cotton Blend", occasion: "Casual / Daily", work: "Embroidery",
-    fullPage: "product.html"
-  },
-  "sarees": {
-    name: "Sarees", category: "Traditional",
-    img: "img/product2.png",
-    badge: "Classic", tagline: "Timeless weaves that drape elegance around you.",
-    price: "₹3,199", priceOld: "₹4,299", discount: "25% OFF",
-    rating: "(218 reviews)",
-    swatches: ["#8A6f63"],
-    sizes: ["Free Size"],
-    fabric: "Silk", occasion: "Festive / Wedding", work: "Zari Work",
-    fullPage: "product1.html"
-  },
-  "gown": {
-    name: "Gown", category: "Party Wear",
-    img: "img/product3.png",
-    badge: "Party Pick", tagline: "Floor-sweeping glamour for your most special nights.",
-    price: "₹3,799", priceOld: "₹5,199", discount: "27% OFF",
-    rating: "(167 reviews)",
-    swatches: ["#6E8A9B"],
-    sizes: ["XS","S","M","L","XL"],
-    fabric: "Georgette", occasion: "Party / Evening", work: "Sequin Work",
-    fullPage: "product2.html"
-  },
-  "pent-plazo": {
-    name: "Pent-Plazo Suits", category: "Casual",
-    img: "img/product4.png",
-    badge: "Trendy", tagline: "Relaxed silhouettes with a modern ethnic touch.",
-    price: "₹1,899", priceOld: "₹2,599", discount: "26% OFF",
-    rating: "(145 reviews)",
-    swatches: ["#1f1f1f"],
-    sizes: ["S","M","L","XL","XXL"],
-    fabric: "Rayon", occasion: "Casual / Office", work: "Printed",
-    fullPage: "product3.html"
-  },
-  "lehanga": {
-    name: "Lehenga", category: "Bridal",
-    img: "img/lah.png",
-    badge: "Bridal", tagline: "Regal lehengas for the grandest celebrations of your life.",
-    price: "₹4,999", priceOld: "₹6,799", discount: "26% OFF",
-    rating: "(284 reviews)",
-    swatches: ["#c89a4a"],
-    sizes: ["XS","S","M","L","XL","XXL"],
-    fabric: "Heavy Silk", occasion: "Wedding / Bridal", work: "Heavy Zari",
-    fullPage: "product4.html"
-  },
-  "peplum": {
-    name: "Peplum", category: "Indo-Western",
-    img: "img/product6.png",
-    badge: "Fusion", tagline: "Where Indo-western charm meets everyday wearability.",
-    price: "₹2,299", priceOld: "₹3,099", discount: "25% OFF",
-    rating: "(98 reviews)",
-    swatches: ["#e4a6b0"],
-    sizes: ["XS","S","M","L","XL"],
-    fabric: "Art Silk", occasion: "Office / Party", work: "Embroidery",
-    fullPage: "product5.html"
-  },
-  "frock": {
-    name: "Frock Suits", category: "Festive",
-    img: "img/product7 (2).png",
-    badge: "Festive", tagline: "Flowy frock-style suits with vibrant festive energy.",
-    price: "₹2,599", priceOld: "₹3,499", discount: "25% OFF",
-    rating: "(121 reviews)",
-    swatches: ["#9B3a3a"],
-    sizes: ["S","M","L","XL","XXL"],
-    fabric: "Crepe", occasion: "Festive / Puja", work: "Digital Print",
-    fullPage: "product6.html"
-  },
-  "pakistani": {
-    name: "Pakistani Suits", category: "Ethnic Wear",
-    img: "img/product8.png",
-    badge: "Trending", tagline: "Elegant long-line silhouettes inspired by timeless craftsmanship.",
-    price: "₹2,799", priceOld: "₹3,799", discount: "26% OFF",
-    rating: "(193 reviews)",
-    swatches: ["#f2efea"],
-    sizes: ["XS","S","M","L","XL","XXL"],
-    fabric: "Chiffon", occasion: "Casual / Festive", work: "Thread Work",
-    fullPage: "product7.html"
-  },
-  "sharara": {
-    name: "Sharara Suits", category: "Festive",
-    img: "img/product9.png",
-    badge: "New Arrival", tagline: "Dramatic flare with festive flair — a statement in every step.",
-    price: "₹2,999", priceOld: "₹4,099", discount: "27% OFF",
-    rating: "(87 reviews)",
-    swatches: ["#c95a6a"],
-    sizes: ["S","M","L","XL","XXL"],
-    fabric: "Georgette", occasion: "Wedding / Festive", work: "Embroidery",
-    fullPage: "product8.html"
-  },
-  "plazo": {
-    name: "Plazo Suits", category: "Casual",
-    img: "img/product10 (2).png",
-    badge: "Comfortable", tagline: "Easy breezy comfort with a touch of ethnic elegance.",
-    price: "₹1,799", priceOld: "₹2,499", discount: "28% OFF",
-    rating: "(156 reviews)",
-    swatches: ["#b7c9d6"],
-    sizes: ["S","M","L","XL","XXL"],
-    fabric: "Rayon", occasion: "Casual / Daily", work: "Block Print",
-    fullPage: "product9.html"
-  },
-  "indo-west": {
-    name: "Indo-Western", category: "Fusion",
-    img: "img/product11 (2).png",
-    badge: "Fusion", tagline: "Where east meets west — bold, modern, unmistakably you.",
-    price: "₹2,899", priceOld: "₹3,999", discount: "27% OFF",
-    rating: "(74 reviews)",
-    swatches: ["#2f2f2f"],
-    sizes: ["XS","S","M","L","XL"],
-    fabric: "Lycra Blend", occasion: "Party / Casual", work: "Cut Work",
-    fullPage: "product10.html"
-  },
-  "pazami": {
-    name: "Pazami Suits", category: "Traditional",
-    img: "img/banner12.png",
-    badge: "Traditional", tagline: "Refined traditional styling with artisanal detailing.",
-    price: "₹2,199", priceOld: "₹2,999", discount: "26% OFF",
-    rating: "(63 reviews)",
-    swatches: ["#2e3f36"],
-    sizes: ["S","M","L","XL","XXL"],
-    fabric: "Cotton", occasion: "Daily / Casual", work: "Embroidery",
-    fullPage: "product11.html"
-  }
+const firebaseConfig = {
+    apiKey:            "AIzaSyDpnSVwV3QP9MP4tuU5SCtXiwpdAUD0vlc",
+    authDomain:        "trendlilly-boutique.firebaseapp.com",
+    projectId:         "trendlilly-boutique",
+    storageBucket:     "trendlilly-boutique.firebasestorage.app",
+    messagingSenderId: "929563690255",
+    appId:             "1:929563690255:web:b535b31e9cb2f6158b6a7a"
 };
 
-let currentProduct = null;
-let qty = 1;
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+window._fbProducts = {};
+window._fbStocks   = {};
+
+function fmtINR(n) {
+    return '₹' + Number(n || 0).toLocaleString('en-IN');
+}
+
+function getStockInfo(stock) {
+    if (stock <= 0) return { cls: 'out', label: 'Out of Stock' };
+    if (stock <= 5) return { cls: 'low', label: `Only ${stock} left!` };
+    return { cls: 'in', label: 'In Stock' };
+}
+
+function setLiveStatus(state, text) {
+    document.getElementById('liveStatusDot').className  = 'live-dot ' + state;
+    document.getElementById('liveStatusText').textContent = text;
+}
+
+function makeCard(id, p) {
+    const stock = parseInt(p.stock || 0);
+    const si    = getStockInfo(stock);
+    const isOut = stock <= 0;
+
+    const card = document.createElement('div');
+    card.className  = 'fb-card' + (isOut ? ' out-of-stock' : '');
+    card.dataset.id = id;
+
+    const imgHTML = (p.img)
+        ? `<img class="fb-card-img" src="${p.img}" alt="${p.name}" loading="lazy"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+          + `<div class="fb-card-emoji" style="display:none">${p.emoji || '👗'}</div>`
+        : `<div class="fb-card-emoji">${p.emoji || '👗'}</div>`;
+
+    card.innerHTML = `
+        ${imgHTML}
+        <span class="fb-new-badge">New</span>
+        <span class="fb-stock-tag ${si.cls}">${si.label}</span>
+        <div class="fb-card-body">
+            <div class="fb-card-name">${p.name || 'New Arrival'}</div>
+            <div class="fb-card-cat">${p.cat || 'Ethnic Wear'}</div>
+            <div class="fb-card-price">${fmtINR(p.price)}</div>
+        </div>
+    `;
+
+    if (!isOut) {
+        card.addEventListener('click', () => window.openFbProduct(id));
+    } else {
+        card.addEventListener('click', () => window.showToast('This item is currently out of stock 😔'));
+    }
+    return card;
+}
+
+onSnapshot(
+    query(collection(db, 'products'), orderBy('createdAt', 'desc'), limit(20)),
+    (snapshot) => {
+        setLiveStatus('', `Live · ${snapshot.size} new products`);
+        const grid = document.getElementById('updatesGrid');
+        grid.innerHTML = '';
+
+        if (snapshot.empty) {
+            grid.innerHTML = `<div class="updates-empty"><div class="empty-icon">🛍️</div><p>No new products yet. Check back soon!</p></div>`;
+            return;
+        }
+
+        snapshot.forEach(docSnap => {
+            const id   = docSnap.id;
+            const data = docSnap.data();
+            const p = {
+                name:     data.name     || data.title    || 'New Arrival',
+                cat:      data.cat      || data.category || 'Ethnic Wear',
+                price:    parseFloat(String(data.price || 0).replace(/[^\d.]/g, '')) || 0,
+                stock:    parseInt(data.stock ?? data.qty ?? data.quantity ?? 0, 10) || 0,
+                sku:      data.sku      || '',
+                emoji:    data.emoji    || '👗',
+                img:      data.img      || data.imageUrl || data.image || data.thumbnail || data.photo || '',
+                fabric:   data.fabric   || '',
+                occasion: data.occasion || '',
+                work:     data.work     || '',
+                tagline:  data.tagline  || 'Crafted with premium fabric for all-day elegance',
+                createdAt: data.createdAt
+            };
+            window._fbProducts[id] = p;
+            window._fbStocks[id]   = p.stock;
+            grid.appendChild(makeCard(id, p));
+        });
+    },
+    (err) => {
+        console.error('[Firebase] Products error:', err);
+        setLiveStatus('error', 'Connection error');
+        document.getElementById('updatesGrid').innerHTML = `
+            <div class="updates-empty"><div class="empty-icon">⚠️</div><p>Could not load products. Please check your connection.</p></div>`;
+    }
+);
+
+/* ── Open Firebase product in overlay ── */
+let currentFbId = null;
 let selectedSize = '';
-let selectedColor = '';
-let wishlistSet = new Set(JSON.parse(localStorage.getItem('variety_wishlist') || '[]'));
-const WISH_KEY = 'wishlist_ids';
-function getWishlist(){try{return new Set(JSON.parse(localStorage.getItem(WISH_KEY))||[]);}catch{return new Set();}}
-function saveWishlist(s){localStorage.setItem(WISH_KEY,JSON.stringify([...s]));}
-let wishlist = getWishlist();
 
-function getCategoryKey(href) {
-  const map = {
-    'product.html':  'salwar',
-    'product1.html': 'sarees',
-    'product2.html': 'gown',
-    'product3.html': 'pent-plazo',
-    'product4.html': 'lehanga',
-    'product5.html': 'peplum',
-    'product6.html': 'frock',
-    'prodct6.html':  'frock',
-    'product7.html': 'pakistani',
-    'prodct7.html':  'pakistani',
-    'product8.html': 'sharara',
-    'prodct8.html':  'sharara',
-    'product9.html': 'plazo',
-    'prodct9.html':  'plazo',
-    'product10.html':'indo-west',
-    'prodct10.html': 'indo-west',
-    'product11.html':'pazami',
-    'prodct11.html': 'pazami',
-  };
-  const file = href ? href.split('/').pop().split('?')[0] : '';
-  return map[file] || null;
-}
+window.openFbProduct = function(id) {
+    const p     = window._fbProducts[id];
+    if (!p) return;
+    const stock = window._fbStocks[id] ?? p.stock ?? 0;
 
-document.querySelectorAll('.product-card').forEach(card => {
-  card.addEventListener('click', function(e) {
-    const link = this.querySelector('a') || this;
-    const href = link.getAttribute('href');
-    const key = getCategoryKey(href);
-    if (key && varietyProducts[key]) {
-      e.preventDefault();
-      openVarietyProduct(key);
-    }
-  });
-});
+    if (stock <= 0) { window.showToast('This item is currently out of stock 😔'); return; }
 
-function openVarietyProduct(key) {
-  const p = varietyProducts[key];
-  if (!p) return;
-  currentProduct = { ...p, key };
+    currentFbId  = id;
+    selectedSize = '';
 
-  qty = 1;
-  selectedSize = '';
-  selectedColor = p.swatches[0] || '';
+    const el = i => document.getElementById(i);
+    el('panelImg').src              = p.img || '';
+    el('panelImg').alt              = p.name;
+    el('panelCategory').textContent = p.cat || 'Ethnic Wear';
+    el('panelName').textContent     = p.name;
+    el('panelTagline').textContent  = p.tagline || 'Crafted with premium fabric for all-day elegance';
+    el('panelPrice').textContent    = fmtINR(p.price);
+    el('qtyVal').textContent        = '1';
 
-  document.getElementById('panelImg').src        = p.img;
-  document.getElementById('panelImg').alt        = p.name;
-  document.getElementById('panelBadge').textContent    = p.badge || 'New Arrival';
-  document.getElementById('panelCategory').textContent = p.category;
-  document.getElementById('panelName').textContent     = p.name;
-  document.getElementById('panelTagline').textContent  = p.tagline;
-  document.getElementById('panelRating').textContent   = p.rating;
-  document.getElementById('panelPrice').textContent    = p.price;
-  document.getElementById('panelPriceOld').textContent = p.priceOld;
-  document.getElementById('panelDiscount').textContent = p.discount;
-  document.getElementById('qtyVal').textContent        = '1';
-  document.getElementById('panelFullLink').href        = p.fullPage;
+    /* Stock status */
+    const si = getStockInfo(stock);
+    const statusEl = el('panelStockStatus');
+    statusEl.className = 'panel-stock-status ' + si.cls;
+    el('panelStockText').textContent = si.label;
 
-  const colorsEl = document.getElementById('panelColors');
-  colorsEl.innerHTML = '';
-  p.swatches.forEach((hex, i) => {
-    const sw = document.createElement('div');
-    sw.className = 'swatch' + (i === 0 ? ' selected' : '');
-    sw.style.background = hex;
-    sw.title = hex;
-    sw.addEventListener('click', () => {
-      colorsEl.querySelectorAll('.swatch').forEach(s => s.classList.remove('selected'));
-      sw.classList.add('selected');
-      selectedColor = hex;
+    /* Sizes */
+    el('panelSizes').innerHTML = '';
+    ['XS','S','M','L','XL','XXL'].forEach(sz => {
+        const btn = document.createElement('button');
+        btn.className   = 'size-btn';
+        btn.textContent = sz;
+        btn.addEventListener('click', () => {
+            el('panelSizes').querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            selectedSize = sz;
+        });
+        el('panelSizes').appendChild(btn);
     });
-    colorsEl.appendChild(sw);
-  });
 
-  const sizesEl = document.getElementById('panelSizes');
-  sizesEl.innerHTML = '';
-  p.sizes.forEach(sz => {
-    const btn = document.createElement('button');
-    btn.className = 'size-btn';
-    btn.textContent = sz;
-    if (sz === 'Free Size') {
-      btn.classList.add('selected');
-      selectedSize = sz;
-    }
-    btn.addEventListener('click', () => {
-      sizesEl.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-      selectedSize = sz;
-    });
-    sizesEl.appendChild(btn);
-  });
+    /* Details — only show fields that exist in Firebase doc */
+    let detailsHTML = '';
+    if (p.cat)      detailsHTML += `<div class="detail-row"><span class="detail-key">Category</span><span class="detail-val">${p.cat}</span></div>`;
+    if (p.fabric)   detailsHTML += `<div class="detail-row"><span class="detail-key">Fabric</span><span class="detail-val">${p.fabric}</span></div>`;
+    if (p.occasion) detailsHTML += `<div class="detail-row"><span class="detail-key">Occasion</span><span class="detail-val">${p.occasion}</span></div>`;
+    if (p.work)     detailsHTML += `<div class="detail-row"><span class="detail-key">Work</span><span class="detail-val">${p.work}</span></div>`;
+    if (p.sku)      detailsHTML += `<div class="detail-row"><span class="detail-key">SKU</span><span class="detail-val">${p.sku}</span></div>`;
+    detailsHTML += `<div class="detail-row"><span class="detail-key">Stock</span><span class="detail-val">${stock} units</span></div>`;
+    el('panelDetails').innerHTML = detailsHTML;
 
-  document.getElementById('panelDetails').innerHTML = `
-    <div class="detail-row"><span class="detail-key">Fabric</span><span class="detail-val">${p.fabric}</span></div>
-    <div class="detail-row"><span class="detail-key">Occasion</span><span class="detail-val">${p.occasion}</span></div>
-    <div class="detail-row"><span class="detail-key">Work</span><span class="detail-val">${p.work}</span></div>
-    <div class="detail-row"><span class="detail-key">Includes</span><span class="detail-val">As per product page</span></div>
-  `;
+    /* Buy button */
+    el('btnBuy').disabled = false;
+    el('btnBuy').innerHTML = '🛍️ &nbsp;Add to Bag';
 
-  const inWish = wishlistSet.has(key);
-  const btnW = document.getElementById('btnWishlist');
-  btnW.innerHTML = inWish ? '♥' : '♡';
-  btnW.classList.toggle('loved', inWish);
-  btnW.dataset.key = key;
+    /* Wishlist */
+    const wl   = getWishlist();
+    const btnW = el('btnWishlist');
+    btnW.innerHTML = wl.has(id) ? '♥' : '♡';
+    btnW.classList.toggle('loved', wl.has(id));
+    btnW.dataset.fbId = id;
 
-  document.getElementById('overlay').classList.add('active');
-  document.body.style.overflow = 'hidden';
-}
+    el('overlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+};
 
-function closeOverlay() {
-  document.getElementById('overlay').classList.remove('active');
-  document.body.style.overflow = '';
-}
-document.getElementById('overlayBackdrop').addEventListener('click', closeOverlay);
-document.getElementById('panelClose').addEventListener('click', closeOverlay);
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeOverlay(); });
-
-document.getElementById('qtyMinus').addEventListener('click', () => {
-  if (qty > 1) { qty--; document.getElementById('qtyVal').textContent = qty; }
-});
-document.getElementById('qtyPlus').addEventListener('click', () => {
-  if (qty < 10) { qty++; document.getElementById('qtyVal').textContent = qty; }
-});
-
+/* Buy */
 document.getElementById('btnBuy').addEventListener('click', () => {
-  if (!selectedSize) {
-    showVarietyToast('Please select a size first ✂️');
-    return;
-  }
-  let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-  cart.push({
-    id: Date.now(),
-    productId: currentProduct.key,
-    name: currentProduct.name,
-    price: currentProduct.price,
-    image: currentProduct.img,
-    quantity: qty,
-    size: selectedSize,
-    color: selectedColor,
-    addedAt: new Date().toISOString()
-  });
-  localStorage.setItem('cart', JSON.stringify(cart));
-  showVarietyToast(`Added ${qty} × ${currentProduct.name} (${selectedSize}) to bag 🛍️`);
-  closeOverlay();
-  setTimeout(() => { window.location.href = 'mycart.html'; }, 1200);
+    if (!currentFbId) return;
+    const p = window._fbProducts[currentFbId];
+    if (!p) return;
+    if (!selectedSize) { window.showToast('Please select a size first ✂️'); return; }
+    const qty = parseInt(document.getElementById('qtyVal').textContent) || 1;
+    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    cart.push({
+        id:        Date.now(),
+        productId: currentFbId,
+        name:      p.name,
+        price:     '₹' + Number(p.price).toLocaleString('en-IN'),
+        image:     p.img,
+        quantity:  qty,
+        size:      selectedSize,
+        category:  p.cat,
+        addedAt:   new Date().toISOString()
+    });
+    localStorage.setItem('cart', JSON.stringify(cart));
+    window.showToast(`Added ${qty} × ${p.name} (${selectedSize}) to bag 🛍️`);
+    closeOverlay();
+    setTimeout(() => { window.location.href = 'mycart.html'; }, 1200);
 });
 
+/* Wishlist */
 document.getElementById('btnWishlist').addEventListener('click', () => {
-  const key = document.getElementById('btnWishlist').dataset.key;
-  const btnW = document.getElementById('btnWishlist');
-  if (wishlistSet.has(key)) {
-    wishlistSet.delete(key);
-    btnW.innerHTML = '♡';
-    btnW.classList.remove('loved');
-    showVarietyToast('Removed from wishlist');
-  } else {
-    wishlistSet.add(key);
-    btnW.innerHTML = '♥';
-    btnW.classList.add('loved');
-    showVarietyToast('Added to wishlist ❤️');
-  }
-  localStorage.setItem('variety_wishlist', JSON.stringify([...wishlistSet]));
+    const id   = document.getElementById('btnWishlist').dataset.fbId;
+    if (!id) return;
+    const btnW = document.getElementById('btnWishlist');
+    const wl   = getWishlist();
+    if (wl.has(id)) {
+        wl.delete(id); btnW.innerHTML = '♡'; btnW.classList.remove('loved');
+        window.showToast('Removed from wishlist');
+    } else {
+        wl.add(id); btnW.innerHTML = '♥'; btnW.classList.add('loved');
+        window.showToast('Added to wishlist ❤️');
+    }
+    saveWishlist(wl);
 });
 
-let toastTimer;
-function showVarietyToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
-}
+function getWishlist()   { try { return new Set(JSON.parse(localStorage.getItem('wishlist_ids') || '[]')); } catch { return new Set(); } }
+function saveWishlist(s) { localStorage.setItem('wishlist_ids', JSON.stringify([...s])); }
 </script>
-
 </body>
 </html>
