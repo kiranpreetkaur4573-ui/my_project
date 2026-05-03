@@ -1,33 +1,39 @@
+// 1. Import required modules
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
 
+// 2. Create app
 const app = express();
+
+// 3. Set port
 const PORT = process.env.PORT || 5000;
 
-// Middleware
+// 4. Middleware
 app.use(cors());
 app.use(express.json());
 
-// Serve frontend files
+// 5. Serve static files (frontend)
 app.use(express.static(__dirname));
 
-// Home route (change file name if needed)
+// 6. Routes
+
+// Home route
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'main_dash.html'));
+  res.sendFile(path.join(__dirname, 'main_dash.html')); // change if needed
 });
 
-// Health check
+// Health check route
 app.get('/health', (req, res) => {
   res.json({ status: `Server running on port ${PORT}` });
 });
 
-// Example upload route (optional)
-app.post('/upload-image', (req, res) => {
-  res.json({ message: "Upload route working" });
+// Example API route
+app.get('/api/test', (req, res) => {
+  res.json({ message: "API working" });
 });
 
-// Start server
+// 7. Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
