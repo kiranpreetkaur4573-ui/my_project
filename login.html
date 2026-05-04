@@ -248,7 +248,7 @@ window.doRegister = async () => {
       role: 'customer'
     });
     showOk(`Welcome, ${name}! Account created. Redirecting…`);
-    setTimeout(() => window.location.href = 'orders.html', 1500);
+    setTimeout(() => window.location.href = 'order.html', 1500);
   } catch(e) {
     showErr(friendly(e.code));
     btn.disabled = false; btn.textContent = 'Create Account →';
