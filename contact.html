@@ -27,17 +27,20 @@
         .nav-cart { display: flex; align-items: center; gap: 5px; margin-left: 10px; text-decoration: none; color: var(--deep); font-size: 12px; font-weight: 700; padding: 6px 10px; border-radius: 20px; transition: background 0.2s; flex-shrink: 0; }
         .nav-cart:hover { background: var(--soft); }
         .nav-cart svg { width: 18px; height: 18px; }
-        .hamburger { display: none; flex-direction: column; cursor: pointer; gap: 5px; margin-left: auto; padding: 6px; background: none; border: none; }
-        .hamburger span { display: block; width: 22px; height: 2px; background: var(--deep); border-radius: 3px; transition: all 0.3s; }
+        .hamburger { display: none; flex-direction: column; cursor: pointer; gap: 5px; padding: 6px; background: none; border: none; z-index: 301; }
+        .hamburger span { display: block; width: 22px; height: 2px; background: var(--deep); border-radius: 3px; transition: all 0.3s ease; }
         .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
         .hamburger.open span:nth-child(2) { opacity: 0; }
         .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-        .mobile-nav { display: none; flex-direction: column; background: white; border-top: 1px solid var(--soft); }
+        .mobile-nav { display: none; flex-direction: column; background: white; border-top: 1px solid var(--soft); position: absolute; top: 58px; left: 0; right: 0; z-index: 299; max-height: calc(100vh - 58px); overflow-y: auto; box-shadow: 0 8px 16px rgba(122,45,82,0.12); }
         .mobile-nav.open { display: flex; }
-        .mobile-nav a { text-decoration: none; color: var(--text); font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 14px 24px; border-bottom: 1px solid #f2e0ea; }
-        .mobile-nav .search-row { display: flex; padding: 14px 20px; }
-        .mobile-nav .search-row input { flex: 1; padding: 9px 14px; border: 1.5px solid #ddb8cc; border-radius: 24px 0 0 24px; font-size: 13px; font-family: 'DM Sans', sans-serif; color: var(--text); outline: none; background: #fdf6f9; }
-        .mobile-nav .search-row button { padding: 9px 16px; background: linear-gradient(135deg, var(--rose), var(--deep)); color: white; border: none; border-radius: 0 24px 24px 0; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+        .mobile-nav a { text-decoration: none; color: var(--text); font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 16px 24px; border-bottom: 1px solid #f2e0ea; display: block; transition: background 0.2s ease; }
+        .mobile-nav a:active, .mobile-nav a.active { background: var(--soft); color: var(--deep); }
+        .mobile-nav a:hover { background: #f9f0f6; }
+        .mobile-nav .search-row { display: flex; padding: 14px 20px; gap: 8px; }
+        .mobile-nav .search-row input { flex: 1; padding: 9px 14px; border: 1.5px solid #ddb8cc; border-radius: 24px; font-size: 13px; font-family: 'DM Sans', sans-serif; color: var(--text); outline: none; background: #fdf6f9; }
+        .mobile-nav .search-row button { padding: 9px 16px; background: linear-gradient(135deg, var(--rose), var(--deep)); color: white; border: none; border-radius: 24px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: opacity 0.2s; }
+        .mobile-nav .search-row button:active { opacity: 0.8; }
 
         .hero { position: relative; min-height: 380px; display: flex; align-items: center; justify-content: center; overflow: hidden; background: linear-gradient(135deg, var(--plum) 0%, var(--deep) 55%, #a0486e 100%); }
         .hero-orbs { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
@@ -127,7 +130,6 @@
         .cr-empty { text-align: center; padding: 32px 20px; }
         .cr-empty .ei { font-size: 40px; margin-bottom: 12px; }
         .cr-empty p { font-size: 14px; color: #9a7080; font-weight: 300; line-height: 1.7; }
-        @media (max-width: 600px) { .cr-input-row { flex-direction: column; } .check-reply-card { padding: 28px 20px; } .check-reply-section { padding: 0 16px 60px; } }
 
         .form-panel { background: white; border-radius: 28px; padding: 44px 40px; box-shadow: 0 8px 48px rgba(122,45,82,0.12); border: 1px solid rgba(197,149,176,0.12); position: relative; overflow: hidden; }
         .form-panel::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--rose), var(--gold), var(--deep)); }
@@ -201,7 +203,18 @@
         footer strong { color: var(--rose); }
 
         @media (max-width: 960px) { .nav-links, .nav-search { display: none; } .hamburger { display: flex; } .nav-cart { margin-left: auto; } .contact-grid { grid-template-columns: 1fr; gap: 40px; } .map-inner { grid-template-columns: 1fr; gap: 32px; } }
-        @media (max-width: 600px) { .contact-section { padding: 48px 16px 56px; } .form-panel { padding: 28px 20px; } .form-row { grid-template-columns: 1fr; gap: 0; } .hero { min-height: 300px; } .faq-section { padding: 52px 16px 60px; } .map-inner { padding: 44px 16px; } .map-visual { min-height: 200px; } }
+        @media (max-width: 600px) { 
+            .contact-section { padding: 48px 16px 56px; } 
+            .form-panel { padding: 28px 20px; } 
+            .form-row { grid-template-columns: 1fr; gap: 0; } 
+            .hero { min-height: 300px; } 
+            .faq-section { padding: 52px 16px 60px; } 
+            .map-inner { padding: 44px 16px; } 
+            .map-visual { min-height: 200px; } 
+            .check-reply-card { padding: 28px 20px; } 
+            .check-reply-section { padding: 0 16px 60px; } 
+            .cr-input-row { flex-direction: column; } 
+        }
         .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
         .reveal.visible { opacity: 1; transform: none; }
         .reveal-delay-1 { transition-delay: 0.15s; }
@@ -235,10 +248,11 @@
         </button>
     </div>
     <div class="mobile-nav" id="mobileNav">
-        <a href="index.html">Home</a>
-        <a href="about.html">About</a>
-        <a href="variety.html">Variety</a>
-        <a href="contact.html">Contact</a>
+        <a href="index.html" onclick="closeMenu()">Home</a>
+        <a href="about.html" onclick="closeMenu()">About</a>
+        <a href="variety.html" onclick="closeMenu()">Variety</a>
+        <a href="contact.html" onclick="closeMenu()">Contact</a>
+        <a href="mycart.html" onclick="closeMenu()">🛒 Cart</a>
         <div class="search-row">
             <input placeholder="Search clothes…" type="text">
             <button>Search</button>
@@ -508,7 +522,7 @@
         btn.disabled = true;
         btn.innerHTML = `<span style="display:inline-block;animation:spin 0.7s linear infinite">🌸</span>`;
         document.getElementById('crResults').innerHTML = `<div class="cr-empty"><div class="ei" style="animation:spin 1s linear infinite;display:inline-block">🌸</div><p style="margin-top:12px">Looking up your messages…</p></div>`;
-try {
+        try {
             const snap = await getDocs(
                 query(collection(db, 'contactSubmissions'), where('email', '==', email))
             );
@@ -575,8 +589,31 @@ try {
 </script>
 
 <script>
-    
+    // ---- MOBILE MENU TOGGLE ----
+    function toggleMenu() {
+        const hamburger = document.getElementById('hamburgerBtn');
+        const mobileNav = document.getElementById('mobileNav');
+        hamburger.classList.toggle('open');
+        mobileNav.classList.toggle('open');
+    }
 
+    function closeMenu() {
+        const hamburger = document.getElementById('hamburgerBtn');
+        const mobileNav = document.getElementById('mobileNav');
+        hamburger.classList.remove('open');
+        mobileNav.classList.remove('open');
+    }
+
+    // Close menu when clicking outside
+    document.addEventListener('click', function(e) {
+        const hamburger = document.getElementById('hamburgerBtn');
+        const mobileNav = document.getElementById('mobileNav');
+        const navbar = document.querySelector('.navbar');
+        
+        if (!navbar.contains(e.target) && mobileNav.classList.contains('open')) {
+            closeMenu();
+        }
+    });
 
     function toggleFaq(btn) {
         const item = btn.closest('.faq-item');
